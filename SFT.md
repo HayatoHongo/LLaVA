@@ -1,0 +1,19 @@
+git clone https://github.com/HayatoHongo/LLaVA.git
+cd LLaVA/
+
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh
+bash ~/miniconda.sh
+source ~/.bashrc
+conda create -n llava python=3.10.12 -y
+source ~/miniconda3/etc/profile.d/conda.sh
+conda --version
+conda create -n llava python=3.10.12 -y
+conda activate llava
+
+pip --version # make sure you use pip 25.1
+cd LLaVA/
+pip install -e .
+
+python -c "import deepspeed; print(deepspeed.__version__)" # make sure you are using deepspeed 0.9.5
+bash scripts/v1_5/finetune.sh
+
