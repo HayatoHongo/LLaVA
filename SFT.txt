@@ -2,12 +2,18 @@ git clone https://github.com/HayatoHongo/LLaVA.git
 cd LLaVA/
 
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh
-bash ~/miniconda.sh
+bash ~/miniconda.sh # Enter, yes, Enter, Enter
 source ~/.bashrc
-conda create -n llava python=3.10.12 -y
 source ~/miniconda3/etc/profile.d/conda.sh
 conda --version
 conda create -n llava python=3.10.12 -y
+
+###
+#権限エラーが出たら
+conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
+conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+###
+
 conda activate llava
 
 pip --version # make sure you use pip 25.1
@@ -17,5 +23,11 @@ pip install -e ".[train]"
 pip install flash-attn==2.3.4 --no-build-isolation
 
 python -c "import deepspeed; print(deepspeed.__version__)" # make sure you are using deepspeed 0.9.5
+
+mkdir -p ./playground/data/LLaVA-Pretrain/
+wget https://huggingface.co/datasets/liuhaotian/LLaVA-Pretrain/resolve/main/blip_laion_cc_sbu_558k.json -O ./playground/data/LLaVA-Pretrain/blip_laion_cc_sbu_558k.json
+
+bash scripts/v1_5/pretrain.sh
+
 bash scripts/v1_5/finetune.sh
 
