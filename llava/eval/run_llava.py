@@ -124,6 +124,8 @@ def eval_model(args):
             stopping_criteria=[stopping_criteria],
         )
 
+    print("----- DEBUG -----")
+    print("output_ids:", output_ids)
     input_token_len = input_ids.shape[1]
     n_diff_input_output = (input_ids != output_ids[:, :input_token_len]).sum().item()
     if n_diff_input_output > 0:
@@ -131,7 +133,7 @@ def eval_model(args):
             f"[Warning] {n_diff_input_output} output_ids are not the same as the input_ids"
         )
     outputs = tokenizer.batch_decode(
-        output_ids[:, input_token_len:], skip_special_tokens=True
+        output_ids[:, :], skip_special_tokens=True
     )[0]
     outputs = outputs.strip()
     if outputs.endswith(stop_str):
