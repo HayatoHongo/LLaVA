@@ -298,8 +298,8 @@ class LLaVATrainer(Trainer):
                             logger.debug(f"bitsandbytes: will optimize {module} in fp32")
                     logger.info(f"skipped: {skipped/2**20}M params")
 
-    print("self.optimizer\n", self.optimizer)
-    return self.optimizer
+        print("self.optimizer\n", self.optimizer)
+        return self.optimizer
 
     def _save_checkpoint(self, model, trial, metrics=None):
 
