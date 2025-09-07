@@ -41,73 +41,137 @@ local_rank = None
 
 
 def rank0_print(*args):
+    """
+    rank0_print(*args)
+    rank0プロセスのみprintするユーティリティ関数。
+    
+    入力例:
+        args = ("学習開始",)
+    出力:
+        rank0プロセスならprint("学習開始")、それ以外は何もしない
+    """
+    print("current file path", "llava/train/train.py")
+    print("def rank0_print(*args)")
+    print("args\n", args)
     if local_rank == 0:
         print(*args)
 
 
 @dataclass
 class ModelArguments:
-    model_name_or_path: Optional[str] = field(default="facebook/opt-125m")
-    version: Optional[str] = field(default="v0")
-    freeze_backbone: bool = field(default=False)
-    tune_mm_mlp_adapter: bool = field(default=False)
-    vision_tower: Optional[str] = field(default=None)
-    mm_vision_select_layer: Optional[int] = field(default=-1)   # default to the last layer
-    pretrain_mm_mlp_adapter: Optional[str] = field(default=None)
-    mm_projector_type: Optional[str] = field(default='linear')
-    mm_use_im_start_end: bool = field(default=False)
-    mm_use_im_patch_token: bool = field(default=True)
-    mm_patch_merge_type: Optional[str] = field(default='flat')
-    mm_vision_select_feature: Optional[str] = field(default="patch")
+    def __post_init__(self):
+        print("current file path", "llava/train/train.py")
+        print("def ModelArguments(...) (dataclass init)")
+    """
+    ModelArguments
+    モデル設定用の引数を管理するデータクラス。
+    
+    入力例:
+        ModelArguments(model_name_or_path="facebook/opt-125m", version="v0", ...)
+    出力:
+        モデル設定値を属性として持つインスタンス
+    """
+    model_name_or_path: Optional[str] = field(default="facebook/opt-125m")   # モデル名またはパス
+    version: Optional[str] = field(default="v0")   # 会話テンプレートや前処理のバージョン指定
+    freeze_backbone: bool = field(default=False)   # モデルのバックボーンを凍結するか
+    tune_mm_mlp_adapter: bool = field(default=False)   # マルチモーダルMLPアダプタのみ学習するか
+    vision_tower: Optional[str] = field(default=None)   # 画像特徴抽出用のビジョンモデル名またはパス
+    mm_vision_select_layer: Optional[int] = field(default=-1)   # ビジョンタワーのどの層の特徴を使うか（-1で最終層）
+    pretrain_mm_mlp_adapter: Optional[str] = field(default=None)   # 事前学習済みマルチモーダルMLPアダプタのパス
+    mm_projector_type: Optional[str] = field(default='linear')   # マルチモーダルプロジェクタの種類（linear等）
+    mm_use_im_start_end: bool = field(default=False)   # 画像トークンの前後に特殊トークンを付与するか
+    mm_use_im_patch_token: bool = field(default=True)   # 画像パッチトークンを使うか
+    mm_patch_merge_type: Optional[str] = field(default='flat')   # パッチ統合方法（flat等）
+    mm_vision_select_feature: Optional[str] = field(default="patch")   # 画像特徴の種類（patch等）
 
 
 @dataclass
 class DataArguments:
+    def __post_init__(self):
+        print("current file path", "llava/train/train.py")
+        print("def DataArguments(...) (dataclass init)")
+    """
+    DataArguments
+    データセット設定用の引数を管理するデータクラス。
+    
+    入力例:
+        DataArguments(data_path="train.json", image_folder="images/", ...)
+    出力:
+        データセット設定値を属性として持つインスタンス
+    """
     data_path: str = field(default=None,
-                           metadata={"help": "Path to the training data."})
-    lazy_preprocess: bool = False
-    is_multimodal: bool = False
-    image_folder: Optional[str] = field(default=None)
-    image_aspect_ratio: str = 'square'
+                           metadata={"help": "Path to the training data."})   # 学習データのパス
+    lazy_preprocess: bool = False   # データの遅延前処理を行うか
+    is_multimodal: bool = False   # マルチモーダルデータかどうか
+    image_folder: Optional[str] = field(default=None)   # 画像フォルダのパス
+    image_aspect_ratio: str = 'square'   # 画像のアスペクト比（square/pad等）
 
 
 @dataclass
 class TrainingArguments(transformers.TrainingArguments):
-    cache_dir: Optional[str] = field(default=None)
-    optim: str = field(default="adamw_torch")
-    remove_unused_columns: bool = field(default=False)
-    freeze_mm_mlp_adapter: bool = field(default=False)
-    mpt_attn_impl: Optional[str] = field(default="triton")
+    def __post_init__(self):
+        print("current file path", "llava/train/train.py")
+        print("def TrainingArguments(...) (dataclass init)")
+    """
+    TrainingArguments
+    学習設定用の引数を管理するデータクラス。
+    transformers.TrainingArgumentsを継承。
+    
+    入力例:
+        TrainingArguments(output_dir="./output", fp16=True, ...)
+    出力:
+        学習設定値を属性として持つインスタンス
+    """
+    cache_dir: Optional[str] = field(default=None)   # モデルやデータのキャッシュディレクトリ
+    optim: str = field(default="adamw_torch")   # オプティマイザの種類
+    remove_unused_columns: bool = field(default=False)   # 未使用カラムを削除するか
+    freeze_mm_mlp_adapter: bool = field(default=False)   # マルチモーダルMLPアダプタを凍結するか
+    mpt_attn_impl: Optional[str] = field(default="triton")   # MPTモデルのAttention実装方式
     model_max_length: int = field(
         default=512,
         metadata={
             "help":
             "Maximum sequence length. Sequences will be right padded (and possibly truncated)."
         },
-    )
+    )   # モデルの最大シーケンス長
     double_quant: bool = field(
         default=True,
         metadata={"help": "Compress the quantization statistics through double quantization."}
-    )
+    )   # 量子化時のdouble quantizationを有効にするか
     quant_type: str = field(
         default="nf4",
         metadata={"help": "Quantization data type to use. Should be one of `fp4` or `nf4`."}
-    )
+    )   # 量子化データ型（fp4/nf4）
     bits: int = field(
         default=16,
         metadata={"help": "How many bits to use."}
-    )
-    lora_enable: bool = False
-    lora_r: int = 64
-    lora_alpha: int = 16
-    lora_dropout: float = 0.05
-    lora_weight_path: str = ""
-    lora_bias: str = "none"
-    mm_projector_lr: Optional[float] = None
-    group_by_modality_length: bool = field(default=False)
+    )   # 量子化ビット数（16/8/4など）
+    lora_enable: bool = False   # LoRAによる微調整を有効にするか
+    lora_r: int = 64   # LoRAのランク
+    lora_alpha: int = 16   # LoRAのalpha値
+    lora_dropout: float = 0.05   # LoRAのドロップアウト率
+    lora_weight_path: str = ""   # LoRA重みのパス
+    lora_bias: str = "none"   # LoRAのバイアス設定
+    mm_projector_lr: Optional[float] = None   # マルチモーダルプロジェクタの学習率
+    group_by_modality_length: bool = field(default=False)   # モダリティごとにバッチをグループ化するか
 
 
 def maybe_zero_3(param, ignore_status=False, name=None):
+
+    print("current file path", "llava/train/train.py")
+    print("def maybe_zero_3(param, ignore_status=False, name=None)")
+    print("param\n", param)
+    print("ignore_status\n", ignore_status)
+    print("name\n", name)
+    """
+    maybe_zero_3(param, ignore_status=False, name=None)
+    DeepSpeed Zero3対応でパラメータを安全に取得する関数。
+    
+    入力例:
+        param: torch.nn.Parameter (DeepSpeedラップ済み)
+    出力:
+        CPU上のtorch.Tensor (パラメータ値)
+    """
     from deepspeed import zero
     from deepspeed.runtime.zero.partition_parameters import ZeroParamStatus
     if hasattr(param, "ds_id"):
@@ -118,11 +182,27 @@ def maybe_zero_3(param, ignore_status=False, name=None):
             param = param.data.detach().cpu().clone()
     else:
         param = param.detach().cpu().clone()
+    print("param (return)\n", param)
     return param
 
 
 # Borrowed from peft.utils.get_peft_model_state_dict
 def get_peft_state_maybe_zero_3(named_params, bias):
+
+    print("current file path", "llava/train/train.py")
+    print("def get_peft_state_maybe_zero_3(named_params, bias)")
+    print("named_params\n", named_params)
+    print("bias\n", bias)
+    """
+    get_peft_state_maybe_zero_3(named_params, bias)
+    LoRAパラメータのstate_dictを取得する関数。
+    
+    入力例:
+        named_params: model.named_parameters()のイテレータ
+        bias: "none"/"all"/"lora_only"
+    出力:
+        LoRA層のstate_dict (dict)
+    """
     if bias == "none":
         to_return = {k: t for k, t in named_params if "lora_" in k}
     elif bias == "all":
@@ -144,24 +224,70 @@ def get_peft_state_maybe_zero_3(named_params, bias):
     else:
         raise NotImplementedError
     to_return = {k: maybe_zero_3(v, ignore_status=True) for k, v in to_return.items()}
+    print("to_return (return)\n", to_return)
     return to_return
 
 
 def get_peft_state_non_lora_maybe_zero_3(named_params, require_grad_only=True):
+
+    print("current file path", "llava/train/train.py")
+    print("def get_peft_state_non_lora_maybe_zero_3(named_params, require_grad_only=True)")
+    print("named_params\n", named_params)
+    print("require_grad_only\n", require_grad_only)
+    """
+    get_peft_state_non_lora_maybe_zero_3(named_params, require_grad_only=True)
+    LoRA以外のパラメータstate_dictを取得する関数。
+    
+    入力例:
+        named_params: model.named_parameters()のイテレータ
+        require_grad_only: True
+    出力:
+        LoRA以外のパラメータstate_dict (dict)
+    """
     to_return = {k: t for k, t in named_params if "lora_" not in k}
     if require_grad_only:
         to_return = {k: t for k, t in to_return.items() if t.requires_grad}
     to_return = {k: maybe_zero_3(v, ignore_status=True).cpu() for k, v in to_return.items()}
+    print("to_return (return)\n", to_return)
     return to_return
 
 
 def get_mm_adapter_state_maybe_zero_3(named_params, keys_to_match):
+
+    print("current file path", "llava/train/train.py")
+    print("def get_mm_adapter_state_maybe_zero_3(named_params, keys_to_match)")
+    print("named_params\n", named_params)
+    print("keys_to_match\n", keys_to_match)
+    """
+    get_mm_adapter_state_maybe_zero_3(named_params, keys_to_match)
+    マルチモーダルアダプタのstate_dict取得。
+    
+    入力例:
+        named_params: model.named_parameters()のイテレータ
+        keys_to_match: ["mm_projector"]
+    出力:
+        指定キーワードを含むパラメータのstate_dict (dict)
+    """
     to_return = {k: t for k, t in named_params if any(key_match in k for key_match in keys_to_match)}
     to_return = {k: maybe_zero_3(v, ignore_status=True).cpu() for k, v in to_return.items()}
+    print("to_return (return)\n", to_return)
     return to_return
 
 
 def find_all_linear_names(model):
+
+    print("current file path", "llava/train/train.py")
+    print("def find_all_linear_names(model)")
+    print("model\n", model)
+    """
+    find_all_linear_names(model)
+    モデル内のLinear層名を抽出。
+    
+    入力例:
+        model: nn.Module (例: LlamaForCausalLM)
+    出力:
+        Linear層名のリスト (例: ["q_proj", "k_proj", ...])
+    """
     cls = torch.nn.Linear
     lora_module_names = set()
     multimodal_keywords = ['mm_projector', 'vision_tower', 'vision_resampler']
@@ -174,20 +300,65 @@ def find_all_linear_names(model):
 
     if 'lm_head' in lora_module_names: # needed for 16-bit
         lora_module_names.remove('lm_head')
-    return list(lora_module_names)
+    result = list(lora_module_names)
+    print("result (return)\n", result)
+    return result
 
 
 def safe_save_model_for_hf_trainer(trainer: transformers.Trainer,
+
                                    output_dir: str):
+
+    print("current file path", "llava/train/train.py")
+    print("def safe_save_model_for_hf_trainer(trainer, output_dir)")
+    print("trainer\n", trainer)
+    print("output_dir\n", output_dir)
+    """
+    safe_save_model_for_hf_trainer(trainer, output_dir)
+    Trainerのモデルを安全に保存。
+    
+    入力例:
+        trainer: transformers.Trainer
+        output_dir: "./output"
+    出力:
+        なし (output_dirにモデル保存)
+    """
     """Collects the state dict and dump to disk."""
 
+    """
+    【safe_save_model_for_hf_trainer内の主な保存処理 実行可否まとめ】
+
+    | 保存処理                                         | pretraining                  | finetuning            |
+    |--------------------------------------------------|------------------------------|-----------------------|
+    | tune_mm_mlp_adapter                               | True                         | False                 |
+    | mm_use_im_start_end                               | False                        | False                 |
+    | trainer.model.config.save_pretrained              | 実行（config.json保存）       | 実行（config.json保存） |
+    | torch.save(weight_to_save, mm_projector.bin)      | 実行（mm_projector.bin保存） | 実行されない           |
+    | torch.save(weight_to_save, mm_projector_folder/...) | チェックポイント保存時のみ    | 実行されない           |
+    | trainer.save_model                                | 実行されない                 | DeepSpeed時のみ        |
+    | trainer._save                                     | 実行されない                 | 実行（全重み保存）      |
+
+    【補足】
+    - pretraining では mm_projector 等の adapter 層と config のみ保存される  
+    - finetuning では通常の全パラメータ保存（trainer._save）が行われる  
+    - DeepSpeed 利用時は trainer.save_model で全重み保存  
+    - torch.save(weight_to_save, mm_projector_folder/...) は checkpoint 保存時のみ実行  
+    """
+
+    # In pretrain.sh --tune_mm_mlp_adapter True \, in finetune.sh, --tune_mm_mlp_adapter False \
     if getattr(trainer.args, "tune_mm_mlp_adapter", False):
-        # Only save Adapter
+        # Only save mm_projector
         keys_to_match = ['mm_projector']
+        # both in pretraning and finetuning, use_im_start_end is set to False. This code is usually not executed.
         if getattr(trainer.args, "use_im_start_end", False):
             keys_to_match.extend(['embed_tokens', 'embed_in'])
 
+        # mm_projectorやembed_tokens等のマルチモーダルアダプタ層の重みのみを保存
+        # pretraining では weight_to_save の中身は「mm_projector層の全パラメータ（重み・バイアス）」のみです。
         weight_to_save = get_mm_adapter_state_maybe_zero_3(trainer.model.named_parameters(), keys_to_match)
+        print("[INFO] Weights to save:", weight_to_save.keys())
+        print("weight_to_save\n", weight_to_save)
+        # モデルの設定(config)のみ保存
         trainer.model.config.save_pretrained(output_dir)
 
         current_folder = output_dir.split('/')[-1]
@@ -196,15 +367,19 @@ def safe_save_model_for_hf_trainer(trainer: transformers.Trainer,
             if current_folder.startswith('checkpoint-'):
                 mm_projector_folder = os.path.join(parent_folder, "mm_projector")
                 os.makedirs(mm_projector_folder, exist_ok=True)
+                # チェックポイントごとにmm_projector等の重みのみ保存
                 torch.save(weight_to_save, os.path.join(mm_projector_folder, f'{current_folder}.bin'))
             else:
                 torch.save(weight_to_save, os.path.join(output_dir, f'mm_projector.bin'))
+        print("return (None)")
         return
 
     if trainer.deepspeed:
         torch.cuda.synchronize()
+        # DeepSpeedを使う場合はtrainer.save_modelを使って保存
         trainer.save_model(output_dir)
-        return
+    print("return (None)")
+    return
 
     state_dict = trainer.model.state_dict()
     if trainer.args.should_save:
@@ -213,7 +388,10 @@ def safe_save_model_for_hf_trainer(trainer: transformers.Trainer,
             for key, value in state_dict.items()
         }
         del state_dict
+        # 全パラメータ(通常のPyTorch state_dict)を保存
+        print("cpu_state_dict\n", cpu_state_dict)
         trainer._save(output_dir, state_dict=cpu_state_dict)  # noqa
+    print("return (None)")
 
 
 def smart_tokenizer_and_embedding_resize(
@@ -221,10 +399,28 @@ def smart_tokenizer_and_embedding_resize(
     tokenizer: transformers.PreTrainedTokenizer,
     model: transformers.PreTrainedModel,
 ):
+    """
+    smart_tokenizer_and_embedding_resize(special_tokens_dict, tokenizer, model)
+    特殊トークン追加時に埋め込みをリサイズ。
+    
+    入力例:
+        special_tokens_dict = {"pad_token": "[PAD]"}
+        tokenizer: AutoTokenizer
+        model: LlamaForCausalLM
+    出力:
+        なし (モデルの埋め込み層がリサイズされる)
+    """
     """Resize tokenizer and embedding.
-
     Note: This is the unoptimized version that may make your embedding size not be divisible by 64.
     """
+    # pretrainingの時のみ、pad_token を追加する。
+    # finetuningでは tokenizer に pad_token が既に存在するので、追加しない。
+    # finetuningで万が一、pad_tokenが設定されていなかった際の安全策として、tokenizer_unk_token を pad_token に設定する。
+    print("current file path", "llava/train/train.py")
+    print("def smart_tokenizer_and_embedding_resize(special_tokens_dict, tokenizer, model)")
+    print("special_tokens_dict\n", special_tokens_dict)
+    print("tokenizer\n", tokenizer)
+    print("model\n", model)
     num_new_tokens = tokenizer.add_special_tokens(special_tokens_dict)
     model.resize_token_embeddings(len(tokenizer))
 
@@ -232,18 +428,46 @@ def smart_tokenizer_and_embedding_resize(
         input_embeddings = model.get_input_embeddings().weight.data
         output_embeddings = model.get_output_embeddings().weight.data
 
-        input_embeddings_avg = input_embeddings[:-num_new_tokens].mean(
-            dim=0, keepdim=True)
-        output_embeddings_avg = output_embeddings[:-num_new_tokens].mean(
-            dim=0, keepdim=True)
+        input_embeddings_avg = input_embeddings[:-num_new_tokens].mean(dim=0, keepdim=True)
+        output_embeddings_avg = output_embeddings[:-num_new_tokens].mean(dim=0, keepdim=True)
 
         input_embeddings[-num_new_tokens:] = input_embeddings_avg
         output_embeddings[-num_new_tokens:] = output_embeddings_avg
+    print("return (None)")
 
 
 def _tokenize_fn(strings: Sequence[str],
                  tokenizer: transformers.PreTrainedTokenizer) -> Dict:
+    """
+    _tokenize_fn(strings, tokenizer)
+    テキストリストをトークナイズして、学習用の形式に変換。
+
+    入力例:
+        strings = ["こんにちは", "さようなら"]
+
+    内部処理イメージ:
+        "こんにちは" → [101, 2001, 2002, 2003, 2004, 102]
+        "さようなら" → [101, 3001, 3002, 3003, 102, 0]   # PAD 追加
+
+    出力例:
+        {
+            "input_ids": [
+                tensor([101, 2001, 2002, 2003, 2004, 102]),
+                tensor([101, 3001, 3002, 3003, 102, 0])
+            ],
+            "labels": [
+                tensor([101, 2001, 2002, 2003, 2004, 102]),
+                tensor([101, 3001, 3002, 3003, 102, 0])
+            ],
+            "input_ids_lens": [6, 5],   # PADを除いた系列長。1文目は6トークン、2文目は5トークン
+            "labels_lens":    [6, 5]
+        }
+    """
     """Tokenize a list of strings."""
+    print("current file path", "llava/train/train.py")
+    print("def _tokenize_fn(strings, tokenizer)")
+    print("strings\n", strings)
+    print("tokenizer\n", tokenizer)
     tokenized_list = [
         tokenizer(
             text,
@@ -260,15 +484,22 @@ def _tokenize_fn(strings: Sequence[str],
         tokenized.input_ids.ne(tokenizer.pad_token_id).sum().item()
         for tokenized in tokenized_list
     ]
-    return dict(
+    result = dict(
         input_ids=input_ids,
         labels=labels,
         input_ids_lens=input_ids_lens,
         labels_lens=labels_lens,
     )
+    print("result (return)\n", result)
+    return result
 
 
 def _mask_targets(target, tokenized_lens, speakers):
+    print("current file path", "llava/train/train.py")
+    print("def _mask_targets(target, tokenized_lens, speakers)")
+    print("target\n", target)
+    print("tokenized_lens\n", tokenized_lens)
+    print("speakers\n", speakers)
     # cur_idx = 0
     cur_idx = tokenized_lens[0]
     tokenized_lens = tokenized_lens[1:]
@@ -277,9 +508,27 @@ def _mask_targets(target, tokenized_lens, speakers):
         if speaker == "human":
             target[cur_idx+2:cur_idx + tokenized_len] = IGNORE_INDEX
         cur_idx += tokenized_len
+    print("masked target\n", target)
+    return target
 
 
 def _add_speaker_and_signal(header, source, get_conversation=True):
+
+    print("current file path", "llava/train/train.py")
+    print("def _add_speaker_and_signal(header, source, get_conversation=True)")
+    print("header\n", header)
+    print("source\n", source)
+    print("get_conversation\n", get_conversation)
+    """
+    _add_speaker_and_signal(header, source, get_conversation=True)
+    会話データに話者・信号を付与。
+    
+    入力例:
+        header = ""
+        source = [{"from": "human", "value": "こんにちは"}, {"from": "gpt", "value": "こんにちは！"}]
+    出力:
+        付与済み会話テキスト (str)
+    """
     """Add speaker and start/end signal on each round."""
     BEGIN_SIGNAL = "### "
     END_SIGNAL = "\n"
@@ -297,6 +546,7 @@ def _add_speaker_and_signal(header, source, get_conversation=True):
         if get_conversation:
             conversation += sentence["value"]
     conversation += BEGIN_SIGNAL
+    print("conversation (return)\n", conversation)
     return conversation
 
 
@@ -304,8 +554,23 @@ def preprocess_multimodal(
     sources: Sequence[str],
     data_args: DataArguments
 ) -> Dict:
+    """
+    preprocess_multimodal(sources, data_args)
+    マルチモーダルデータの前処理。
+    
+    入力例:
+        sources = [[{"from": "human", "value": "<image> こんにちは"}]]
+        data_args: DataArguments
+    出力:
+        前処理済みsources (list)
+    """
+    print("current file path", "llava/train/train.py")
+    print("def preprocess_multimodal(sources, data_args)")
+    print("sources\n", sources)
+    print("data_args\n", data_args)
     is_multimodal = data_args.is_multimodal
     if not is_multimodal:
+        print("sources (return)\n", sources)
         return sources
 
     for source in sources:
@@ -321,6 +586,7 @@ def preprocess_multimodal(
                 replace_token = DEFAULT_IM_START_TOKEN + replace_token + DEFAULT_IM_END_TOKEN
             sentence["value"] = sentence["value"].replace(DEFAULT_IMAGE_TOKEN, replace_token)
 
+    print("sources (return)\n", sources)
     return sources
 
 
@@ -329,6 +595,33 @@ def preprocess_llama_2(
     tokenizer: transformers.PreTrainedTokenizer,
     has_image: bool = False
 ) -> Dict:
+    """
+    preprocess_llama_2(sources, tokenizer, has_image=False)
+    Llama2形式の会話データ前処理。
+    
+    入力例:
+        sources = [[{"from": "human", "value": "こんにちは"}, {"from": "gpt", "value": "やあ！"}]]
+        tokenizer: AutoTokenizer
+        has_image: False
+    出力:
+        {"input_ids": Tensor, "labels": Tensor}
+    """
+    print("current file path", "llava/train/train.py")
+    print("def preprocess_llama_2(sources, tokenizer, has_image=False)")
+    print("sources\n", sources)
+    print("tokenizer\n", tokenizer)
+    print("has_image\n", has_image)
+    """
+    preprocess_llama_2(sources, tokenizer, has_image=False)
+    Llama2形式の会話データ前処理。
+    
+    入力例:
+        sources = [[{"from": "human", "value": "こんにちは"}, {"from": "gpt", "value": "やあ！"}]]
+        tokenizer: AutoTokenizer
+        has_image: False
+    出力:
+        {"input_ids": Tensor, "labels": Tensor}
+    """
     conv = conversation_lib.default_conversation.copy()
     roles = {"human": conv.roles[0], "gpt": conv.roles[1]}
 
@@ -400,10 +693,12 @@ def preprocess_llama_2(
                     f" (ignored)"
                 )
 
-    return dict(
+    result = dict(
         input_ids=input_ids,
         labels=targets,
     )
+    print("result (return)\n", result)
+    return result
 
 
 def preprocess_v1(
@@ -411,6 +706,33 @@ def preprocess_v1(
     tokenizer: transformers.PreTrainedTokenizer,
     has_image: bool = False
 ) -> Dict:
+    """
+    preprocess_v1(sources, tokenizer, has_image=False)
+    v1系会話データ前処理。
+    
+    入力例:
+        sources = [[{"from": "human", "value": "こんにちは"}, {"from": "gpt", "value": "やあ！"}]]
+        tokenizer: AutoTokenizer
+        has_image: False
+    出力:
+        {"input_ids": Tensor, "labels": Tensor}
+    """
+    print("current file path", "llava/train/train.py")
+    print("def preprocess_v1(sources, tokenizer, has_image=False)")
+    print("sources\n", sources)
+    print("tokenizer\n", tokenizer)
+    print("has_image\n", has_image)
+    """
+    preprocess_v1(sources, tokenizer, has_image=False)
+    v1系会話データ前処理。
+    
+    入力例:
+        sources = [[{"from": "human", "value": "こんにちは"}, {"from": "gpt", "value": "やあ！"}]]
+        tokenizer: AutoTokenizer
+        has_image: False
+    出力:
+        {"input_ids": Tensor, "labels": Tensor}
+    """
     conv = conversation_lib.default_conversation.copy()
     roles = {"human": conv.roles[0], "gpt": conv.roles[1]}
 
@@ -482,16 +804,42 @@ def preprocess_v1(
                     f" (ignored)"
                 )
 
-    return dict(
+    result = dict(
         input_ids=input_ids,
         labels=targets,
     )
+    print("result (return)\n", result)
+    return result
 
 
 def preprocess_mpt(
     sources,
     tokenizer: transformers.PreTrainedTokenizer,
 ) -> Dict:
+    """
+    preprocess_mpt(sources, tokenizer)
+    MPT形式の会話データ前処理。
+    
+    入力例:
+        sources = [[{"from": "human", "value": "こんにちは"}, {"from": "gpt", "value": "やあ！"}]]
+        tokenizer: AutoTokenizer
+    出力:
+        {"input_ids": Tensor, "labels": Tensor}
+    """
+    print("current file path", "llava/train/train.py")
+    print("def preprocess_mpt(sources, tokenizer)")
+    print("sources\n", sources)
+    print("tokenizer\n", tokenizer)
+    """
+    preprocess_mpt(sources, tokenizer)
+    MPT形式の会話データ前処理。
+    
+    入力例:
+        sources = [[{"from": "human", "value": "こんにちは"}, {"from": "gpt", "value": "やあ！"}]]
+        tokenizer: AutoTokenizer
+    出力:
+        {"input_ids": Tensor, "labels": Tensor}
+    """
     conv = conversation_lib.default_conversation.copy()
     roles = {"human": conv.roles[0], "gpt": conv.roles[1]}
 
@@ -548,16 +896,42 @@ def preprocess_mpt(
                     f" (ignored)"
                 )
 
-    return dict(
+    result = dict(
         input_ids=input_ids,
         labels=targets,
     )
+    print("result (return)\n", result)
+    return result
 
 
 def preprocess_plain(
     sources: Sequence[str],
     tokenizer: transformers.PreTrainedTokenizer,
 ) -> Dict:
+    """
+    preprocess_plain(sources, tokenizer)
+    プレーン形式の会話データ前処理。
+    
+    入力例:
+        sources = [[{"from": "human", "value": "<image>"}, {"from": "gpt", "value": "説明文"}]]
+        tokenizer: AutoTokenizer
+    出力:
+        {"input_ids": [Tensor], "labels": [Tensor]}
+    """
+    print("current file path", "llava/train/train.py")
+    print("def preprocess_plain(sources, tokenizer)")
+    print("sources\n", sources)
+    print("tokenizer\n", tokenizer)
+    """
+    preprocess_plain(sources, tokenizer)
+    プレーン形式の会話データ前処理。
+    
+    入力例:
+        sources = [[{"from": "human", "value": "<image>"}, {"from": "gpt", "value": "説明文"}]]
+        tokenizer: AutoTokenizer
+    出力:
+        {"input_ids": [Tensor], "labels": [Tensor]}
+    """
     # add end signal and concatenate together
     conversations = []
     for source in sources:
@@ -573,7 +947,9 @@ def preprocess_plain(
         tokenized_len = len(tokenizer_image_token(source[0]['value'], tokenizer))
         target[:tokenized_len] = IGNORE_INDEX
 
-    return dict(input_ids=input_ids, labels=targets)
+    result = dict(input_ids=input_ids, labels=targets)
+    print("result (return)\n", result)
+    return result
 
 
 def preprocess(
@@ -582,6 +958,33 @@ def preprocess(
     has_image: bool = False
 ) -> Dict:
     """
+    preprocess(sources, tokenizer, has_image=False)
+    会話データの前処理を形式ごとに分岐。
+    
+    入力例:
+        sources = [[{"from": "human", "value": "こんにちは"}, {"from": "gpt", "value": "やあ！"}]]
+        tokenizer: AutoTokenizer
+        has_image: False
+    出力:
+        {"input_ids": [Tensor], "labels": [Tensor]}
+    """
+    print("current file path", "llava/train/train.py")
+    print("def preprocess(sources, tokenizer, has_image=False)")
+    print("sources\n", sources)
+    print("tokenizer\n", tokenizer)
+    print("has_image\n", has_image)
+    """
+    preprocess(sources, tokenizer, has_image=False)
+    会話データの前処理を形式ごとに分岐。
+    
+    入力例:
+        sources = [[{"from": "human", "value": "こんにちは"}, {"from": "gpt", "value": "やあ！"}]]
+        tokenizer: AutoTokenizer
+        has_image: False
+    出力:
+        {"input_ids": [Tensor], "labels": [Tensor]}
+    """
+    """
     Given a list of sources, each is a conversation list. This transform:
     1. Add signal '### ' at the beginning each sentence, with end signal '\n';
     2. Concatenate conversations together;
@@ -589,13 +992,21 @@ def preprocess(
     4. Make a deepcopy as the target. Mask human words with IGNORE_INDEX.
     """
     if conversation_lib.default_conversation.sep_style == conversation_lib.SeparatorStyle.PLAIN:
-        return preprocess_plain(sources, tokenizer)
+        result = preprocess_plain(sources, tokenizer)
+        print("result (return)\n", result)
+        return result
     if conversation_lib.default_conversation.sep_style == conversation_lib.SeparatorStyle.LLAMA_2:
-        return preprocess_llama_2(sources, tokenizer, has_image=has_image)
+        result = preprocess_llama_2(sources, tokenizer, has_image=has_image)
+        print("result (return)\n", result)
+        return result
     if conversation_lib.default_conversation.version.startswith("v1"):
-        return preprocess_v1(sources, tokenizer, has_image=has_image)
+        result = preprocess_v1(sources, tokenizer, has_image=has_image)
+        print("result (return)\n", result)
+        return result
     if conversation_lib.default_conversation.version == "mpt":
-        return preprocess_mpt(sources, tokenizer)
+        result = preprocess_mpt(sources, tokenizer)
+        print("result (return)\n", result)
+        return result
     # add end signal and concatenate together
     conversations = []
     for source in sources:
@@ -621,10 +1032,23 @@ def preprocess(
         speakers = [sentence["from"] for sentence in source]
         _mask_targets(target, tokenized_lens, speakers)
 
-    return dict(input_ids=input_ids, labels=targets)
+    result = dict(input_ids=input_ids, labels=targets)
+    print("result (return)\n", result)
+    return result
 
 
 class LazySupervisedDataset(Dataset):
+    """
+    LazySupervisedDataset(Dataset)
+    SFT用データセットクラス。
+    
+    入力例:
+        data_path="train.json"
+        tokenizer=AutoTokenizer
+        data_args=DataArguments
+    出力:
+        __getitem__でdict(input_ids=Tensor, labels=Tensor, image=Tensor)などを返す
+    """
     """Dataset for supervised fine-tuning."""
 
     def __init__(self, data_path: str,
@@ -715,6 +1139,16 @@ class LazySupervisedDataset(Dataset):
 
 @dataclass
 class DataCollatorForSupervisedDataset(object):
+    """
+    DataCollatorForSupervisedDataset
+    SFT用データコラトラ。
+    
+    入力例:
+        tokenizer=AutoTokenizer
+        __call__でinstances=[{"input_ids":Tensor, "labels":Tensor, "image":Tensor}, ...]
+    出力:
+        バッチ化されたdict(input_ids=Tensor, labels=Tensor, images=Tensor, attention_mask=Tensor)
+    """
     """Collate examples for supervised fine-tuning."""
 
     tokenizer: transformers.PreTrainedTokenizer
@@ -751,6 +1185,16 @@ class DataCollatorForSupervisedDataset(object):
 
 def make_supervised_data_module(tokenizer: transformers.PreTrainedTokenizer,
                                 data_args) -> Dict:
+    """
+    make_supervised_data_module(tokenizer, data_args)
+    SFT用データセット・コラトラ生成。
+    
+    入力例:
+        tokenizer=AutoTokenizer
+        data_args=DataArguments
+    出力:
+        {"train_dataset": Dataset, "eval_dataset": None, "data_collator": DataCollatorForSupervisedDataset}
+    """
     """Make dataset and collator for supervised fine-tuning."""
     train_dataset = LazySupervisedDataset(tokenizer=tokenizer,
                                 data_path=data_args.data_path,
@@ -762,6 +1206,15 @@ def make_supervised_data_module(tokenizer: transformers.PreTrainedTokenizer,
 
 
 def train():
+    """
+    train()
+    学習メイン関数。
+    
+    入力例:
+        なし (コマンドライン引数で設定)
+    出力:
+        なし (学習・保存が実行される)
+    """
     global local_rank
 
     parser = transformers.HfArgumentParser(

@@ -16,6 +16,12 @@ from typing import List, Optional
 
 
 def maybe_zero_3(param, ignore_status=False, name=None):
+
+    print("current file path", "llava/train/llava_trainer.py")
+    print("def maybe_zero_3(param, ignore_status=False, name=None)")
+    print("param\n", param)
+    print("ignore_status\n", ignore_status)
+    print("name\n", name)
     from deepspeed import zero
     from deepspeed.runtime.zero.partition_parameters import ZeroParamStatus
     if hasattr(param, "ds_id"):
@@ -26,16 +32,29 @@ def maybe_zero_3(param, ignore_status=False, name=None):
             param = param.data.detach().cpu().clone()
     else:
         param = param.detach().cpu().clone()
+    print("param\n", param)
     return param
 
 
 def get_mm_adapter_state_maybe_zero_3(named_params, keys_to_match):
+
+    print("current file path", "llava/train/llava_trainer.py")
+    print("def get_mm_adapter_state_maybe_zero_3(named_params, keys_to_match)")
+    print("named_params\n", named_params)
+    print("keys_to_match\n", keys_to_match)
     to_return = {k: t for k, t in named_params if any(key_match in k for key_match in keys_to_match)}
     to_return = {k: maybe_zero_3(v, ignore_status=True, name=k).cpu() for k, v in to_return.items()}
+    print("to_return\n", to_return)
     return to_return
 
 
 def split_to_even_chunks(indices, lengths, num_chunks):
+
+    print("current file path", "llava/train/llava_trainer.py")
+    print("def split_to_even_chunks(indices, lengths, num_chunks)")
+    print("indices\n", indices)
+    print("lengths\n", lengths)
+    print("num_chunks\n", num_chunks)
     """
     Split a list of indices into `chunks` chunks of roughly equal lengths.
     """
@@ -54,10 +73,18 @@ def split_to_even_chunks(indices, lengths, num_chunks):
         if len(chunks[shortest_chunk]) == num_indices_per_chunk:
             chunks_lengths[shortest_chunk] = float("inf")
 
+    print("chunks\n", chunks)
     return chunks
 
 
 def get_modality_length_grouped_indices(lengths, batch_size, world_size, generator=None):
+
+    print("current file path", "llava/train/llava_trainer.py")
+    print("def get_modality_length_grouped_indices(lengths, batch_size, world_size, generator=None)")
+    print("lengths\n", lengths)
+    print("batch_size\n", batch_size)
+    print("world_size\n", world_size)
+    print("generator\n", generator)
     # We need to use torch for the random part as a distributed sampler will set the random seed for torch.
     assert all(l != 0 for l in lengths), "Should not have zero length."
     if all(l > 0 for l in lengths) or all(l < 0 for l in lengths):
@@ -82,10 +109,20 @@ def get_modality_length_grouped_indices(lengths, batch_size, world_size, generat
     if len(additional_batch) > 0:
         megabatches.append(sorted(additional_batch))
 
-    return [i for megabatch in megabatches for i in megabatch]
+    result = [i for megabatch in megabatches for i in megabatch]
+    print("result\n", result)
+    return result
 
 
 def get_length_grouped_indices(lengths, batch_size, world_size, generator=None, merge=True):
+
+    print("current file path", "llava/train/llava_trainer.py")
+    print("def get_length_grouped_indices(lengths, batch_size, world_size, generator=None, merge=True)")
+    print("lengths\n", lengths)
+    print("batch_size\n", batch_size)
+    print("world_size\n", world_size)
+    print("generator\n", generator)
+    print("merge\n", merge)
     # We need to use torch for the random part as a distributed sampler will set the random seed for torch.
     indices = torch.randperm(len(lengths), generator=generator)
     megabatch_size = world_size * batch_size
@@ -93,7 +130,9 @@ def get_length_grouped_indices(lengths, batch_size, world_size, generator=None, 
     megabatches = [sorted(megabatch, key=lambda i: lengths[i], reverse=True) for megabatch in megabatches]
     megabatches = [split_to_even_chunks(megabatch, lengths, world_size) for megabatch in megabatches]
 
-    return [i for megabatch in megabatches for batch in megabatch for i in batch]
+    result = [i for megabatch in megabatches for batch in megabatch for i in batch]
+    print("result\n", result)
+    return result
 
 
 class LengthGroupedSampler(Sampler):
@@ -110,6 +149,15 @@ class LengthGroupedSampler(Sampler):
         generator=None,
         group_by_modality: bool = False,
     ):
+
+        print("current file path", "llava/train/llava_trainer.py")
+        print("def LengthGroupedSampler.__init__(self, batch_size, world_size, lengths=None, generator=None, group_by_modality=False)")
+        print("self\n", self)
+        print("batch_size\n", batch_size)
+        print("world_size\n", world_size)
+        print("lengths\n", lengths)
+        print("generator\n", generator)
+        print("group_by_modality\n", group_by_modality)
         if lengths is None:
             raise ValueError("Lengths must be provided.")
 
@@ -120,9 +168,17 @@ class LengthGroupedSampler(Sampler):
         self.group_by_modality = group_by_modality
 
     def __len__(self):
+
+        print("current file path", "llava/train/llava_trainer.py")
+        print("def LengthGroupedSampler.__len__(self)")
+        print("self\n", self)
         return len(self.lengths)
 
     def __iter__(self):
+
+        print("current file path", "llava/train/llava_trainer.py")
+        print("def LengthGroupedSampler.__iter__(self)")
+        print("self\n", self)
         if self.group_by_modality:
             indices = get_modality_length_grouped_indices(self.lengths, self.batch_size, self.world_size, generator=self.generator)
         else:
@@ -133,6 +189,10 @@ class LengthGroupedSampler(Sampler):
 class LLaVATrainer(Trainer):
 
     def _get_train_sampler(self) -> Optional[torch.utils.data.Sampler]:
+
+        print("current file path", "llava/train/llava_trainer.py")
+        print("def LLaVATrainer._get_train_sampler(self)")
+        print("self\n", self)
         if self.train_dataset is None or not has_length(self.train_dataset):
             return None
 
@@ -148,6 +208,10 @@ class LLaVATrainer(Trainer):
             return super()._get_train_sampler()
 
     def create_optimizer(self):
+
+        print("current file path", "llava/train/llava_trainer.py")
+        print("def LLaVATrainer.create_optimizer(self)")
+        print("self\n", self)
         """
         Setup the optimizer.
 
@@ -234,9 +298,17 @@ class LLaVATrainer(Trainer):
                             logger.debug(f"bitsandbytes: will optimize {module} in fp32")
                     logger.info(f"skipped: {skipped/2**20}M params")
 
-        return self.optimizer
+    print("self.optimizer\n", self.optimizer)
+    return self.optimizer
 
     def _save_checkpoint(self, model, trial, metrics=None):
+
+        print("current file path", "llava/train/llava_trainer.py")
+        print("def LLaVATrainer._save_checkpoint(self, model, trial, metrics=None)")
+        print("self\n", self)
+        print("model\n", model)
+        print("trial\n", trial)
+        print("metrics\n", metrics)
         if getattr(self.args, 'tune_mm_mlp_adapter', False):
             from transformers.trainer_utils import PREFIX_CHECKPOINT_DIR
             checkpoint_folder = f"{PREFIX_CHECKPOINT_DIR}-{self.state.global_step}"
@@ -258,6 +330,12 @@ class LLaVATrainer(Trainer):
             super(LLaVATrainer, self)._save_checkpoint(model, trial, metrics)
 
     def _save(self, output_dir: Optional[str] = None, state_dict=None):
+
+        print("current file path", "llava/train/llava_trainer.py")
+        print("def LLaVATrainer._save(self, output_dir=None, state_dict=None)")
+        print("self\n", self)
+        print("output_dir\n", output_dir)
+        print("state_dict\n", state_dict)
         if getattr(self.args, 'tune_mm_mlp_adapter', False):
             pass
         else:
