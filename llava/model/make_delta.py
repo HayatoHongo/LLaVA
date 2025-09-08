@@ -11,6 +11,14 @@ from llava.model.utils import auto_upgrade
 
 
 def make_delta(base_model_path, target_model_path, delta_path, hub_repo_id):
+
+    print("current file path", "llava/model/make_delta.py")
+    print("def make_delta(base_model_path, target_model_path, delta_path, hub_repo_id)")
+    print("base_model_path\n", base_model_path)
+    print("target_model_path\n", target_model_path)
+    print("delta_path\n", delta_path)
+    print("hub_repo_id\n", hub_repo_id)
+
     print("Loading base model")
     base = AutoModelForCausalLM.from_pretrained(
         base_model_path, torch_dtype=torch.float16, low_cpu_mem_usage=True)
@@ -39,6 +47,7 @@ def make_delta(base_model_path, target_model_path, delta_path, hub_repo_id):
     target.save_pretrained(delta_path, **kwargs)
     target_tokenizer = AutoTokenizer.from_pretrained(target_model_path)
     target_tokenizer.save_pretrained(delta_path, **kwargs)
+    print("return None")
 
 
 if __name__ == "__main__":

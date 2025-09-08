@@ -29,6 +29,10 @@ from llava.mm_utils import get_anyres_image_grid_shape
 class LlavaMetaModel:
 
     def __init__(self, config):
+
+        print("current file path", "llava/model/llava_arch.py")
+        print("def __init__(self, config)")
+        print("config\n", config)
         super(LlavaMetaModel, self).__init__(config)
 
         if hasattr(config, "mm_vision_tower"):
@@ -41,12 +45,22 @@ class LlavaMetaModel:
                 )
 
     def get_vision_tower(self):
+
+        print("current file path", "llava/model/llava_arch.py")
+        print("def get_vision_tower(self)")
         vision_tower = getattr(self, 'vision_tower', None)
+        print("vision_tower (raw)\n", vision_tower)
         if type(vision_tower) is list:
             vision_tower = vision_tower[0]
+        print("vision_tower (return)\n", vision_tower)
         return vision_tower
 
     def initialize_vision_modules(self, model_args, fsdp=None):
+
+        print("current file path", "llava/model/llava_arch.py")
+        print("def initialize_vision_modules(self, model_args, fsdp=None)")
+        print("model_args\n", model_args)
+        print("fsdp\n", fsdp)
         vision_tower = model_args.vision_tower
         mm_vision_select_layer = model_args.mm_vision_select_layer
         mm_vision_select_feature = model_args.mm_vision_select_feature
@@ -92,22 +106,22 @@ class LlavaMetaModel:
         if pretrain_mm_mlp_adapter is not None:
             mm_projector_weights = torch.load(pretrain_mm_mlp_adapter, map_location='cpu')
             def get_w(weights, keyword):
-                return {k.split(keyword + '.')[1]: v for k, v in weights.items() if keyword in k}
+                print("current file path", "llava/model/llava_arch.py")
+                print("def get_w(weights, keyword)")
+                print("weights\n", weights)
+                print("keyword\n", keyword)
+                result = {k.split(keyword + '.')[1]: v for k, v in weights.items() if keyword in k}
+                print("result (return)\n", result)
+                return result
 
             self.mm_projector.load_state_dict(get_w(mm_projector_weights, 'mm_projector'))
 
 
 def unpad_image(tensor, original_size):
-    """
-    Unpads a PyTorch tensor of a padded and resized image.
-
-    Args:
-    tensor (torch.Tensor): The image tensor, assumed to be in CxHxW format.
-    original_size (tuple): The original size of the image (height, width).
-
-    Returns:
-    torch.Tensor: The unpadded image tensor.
-    """
+    print("current file path", "llava/model/llava_arch.py")
+    print("def unpad_image(tensor, original_size)")
+    print("tensor\n", tensor)
+    print("original_size\n", original_size)
     original_width, original_height = original_size
     current_height, current_width = tensor.shape[1:]
 
@@ -125,6 +139,7 @@ def unpad_image(tensor, original_size):
         padding = (current_width - new_width) // 2
         unpadded_tensor = tensor[:, :, padding:current_width - padding]
 
+    print("unpadded_tensor (return)\n", unpadded_tensor)
     return unpadded_tensor
 
 

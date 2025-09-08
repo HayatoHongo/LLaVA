@@ -24,6 +24,18 @@ from llava.constants import DEFAULT_IMAGE_PATCH_TOKEN, DEFAULT_IM_START_TOKEN, D
 
 
 def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, load_4bit=False, device_map="auto", device="cuda", **kwargs):
+
+    print("current file path", "llava/model/builder.py")
+    print("def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, load_4bit=False, device_map=\"auto\", device=\"cuda\", **kwargs)")
+    print("model_path\n", model_path)
+    print("model_base\n", model_base)
+    print("model_name\n", model_name)
+    print("load_8bit\n", load_8bit)
+    print("load_4bit\n", load_4bit)
+    print("device_map\n", device_map)
+    print("device\n", device)
+    print("kwargs\n", kwargs)
+
     kwargs = {"device_map": device_map, **kwargs}
 
     if device != "cuda":
@@ -63,11 +75,19 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
                 # this is probably from HF Hub
                 from huggingface_hub import hf_hub_download
                 def load_from_hf(repo_id, filename, subfolder=None):
+                    print("current file path", "llava/model/builder.py")
+                    print("def load_from_hf(repo_id, filename, subfolder=None)")
+                    print("repo_id\n", repo_id)
+                    print("filename\n", filename)
+                    print("subfolder\n", subfolder)
                     cache_file = hf_hub_download(
                         repo_id=repo_id,
                         filename=filename,
                         subfolder=subfolder)
-                    return torch.load(cache_file, map_location='cpu')
+                    print("cache_file\n", cache_file)
+                    result = torch.load(cache_file, map_location='cpu')
+                    print("result (return)\n", result)
+                    return result
                 non_lora_trainables = load_from_hf(model_path, 'non_lora_trainables.bin')
             non_lora_trainables = {(k[11:] if k.startswith('base_model.') else k): v for k, v in non_lora_trainables.items()}
             if any(k.startswith('model.model.') for k in non_lora_trainables):
@@ -156,4 +176,8 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
     else:
         context_len = 2048
 
+    print("tokenizer\n", tokenizer)
+    print("model\n", model)
+    print("image_processor\n", image_processor)
+    print("context_len\n", context_len)
     return tokenizer, model, image_processor, context_len

@@ -10,6 +10,11 @@ from llava.constants import IMAGE_TOKEN_INDEX
 
 
 def select_best_resolution(original_size, possible_resolutions):
+
+    print("current file path", "llava/mm_utils.py")
+    print("def select_best_resolution(original_size, possible_resolutions)")
+    print("original_size\n", original_size)
+    print("possible_resolutions\n", possible_resolutions)
     """
     Selects the best resolution from a list of possible resolutions based on the original size.
 
@@ -36,10 +41,16 @@ def select_best_resolution(original_size, possible_resolutions):
             min_wasted_resolution = wasted_resolution
             best_fit = (width, height)
 
+    print("best_fit (return)\n", best_fit)
     return best_fit
 
 
 def resize_and_pad_image(image, target_resolution):
+
+    print("current file path", "llava/mm_utils.py")
+    print("def resize_and_pad_image(image, target_resolution)")
+    print("image\n", image)
+    print("target_resolution\n", target_resolution)
     """
     Resize and pad an image to a target resolution while maintaining aspect ratio.
 
@@ -71,10 +82,16 @@ def resize_and_pad_image(image, target_resolution):
     paste_y = (target_height - new_height) // 2
     new_image.paste(resized_image, (paste_x, paste_y))
 
+    print("new_image (return)\n", new_image)
     return new_image
 
 
 def divide_to_patches(image, patch_size):
+
+    print("current file path", "llava/mm_utils.py")
+    print("def divide_to_patches(image, patch_size)")
+    print("image\n", image)
+    print("patch_size\n", patch_size)
     """
     Divides an image into patches of a specified size.
 
@@ -93,10 +110,17 @@ def divide_to_patches(image, patch_size):
             patch = image.crop(box)
             patches.append(patch)
 
+    print("patches (return)\n", patches)
     return patches
 
 
 def get_anyres_image_grid_shape(image_size, grid_pinpoints, patch_size):
+
+    print("current file path", "llava/mm_utils.py")
+    print("def get_anyres_image_grid_shape(image_size, grid_pinpoints, patch_size)")
+    print("image_size\n", image_size)
+    print("grid_pinpoints\n", grid_pinpoints)
+    print("patch_size\n", patch_size)
     """
     Calculate the shape of the image patch grid after the preprocessing for images of any resolution.
 
@@ -113,10 +137,18 @@ def get_anyres_image_grid_shape(image_size, grid_pinpoints, patch_size):
     else:
         possible_resolutions = ast.literal_eval(grid_pinpoints)
     width, height = select_best_resolution(image_size, possible_resolutions)
-    return width // patch_size, height // patch_size
+    result = (width // patch_size, height // patch_size)
+    print("result (return)\n", result)
+    return result
 
 
 def process_anyres_image(image, processor, grid_pinpoints):
+
+    print("current file path", "llava/mm_utils.py")
+    print("def process_anyres_image(image, processor, grid_pinpoints)")
+    print("image\n", image)
+    print("processor\n", processor)
+    print("grid_pinpoints\n", grid_pinpoints)
     """
     Process an image with variable resolutions.
 
@@ -142,28 +174,49 @@ def process_anyres_image(image, processor, grid_pinpoints):
     image_patches = [image_original_resize] + patches
     image_patches = [processor.preprocess(image_patch, return_tensors='pt')['pixel_values'][0]
                      for image_patch in image_patches]
-    return torch.stack(image_patches, dim=0)
+    result = torch.stack(image_patches, dim=0)
+    print("result (return)\n", result)
+    return result
 
 
 def load_image_from_base64(image):
-    return Image.open(BytesIO(base64.b64decode(image)))
+    print("current file path", "llava/mm_utils.py")
+    print("def load_image_from_base64(image)")
+    print("image\n", image)
+    result = Image.open(BytesIO(base64.b64decode(image)))
+    print("result (return)\n", result)
+    return result
 
 
 def expand2square(pil_img, background_color):
+
+    print("current file path", "llava/mm_utils.py")
+    print("def expand2square(pil_img, background_color)")
+    print("pil_img\n", pil_img)
+    print("background_color\n", background_color)
     width, height = pil_img.size
     if width == height:
+        print("pil_img (return)\n", pil_img)
         return pil_img
     elif width > height:
         result = Image.new(pil_img.mode, (width, width), background_color)
         result.paste(pil_img, (0, (width - height) // 2))
+        print("result (return)\n", result)
         return result
     else:
         result = Image.new(pil_img.mode, (height, height), background_color)
         result.paste(pil_img, ((height - width) // 2, 0))
+        print("result (return)\n", result)
         return result
 
 
 def process_images(images, image_processor, model_cfg):
+
+    print("current file path", "llava/mm_utils.py")
+    print("def process_images(images, image_processor, model_cfg)")
+    print("images\n", images)
+    print("image_processor\n", image_processor)
+    print("model_cfg\n", model_cfg)
     image_aspect_ratio = getattr(model_cfg, "image_aspect_ratio", None)
     new_images = []
     if image_aspect_ratio == 'pad':
@@ -179,10 +232,18 @@ def process_images(images, image_processor, model_cfg):
         return image_processor(images, return_tensors='pt')['pixel_values']
     if all(x.shape == new_images[0].shape for x in new_images):
         new_images = torch.stack(new_images, dim=0)
+    print("new_images (return)\n", new_images)
     return new_images
 
 
 def tokenizer_image_token(prompt, tokenizer, image_token_index=IMAGE_TOKEN_INDEX, return_tensors=None):
+
+    print("current file path", "llava/mm_utils.py")
+    print("def tokenizer_image_token(prompt, tokenizer, image_token_index=IMAGE_TOKEN_INDEX, return_tensors=None)")
+    print("prompt\n", prompt)
+    print("tokenizer\n", tokenizer)
+    print("image_token_index\n", image_token_index)
+    print("return_tensors\n", return_tensors)
     prompt_chunks = [tokenizer(chunk).input_ids for chunk in prompt.split('<image>')]
 
     def insert_separator(X, sep):
@@ -201,19 +262,31 @@ def tokenizer_image_token(prompt, tokenizer, image_token_index=IMAGE_TOKEN_INDEX
         if return_tensors == 'pt':
             return torch.tensor(input_ids, dtype=torch.long)
         raise ValueError(f'Unsupported tensor type: {return_tensors}')
+    print("input_ids (return)\n", input_ids)
     return input_ids
 
 
 def get_model_name_from_path(model_path):
+    print("current file path", "llava/mm_utils.py")
+    print("def get_model_name_from_path(model_path)")
+    print("model_path\n", model_path)
     model_path = model_path.strip("/")
     model_paths = model_path.split("/")
     if model_paths[-1].startswith('checkpoint-'):
-        return model_paths[-2] + "_" + model_paths[-1]
+        result = model_paths[-2] + "_" + model_paths[-1]
     else:
-        return model_paths[-1]
+        result = model_paths[-1]
+    print("result (return)\n", result)
+    return result
 
 class KeywordsStoppingCriteria(StoppingCriteria):
     def __init__(self, keywords, tokenizer, input_ids):
+
+        print("current file path", "llava/mm_utils.py")
+        print("def __init__(self, keywords, tokenizer, input_ids)")
+        print("keywords\n", keywords)
+        print("tokenizer\n", tokenizer)
+        print("input_ids\n", input_ids)
         self.keywords = keywords
         self.keyword_ids = []
         self.max_keyword_len = 0
@@ -228,19 +301,35 @@ class KeywordsStoppingCriteria(StoppingCriteria):
         self.start_len = input_ids.shape[1]
     
     def call_for_batch(self, output_ids: torch.LongTensor, scores: torch.FloatTensor, **kwargs) -> bool:
+
+        print("current file path", "llava/mm_utils.py")
+        print("def call_for_batch(self, output_ids, scores, **kwargs)")
+        print("output_ids\n", output_ids)
+        print("scores\n", scores)
+        print("kwargs\n", kwargs)
         offset = min(output_ids.shape[1] - self.start_len, self.max_keyword_len)
         self.keyword_ids = [keyword_id.to(output_ids.device) for keyword_id in self.keyword_ids]
         for keyword_id in self.keyword_ids:
             if (output_ids[0, -keyword_id.shape[0]:] == keyword_id).all():
+                print("return True")
                 return True
         outputs = self.tokenizer.batch_decode(output_ids[:, -offset:], skip_special_tokens=True)[0]
         for keyword in self.keywords:
             if keyword in outputs:
+                print("return True")
                 return True
+        print("return False")
         return False
     
     def __call__(self, output_ids: torch.LongTensor, scores: torch.FloatTensor, **kwargs) -> bool:
+
+        print("current file path", "llava/mm_utils.py")
+        print("def __call__(self, output_ids, scores, **kwargs)")
+        print("output_ids\n", output_ids)
+        print("scores\n", scores)
+        print("kwargs\n", kwargs)
         outputs = []
         for i in range(output_ids.shape[0]):
             outputs.append(self.call_for_batch(output_ids[i].unsqueeze(0), scores))
+        print("outputs (return)\n", outputs)
         return all(outputs)

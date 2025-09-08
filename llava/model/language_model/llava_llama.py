@@ -35,6 +35,11 @@ class LlavaLlamaModel(LlavaMetaModel, LlamaModel):
     config_class = LlavaConfig
 
     def __init__(self, config: LlamaConfig):
+
+        print("current file path", "llava/llava/model/language_model/llava_llama.py")
+        print("def LlavaLlamaModel.__init__(self, config: LlamaConfig)")
+        print("self\n", type(self))
+        print("config\n", config)
         super(LlavaLlamaModel, self).__init__(config)
 
 
@@ -42,6 +47,11 @@ class LlavaLlamaForCausalLM(LlamaForCausalLM, LlavaMetaForCausalLM):
     config_class = LlavaConfig
 
     def __init__(self, config):
+
+        print("current file path", "llava/llava/model/language_model/llava_llama.py")
+        print("def LlavaLlamaForCausalLM.__init__(self, config)")
+        print("self\n", type(self))
+        print("config\n", config)
         super(LlamaForCausalLM, self).__init__(config)
         self.model = LlavaLlamaModel(config)
         self.pretraining_tp = config.pretraining_tp
@@ -52,6 +62,11 @@ class LlavaLlamaForCausalLM(LlamaForCausalLM, LlavaMetaForCausalLM):
         self.post_init()
 
     def get_model(self):
+
+        print("current file path", "llava/llava/model/language_model/llava_llama.py")
+        print("def LlavaLlamaForCausalLM.get_model(self)")
+        print("self\n", type(self))
+        print("self.model (return)\n", self.model)
         return self.model
 
     def forward(
@@ -69,6 +84,27 @@ class LlavaLlamaForCausalLM(LlamaForCausalLM, LlavaMetaForCausalLM):
         image_sizes: Optional[List[List[int]]] = None,
         return_dict: Optional[bool] = None,
     ) -> Union[Tuple, CausalLMOutputWithPast]:
+
+        print("current file path", "llava/llava/model/language_model/llava_llama.py")
+        print("def LlavaLlamaForCausalLM.forward(self, input_ids, attention_mask, position_ids, past_key_values, inputs_embeds, labels, use_cache, output_attentions, output_hidden_states, images, image_sizes, return_dict)")
+        print("input_ids\n", input_ids)
+        if hasattr(input_ids, 'shape'):
+            print("input_ids.shape\n", input_ids.shape)
+        print("attention_mask\n", attention_mask)
+        print("position_ids\n", position_ids)
+        print("past_key_values\n", past_key_values)
+        print("inputs_embeds\n", inputs_embeds)
+        if hasattr(inputs_embeds, 'shape'):
+            print("inputs_embeds.shape\n", inputs_embeds.shape)
+        print("labels\n", labels)
+        print("use_cache\n", use_cache)
+        print("output_attentions\n", output_attentions)
+        print("output_hidden_states\n", output_hidden_states)
+        print("images\n", images)
+        if hasattr(images, 'shape'):
+            print("images.shape\n", images.shape)
+        print("image_sizes\n", image_sizes)
+        print("return_dict\n", return_dict)
 
         if inputs_embeds is None:
             (
@@ -88,7 +124,7 @@ class LlavaLlamaForCausalLM(LlamaForCausalLM, LlavaMetaForCausalLM):
                 image_sizes
             )
 
-        return super().forward(
+        result = super().forward(
             input_ids=input_ids,
             attention_mask=attention_mask,
             position_ids=position_ids,
@@ -100,6 +136,8 @@ class LlavaLlamaForCausalLM(LlamaForCausalLM, LlavaMetaForCausalLM):
             output_hidden_states=output_hidden_states,
             return_dict=return_dict
         )
+        print("result (return)\n", result)
+        return result
 
     @torch.no_grad()
     def generate(
@@ -109,9 +147,21 @@ class LlavaLlamaForCausalLM(LlamaForCausalLM, LlavaMetaForCausalLM):
         image_sizes: Optional[torch.Tensor] = None,
         **kwargs,
     ) -> Union[GenerateOutput, torch.LongTensor]:
+
+        print("current file path", "llava/llava/model/language_model/llava_llama.py")
+        print("def LlavaLlamaForCausalLM.generate(self, inputs, images, image_sizes, **kwargs)")
+        print("inputs\n", inputs)
+        if hasattr(inputs, 'shape'):
+            print("inputs.shape\n", inputs.shape)
+        print("images\n", images)
+        if hasattr(images, 'shape'):
+            print("images.shape\n", images.shape)
+        print("image_sizes\n", image_sizes)
+        print("kwargs\n", kwargs)
         position_ids = kwargs.pop("position_ids", None)
         attention_mask = kwargs.pop("attention_mask", None)
         if "inputs_embeds" in kwargs:
+            print("print(risk): print(inputs_embeds) disabled for safety")
             raise NotImplementedError("`inputs_embeds` is not supported")
 
         if images is not None:
@@ -134,15 +184,28 @@ class LlavaLlamaForCausalLM(LlamaForCausalLM, LlavaMetaForCausalLM):
         else:
             inputs_embeds = self.get_model().embed_tokens(inputs)
 
-        return super().generate(
+        result = super().generate(
             position_ids=position_ids,
             attention_mask=attention_mask,
             inputs_embeds=inputs_embeds,
             **kwargs
         )
+        print("result (return)\n", result)
+        return result
 
     def prepare_inputs_for_generation(self, input_ids, past_key_values=None,
                                       inputs_embeds=None, **kwargs):
+
+        print("current file path", "llava/llava/model/language_model/llava_llama.py")
+        print("def LlavaLlamaForCausalLM.prepare_inputs_for_generation(self, input_ids, past_key_values=None, inputs_embeds=None, **kwargs)")
+        print("input_ids\n", input_ids)
+        if hasattr(input_ids, 'shape'):
+            print("input_ids.shape\n", input_ids.shape)
+        print("past_key_values\n", past_key_values)
+        print("inputs_embeds\n", inputs_embeds)
+        if hasattr(inputs_embeds, 'shape'):
+            print("inputs_embeds.shape\n", inputs_embeds.shape)
+        print("kwargs\n", kwargs)
         images = kwargs.pop("images", None)
         image_sizes = kwargs.pop("image_sizes", None)
         inputs = super().prepare_inputs_for_generation(
@@ -152,6 +215,7 @@ class LlavaLlamaForCausalLM(LlamaForCausalLM, LlavaMetaForCausalLM):
             inputs['images'] = images
         if image_sizes is not None:
             inputs['image_sizes'] = image_sizes
+        print("inputs (return)\n", inputs)
         return inputs
 
 AutoConfig.register("llava_llama", LlavaConfig)

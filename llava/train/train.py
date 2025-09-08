@@ -41,6 +41,10 @@ local_rank = None
 
 
 def rank0_print(*args):
+
+    print("current file path", "llava/train/train.py")
+    print("def rank0_print(*args)")
+    print("args\n", args)
     if local_rank == 0:
         print(*args)
 
@@ -108,6 +112,14 @@ class TrainingArguments(transformers.TrainingArguments):
 
 
 def maybe_zero_3(param, ignore_status=False, name=None):
+
+    print("current file path", "llava/train/train.py")
+    print("def maybe_zero_3(param, ignore_status=False, name=None)")
+    print("param\n", param)
+    if hasattr(param, 'shape'):
+        print("param.shape\n", param.shape)
+    print("ignore_status\n", ignore_status)
+    print("name\n", name)
     from deepspeed import zero
     from deepspeed.runtime.zero.partition_parameters import ZeroParamStatus
     if hasattr(param, "ds_id"):
@@ -118,11 +130,19 @@ def maybe_zero_3(param, ignore_status=False, name=None):
             param = param.data.detach().cpu().clone()
     else:
         param = param.detach().cpu().clone()
+    print("param (return)\n", param)
+    if hasattr(param, 'shape'):
+        print("param (return).shape\n", param.shape)
     return param
 
 
 # Borrowed from peft.utils.get_peft_model_state_dict
 def get_peft_state_maybe_zero_3(named_params, bias):
+
+    print("current file path", "llava/train/train.py")
+    print("def get_peft_state_maybe_zero_3(named_params, bias)")
+    print("named_params\n", named_params)
+    print("bias\n", bias)
     if bias == "none":
         to_return = {k: t for k, t in named_params if "lora_" in k}
     elif bias == "all":
@@ -144,24 +164,52 @@ def get_peft_state_maybe_zero_3(named_params, bias):
     else:
         raise NotImplementedError
     to_return = {k: maybe_zero_3(v, ignore_status=True) for k, v in to_return.items()}
+    print("to_return (return)\n", to_return)
+    for k, v in to_return.items():
+        if hasattr(v, 'shape'):
+            print(f"to_return['{k}'].shape\n", v.shape)
     return to_return
 
 
 def get_peft_state_non_lora_maybe_zero_3(named_params, require_grad_only=True):
+
+    print("current file path", "llava/train/train.py")
+    print("def get_peft_state_non_lora_maybe_zero_3(named_params, require_grad_only=True)")
+    print("named_params\n", named_params)
+    print("require_grad_only\n", require_grad_only)
     to_return = {k: t for k, t in named_params if "lora_" not in k}
     if require_grad_only:
         to_return = {k: t for k, t in to_return.items() if t.requires_grad}
     to_return = {k: maybe_zero_3(v, ignore_status=True).cpu() for k, v in to_return.items()}
+    print("to_return (return)\n", to_return)
+    for k, v in to_return.items():
+        if hasattr(v, 'shape'):
+            print(f"to_return['{k}'].shape\n", v.shape)
     return to_return
 
 
 def get_mm_adapter_state_maybe_zero_3(named_params, keys_to_match):
+
+    print("current file path", "llava/train/train.py")
+    print("def get_mm_adapter_state_maybe_zero_3(named_params, keys_to_match)")
+    print("named_params\n", named_params)
+    print("keys_to_match\n", keys_to_match)
     to_return = {k: t for k, t in named_params if any(key_match in k for key_match in keys_to_match)}
     to_return = {k: maybe_zero_3(v, ignore_status=True).cpu() for k, v in to_return.items()}
+    print("to_return (return)\n", to_return)
+    for k, v in to_return.items():
+        if hasattr(v, 'shape'):
+            print(f"to_return['{k}'].shape\n", v.shape)
     return to_return
 
 
 def find_all_linear_names(model):
+
+    print("current file path", "llava/train/train.py")
+    print("def find_all_linear_names(model)")
+    print("model\n", model)
+    if hasattr(model, 'shape'):
+        print("model.shape\n", model.shape)
     cls = torch.nn.Linear
     lora_module_names = set()
     multimodal_keywords = ['mm_projector', 'vision_tower', 'vision_resampler']
@@ -174,7 +222,9 @@ def find_all_linear_names(model):
 
     if 'lm_head' in lora_module_names: # needed for 16-bit
         lora_module_names.remove('lm_head')
-    return list(lora_module_names)
+    result = list(lora_module_names)
+    print("result (return)\n", result)
+    return result
 
 
 def safe_save_model_for_hf_trainer(trainer: transformers.Trainer,
@@ -188,6 +238,8 @@ def safe_save_model_for_hf_trainer(trainer: transformers.Trainer,
             keys_to_match.extend(['embed_tokens', 'embed_in'])
 
         weight_to_save = get_mm_adapter_state_maybe_zero_3(trainer.model.named_parameters(), keys_to_match)
+        if hasattr(weight_to_save, 'shape'):
+            print("weight_to_save.shape\n", weight_to_save.shape)
         trainer.model.config.save_pretrained(output_dir)
 
         current_folder = output_dir.split('/')[-1]
@@ -209,9 +261,11 @@ def safe_save_model_for_hf_trainer(trainer: transformers.Trainer,
     state_dict = trainer.model.state_dict()
     if trainer.args.should_save:
         cpu_state_dict = {
-            key: value.cpu()
-            for key, value in state_dict.items()
+            key: value.cpu() for key, value in state_dict.items()
         }
+        for key, value in cpu_state_dict.items():
+            if hasattr(value, 'shape'):
+                print(f"cpu_state_dict['{key}'].shape\n", value.shape)
         del state_dict
         trainer._save(output_dir, state_dict=cpu_state_dict)  # noqa
 
@@ -231,12 +285,12 @@ def smart_tokenizer_and_embedding_resize(
     if num_new_tokens > 0:
         input_embeddings = model.get_input_embeddings().weight.data
         output_embeddings = model.get_output_embeddings().weight.data
-
+        print("input_embeddings.shape\n", input_embeddings.shape)
+        print("output_embeddings.shape\n", output_embeddings.shape)
         input_embeddings_avg = input_embeddings[:-num_new_tokens].mean(
             dim=0, keepdim=True)
         output_embeddings_avg = output_embeddings[:-num_new_tokens].mean(
             dim=0, keepdim=True)
-
         input_embeddings[-num_new_tokens:] = input_embeddings_avg
         output_embeddings[-num_new_tokens:] = output_embeddings_avg
 
@@ -256,6 +310,9 @@ def _tokenize_fn(strings: Sequence[str],
     input_ids = labels = [
         tokenized.input_ids[0] for tokenized in tokenized_list
     ]
+    for idx, tensor in enumerate(input_ids):
+        if hasattr(tensor, 'shape'):
+            print(f"input_ids[{idx}].shape\n", tensor.shape)
     input_ids_lens = labels_lens = [
         tokenized.input_ids.ne(tokenizer.pad_token_id).sum().item()
         for tokenized in tokenized_list
@@ -358,8 +415,10 @@ def preprocess_llama_2(
             max_length=tokenizer.model_max_length,
             truncation=True,
         ).input_ids
+    print("input_ids.shape\n", input_ids.shape)
 
     targets = input_ids.clone()
+    print("targets.shape\n", targets.shape)
 
     assert conv.sep_style == conversation_lib.SeparatorStyle.LLAMA_2
 
@@ -440,8 +499,10 @@ def preprocess_v1(
             max_length=tokenizer.model_max_length,
             truncation=True,
         ).input_ids
+    print("input_ids.shape\n", input_ids.shape)
 
     targets = input_ids.clone()
+    print("targets.shape\n", targets.shape)
 
     assert conv.sep_style == conversation_lib.SeparatorStyle.TWO
 
@@ -511,7 +572,9 @@ def preprocess_mpt(
 
     # Tokenize conversations
     input_ids = torch.stack([tokenizer_image_token(prompt, tokenizer, return_tensors='pt') for prompt in conversations], dim=0)
+    print("input_ids.shape\n", input_ids.shape)
     targets = input_ids.clone()
+    print("targets.shape\n", targets.shape)
     assert conv.sep_style == conversation_lib.SeparatorStyle.MPT
 
     # Mask targets
@@ -568,7 +631,13 @@ def preprocess_plain(
         conversations.append(conversation)
     # tokenize conversations
     input_ids = [tokenizer_image_token(prompt, tokenizer, return_tensors='pt') for prompt in conversations]
+    for idx, tensor in enumerate(input_ids):
+        if hasattr(tensor, 'shape'):
+            print(f"input_ids[{idx}].shape\n", tensor.shape)
     targets = copy.deepcopy(input_ids)
+    for idx, tensor in enumerate(targets):
+        if hasattr(tensor, 'shape'):
+            print(f"targets[{idx}].shape\n", tensor.shape)
     for target, source in zip(targets, sources):
         tokenized_len = len(tokenizer_image_token(source[0]['value'], tokenizer))
         target[:tokenized_len] = IGNORE_INDEX
@@ -608,11 +677,20 @@ def preprocess(
 
     if has_image:
         input_ids = [tokenizer_image_token(prompt, tokenizer, return_tensors='pt') for prompt in conversations]
+        for idx, tensor in enumerate(input_ids):
+            if hasattr(tensor, 'shape'):
+                print(f"input_ids[{idx}].shape\n", tensor.shape)
     else:
         conversations_tokenized = _tokenize_fn(conversations, tokenizer)
         input_ids = conversations_tokenized["input_ids"]
 
     targets = copy.deepcopy(input_ids)
+    if isinstance(targets, list):
+        for idx, tensor in enumerate(targets):
+            if hasattr(tensor, 'shape'):
+                print(f"targets[{idx}].shape\n", tensor.shape)
+    elif hasattr(targets, 'shape'):
+        print("targets.shape\n", targets.shape)
     for target, source in zip(targets, sources):
         if has_image:
             tokenized_lens = get_tokenize_len([header] + [s["value"] for s in source])
@@ -936,7 +1014,7 @@ def train():
                     **data_module)
 
     if list(pathlib.Path(training_args.output_dir).glob("checkpoint-*")):
-        trainer.train(resume_from_checkpoint=True)
+        trainer.train(resume_from_checkpoint=False)
     else:
         trainer.train()
     trainer.save_state()

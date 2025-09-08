@@ -15,6 +15,11 @@ handler = None
 
 
 def build_logger(logger_name, logger_filename):
+
+    print("current file path", "llava/llava/utils.py")
+    print("def build_logger(logger_name, logger_filename)")
+    print("logger_name\n", logger_name)
+    print("logger_filename\n", logger_filename)
     global handler
 
     formatter = logging.Formatter(
@@ -54,6 +59,7 @@ def build_logger(logger_name, logger_filename):
             if isinstance(item, logging.Logger):
                 item.addHandler(handler)
 
+    print("logger (return)\n", logger)
     return logger
 
 
@@ -62,15 +68,28 @@ class StreamToLogger(object):
     Fake file-like stream object that redirects writes to a logger instance.
     """
     def __init__(self, logger, log_level=logging.INFO):
+
+    print("current file path", "llava/llava/utils.py")
+    print("def __init__(self, logger, log_level=logging.INFO)")
+    print("logger\n", logger)
+    print("log_level\n", log_level)
         self.terminal = sys.stdout
         self.logger = logger
         self.log_level = log_level
         self.linebuf = ''
 
     def __getattr__(self, attr):
+
+    print("current file path", "llava/llava/utils.py")
+    print("def __getattr__(self, attr)")
+    print("attr\n", attr)
         return getattr(self.terminal, attr)
 
     def write(self, buf):
+
+    print("current file path", "llava/llava/utils.py")
+    print("def write(self, buf)")
+    print("buf\n", buf)
         temp_linebuf = self.linebuf + buf
         self.linebuf = ''
         for line in temp_linebuf.splitlines(True):
@@ -85,12 +104,18 @@ class StreamToLogger(object):
                 self.linebuf += line
 
     def flush(self):
+
+    print("current file path", "llava/llava/utils.py")
+    print("def flush(self)")
         if self.linebuf != '':
             self.logger.log(self.log_level, self.linebuf.rstrip())
         self.linebuf = ''
 
 
 def disable_torch_init():
+
+    print("current file path", "llava/llava/utils.py")
+    print("def disable_torch_init()")
     """
     Disable the redundant torch default initialization to accelerate model creation.
     """
@@ -100,6 +125,10 @@ def disable_torch_init():
 
 
 def violates_moderation(text):
+
+    print("current file path", "llava/llava/utils.py")
+    print("def violates_moderation(text)")
+    print("text\n", text)
     """
     Check whether the text violates OpenAI moderation API.
     """
@@ -110,17 +139,30 @@ def violates_moderation(text):
     data = "{" + '"input": ' + f'"{text}"' + "}"
     data = data.encode("utf-8")
     try:
+        # print("ret\n", ret) # ret is a requests.Response object, printing directly is risky
         ret = requests.post(url, headers=headers, data=data, timeout=5)
-        flagged = ret.json()["results"][0]["flagged"]
+        try:
+            flagged = ret.json()["results"][0]["flagged"]
+        except Exception as e:
+            print("print(risk): print(ret.json()) disabled for safety")
+            flagged = False
     except requests.exceptions.RequestException as e:
         flagged = False
     except KeyError as e:
         flagged = False
 
+    print("flagged (return)\n", flagged)
     return flagged
 
 
 def pretty_print_semaphore(semaphore):
+
+    print("current file path", "llava/llava/utils.py")
+    print("def pretty_print_semaphore(semaphore)")
+    print("semaphore\n", semaphore)
     if semaphore is None:
+        print("returning None")
         return "None"
-    return f"Semaphore(value={semaphore._value}, locked={semaphore.locked()})"
+    result = f"Semaphore(value={semaphore._value}, locked={semaphore.locked()})"
+    print("result (return)\n", result)
+    return result

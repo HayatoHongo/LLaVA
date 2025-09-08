@@ -27,6 +27,10 @@ class Conversation:
     skip_next: bool = False
 
     def get_prompt(self):
+
+        print("current file path", "llava/conversation.py")
+        print("def get_prompt(self)")
+        print("self\n", self)
         messages = self.messages
         if len(messages) > 0 and type(messages[0][1]) is tuple:
             messages = self.messages.copy()
@@ -101,12 +105,23 @@ class Conversation:
         else:
             raise ValueError(f"Invalid style: {self.sep_style}")
 
+        print("ret (return)\n", ret)
         return ret
 
     def append_message(self, role, message):
+
+        print("current file path", "llava/conversation.py")
+        print("def append_message(self, role, message)")
+        print("role\n", role)
+        print("message\n", message)
         self.messages.append([role, message])
+        print("messages (after append)\n", self.messages)
 
     def get_images(self, return_pil=False):
+
+        print("current file path", "llava/conversation.py")
+        print("def get_images(self, return_pil=False)")
+        print("return_pil\n", return_pil)
         images = []
         for i, (role, msg) in enumerate(self.messages[self.offset:]):
             if i % 2 == 0:
@@ -154,9 +169,13 @@ class Conversation:
                         image.save(buffered, format="PNG")
                         img_b64_str = base64.b64encode(buffered.getvalue()).decode()
                         images.append(img_b64_str)
+        print("images (return)\n", images)
         return images
 
     def to_gradio_chatbot(self):
+
+        print("current file path", "llava/conversation.py")
+        print("def to_gradio_chatbot(self)")
         ret = []
         for i, (role, msg) in enumerate(self.messages[self.offset:]):
             if i % 2 == 0:
@@ -185,10 +204,14 @@ class Conversation:
                     ret.append([msg, None])
             else:
                 ret[-1][-1] = msg
+        print("ret (return)\n", ret)
         return ret
 
     def copy(self):
-        return Conversation(
+
+        print("current file path", "llava/conversation.py")
+        print("def copy(self)")
+        result = Conversation(
             system=self.system,
             roles=self.roles,
             messages=[[x, y] for x, y in self.messages],
@@ -197,10 +220,15 @@ class Conversation:
             sep=self.sep,
             sep2=self.sep2,
             version=self.version)
+        print("result (return)\n", result)
+        return result
 
     def dict(self):
+
+        print("current file path", "llava/conversation.py")
+        print("def dict(self)")
         if len(self.get_images()) > 0:
-            return {
+            result = {
                 "system": self.system,
                 "roles": self.roles,
                 "messages": [[x, y[0] if type(y) is tuple else y] for x, y in self.messages],
@@ -208,7 +236,9 @@ class Conversation:
                 "sep": self.sep,
                 "sep2": self.sep2,
             }
-        return {
+            print("result (return)\n", result)
+            return result
+        result = {
             "system": self.system,
             "roles": self.roles,
             "messages": self.messages,
@@ -216,6 +246,8 @@ class Conversation:
             "sep": self.sep,
             "sep2": self.sep2,
         }
+        print("result (return)\n", result)
+        return result
 
 
 conv_vicuna_v0 = Conversation(

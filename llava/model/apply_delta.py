@@ -11,6 +11,13 @@ from llava import LlavaLlamaForCausalLM
 
 
 def apply_delta(base_model_path, target_model_path, delta_path):
+
+    print("current file path", "llava/model/apply_delta.py")
+    print("def apply_delta(base_model_path, target_model_path, delta_path)")
+    print("base_model_path\n", base_model_path)
+    print("target_model_path\n", target_model_path)
+    print("delta_path\n", delta_path)
+
     print("Loading base model")
     base = AutoModelForCausalLM.from_pretrained(
         base_model_path, torch_dtype=torch.float16, low_cpu_mem_usage=True)
@@ -35,6 +42,7 @@ def apply_delta(base_model_path, target_model_path, delta_path):
     print("Saving target model")
     delta.save_pretrained(target_model_path)
     delta_tokenizer.save_pretrained(target_model_path)
+    print("return None")
 
 
 if __name__ == "__main__":

@@ -2,6 +2,10 @@ from transformers import AutoConfig
 
 
 def auto_upgrade(config):
+
+    print("current file path", "llava/model/utils.py")
+    print("def auto_upgrade(config)")
+    print("config\n", config)
     cfg = AutoConfig.from_pretrained(config)
     if 'llava' in config and 'llava' not in cfg.model_type:
         assert cfg.model_type == 'llama'
@@ -18,3 +22,4 @@ def auto_upgrade(config):
         else:
             print("Checkpoint upgrade aborted.")
             exit(1)
+    print("return None")
