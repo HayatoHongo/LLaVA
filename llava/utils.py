@@ -68,28 +68,25 @@ class StreamToLogger(object):
     Fake file-like stream object that redirects writes to a logger instance.
     """
     def __init__(self, logger, log_level=logging.INFO):
-
-    print("current file path", "llava/llava/utils.py")
-    print("def __init__(self, logger, log_level=logging.INFO)")
-    print("logger\n", logger)
-    print("log_level\n", log_level)
+        print("current file path", "llava/utils.py")
+        print("def StreamToLogger.__init__(self, logger, log_level=logging.INFO)")
+        print("logger\n", type(logger))
+        print("log_level\n", log_level)
         self.terminal = sys.stdout
         self.logger = logger
         self.log_level = log_level
         self.linebuf = ''
 
     def __getattr__(self, attr):
-
-    print("current file path", "llava/llava/utils.py")
-    print("def __getattr__(self, attr)")
-    print("attr\n", attr)
+        print("current file path", "llava/utils.py")
+        print("def StreamToLogger.__getattr__(self, attr)")
+        print("attr\n", attr)
         return getattr(self.terminal, attr)
 
     def write(self, buf):
-
-    print("current file path", "llava/llava/utils.py")
-    print("def write(self, buf)")
-    print("buf\n", buf)
+        print("current file path", "llava/utils.py")
+        print("def StreamToLogger.write(self, buf)")
+        print("buf\n", buf)
         temp_linebuf = self.linebuf + buf
         self.linebuf = ''
         for line in temp_linebuf.splitlines(True):
@@ -104,9 +101,8 @@ class StreamToLogger(object):
                 self.linebuf += line
 
     def flush(self):
-
-    print("current file path", "llava/llava/utils.py")
-    print("def flush(self)")
+        print("current file path", "llava/utils.py")
+        print("def StreamToLogger.flush(self)")
         if self.linebuf != '':
             self.logger.log(self.log_level, self.linebuf.rstrip())
         self.linebuf = ''
@@ -157,9 +153,10 @@ def violates_moderation(text):
 
 def pretty_print_semaphore(semaphore):
 
-    print("current file path", "llava/llava/utils.py")
+    print("current file path", "llava/utils.py")
     print("def pretty_print_semaphore(semaphore)")
     print("semaphore\n", semaphore)
+
     if semaphore is None:
         print("returning None")
         return "None"
