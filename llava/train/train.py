@@ -39,7 +39,6 @@ from PIL import Image
 
 local_rank = None
 
-
 def rank0_print(*args):
     """
     rank0_print(*args)
@@ -52,7 +51,7 @@ def rank0_print(*args):
     """
     print("current file path", "llava/train/train.py")
     print("def rank0_print(*args)")
-    print("args\n", args)
+    print("args", "print(args) disabled for safety")
     if local_rank == 0:
         print(*args)
 
@@ -134,6 +133,7 @@ class TrainingArguments(transformers.TrainingArguments):
             "Maximum sequence length. Sequences will be right padded (and possibly truncated)."
         },
     )   # モデルの最大シーケンス長
+    deepspeed_plugin: any = None   # これを追加することで、deepspeedの引数を受け取れるようにする
     double_quant: bool = field(
         default=True,
         metadata={"help": "Compress the quantization statistics through double quantization."}
@@ -306,12 +306,11 @@ def find_all_linear_names(model):
 
 
 def safe_save_model_for_hf_trainer(trainer: transformers.Trainer,
-
                                    output_dir: str):
 
     print("current file path", "llava/train/train.py")
     print("def safe_save_model_for_hf_trainer(trainer, output_dir)")
-    print("trainer\n", trainer)
+    print("trainer\n", "print(trainer) disabled for safety.") 
     print("output_dir\n", output_dir)
     """
     safe_save_model_for_hf_trainer(trainer, output_dir)
