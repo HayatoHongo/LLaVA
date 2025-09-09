@@ -110,7 +110,9 @@ class LlavaLlamaForCausalLM(LlamaForCausalLM, LlavaMetaForCausalLM):
         print("image_sizes\n", image_sizes)
         print("return_dict\n", return_dict)
 
+        print(f"[COND] inputs_embeds_is_None={inputs_embeds is None}")
         if inputs_embeds is None:
+            print("【ENTER】if inputs_embeds is None:")
             (
                 input_ids,
                 position_ids,
@@ -127,6 +129,7 @@ class LlavaLlamaForCausalLM(LlamaForCausalLM, LlavaMetaForCausalLM):
                 images,
                 image_sizes
             )
+            print("【EXIT】if inputs_embeds is None:")
 
         result = super().forward(
             input_ids=input_ids,
@@ -165,11 +168,16 @@ class LlavaLlamaForCausalLM(LlamaForCausalLM, LlavaMetaForCausalLM):
         print("kwargs\n", kwargs)
         position_ids = kwargs.pop("position_ids", None)
         attention_mask = kwargs.pop("attention_mask", None)
+        print(f"[COND] 'inputs_embeds'_in_kwargs={'inputs_embeds' in kwargs}")
         if "inputs_embeds" in kwargs:
+            print("【ENTER】if 'inputs_embeds' in kwargs:")
             print("print(risk): print(inputs_embeds) disabled for safety")
             raise NotImplementedError("`inputs_embeds` is not supported")
+            print("【EXIT】if 'inputs_embeds' in kwargs:")
 
+        print(f"[COND] images_is_not_None={images is not None}")
         if images is not None:
+            print("【ENTER】if images is not None:")
             (
                 inputs,
                 position_ids,
@@ -186,8 +194,12 @@ class LlavaLlamaForCausalLM(LlamaForCausalLM, LlavaMetaForCausalLM):
                 images,
                 image_sizes=image_sizes
             )
+            print("【EXIT】if images is not None:")
         else:
+            print(f"[COND] images_is_None={images is None}")
+            print("【ENTER】else of if images is not None:")
             inputs_embeds = self.get_model().embed_tokens(inputs)
+            print("【EXIT】else of if images is not None:")
 
         result = super().generate(
             position_ids=position_ids,
@@ -216,10 +228,16 @@ class LlavaLlamaForCausalLM(LlamaForCausalLM, LlavaMetaForCausalLM):
         inputs = super().prepare_inputs_for_generation(
             input_ids, past_key_values=past_key_values, inputs_embeds=inputs_embeds, **kwargs
         )
+        print(f"[COND] images_is_not_None={images is not None}")
         if images is not None:
+            print("【ENTER】if images is not None:")
             inputs['images'] = images
+            print("【EXIT】if images is not None:")
+        print(f"[COND] image_sizes_is_not_None={image_sizes is not None}")
         if image_sizes is not None:
+            print("【ENTER】if image_sizes is not None:")
             inputs['image_sizes'] = image_sizes
+            print("【EXIT】if image_sizes is not None:")
         print("inputs (return)\n", inputs)
         return inputs
 
