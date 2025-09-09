@@ -845,10 +845,14 @@ def train():
     parser = transformers.HfArgumentParser(
         (ModelArguments, DataArguments, TrainingArguments))
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
+    print("model_args\n", model_args)
+    print("data_args\n", data_args)
+    print("training_args\n", training_args)
     local_rank = training_args.local_rank
     compute_dtype = (torch.float16 if training_args.fp16 else (torch.bfloat16 if training_args.bf16 else torch.float32))
 
     bnb_model_from_pretrained_args = {}
+    # bfloat16 なので 以下の if 文はスキップされる
     print(f"[COND] bits={training_args.bits}")
     if training_args.bits in [4, 8]:
         print("【ENTER】if training_args.bits in [4, 8]:")
@@ -871,9 +875,11 @@ def train():
         print("【EXIT】if training_args.bits in [4, 8]:")
 
     print(f"[COND] vision_tower={model_args.vision_tower}")
+    # vision_tower=openai/clip-vit-large-patch14-336 なので、この分岐に入る
     if model_args.vision_tower is not None:
         print("【ENTER】if model_args.vision_tower is not None:")
         print(f"[COND] mpt_in_model_name_or_path={'mpt' in model_args.model_name_or_path}")
+        # model_args.model_name_or_path に mptは含まれていないので、この分岐には入らない
         if 'mpt' in model_args.model_name_or_path:
             print("【ENTER】if 'mpt' in model_args.model_name_or_path:")
             config = transformers.AutoConfig.from_pretrained(model_args.model_name_or_path, trust_remote_code=True)
