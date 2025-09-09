@@ -51,13 +51,41 @@ class LlavaLlamaForCausalLM(LlamaForCausalLM, LlavaMetaForCausalLM):
         print("current file path", "llava/llava/model/language_model/llava_llama.py")
         print("def LlavaLlamaForCausalLM.__init__(self, config)")
         print("self\n", type(self))
+        # config は https://huggingface.co/lmsys/vicuna-7b-v1.5/blob/main/config.json
         print("config\n", config)
         super(LlamaForCausalLM, self).__init__(config)
         self.model = LlavaLlamaModel(config)
+        # LlavaLlamaModelの初期化あと、LlavaMetaModelの初期化も呼ばれる。
         self.pretraining_tp = config.pretraining_tp
         self.vocab_size = config.vocab_size
         self.lm_head = nn.Linear(config.hidden_size, config.vocab_size, bias=False)
         print("self.model\n", self.model)
+        """
+        self.model
+        LlavaLlamaModel(
+        (embed_tokens): Embedding(32000, 4096, padding_idx=0)
+        (layers): ModuleList(
+            (0-31): 32 x LlamaDecoderLayer(
+            (self_attn): LlamaAttention(
+                (q_proj): Linear(in_features=4096, out_features=4096, bias=False)
+                (k_proj): Linear(in_features=4096, out_features=4096, bias=False)
+                (v_proj): Linear(in_features=4096, out_features=4096, bias=False)
+                (o_proj): Linear(in_features=4096, out_features=4096, bias=False)
+                (rotary_emb): LlamaRotaryEmbedding()
+            )
+            (mlp): LlamaMLP(
+                (gate_proj): Linear(in_features=4096, out_features=11008, bias=False)
+                (up_proj): Linear(in_features=4096, out_features=11008, bias=False)
+                (down_proj): Linear(in_features=11008, out_features=4096, bias=False)
+                (act_fn): SiLUActivation()
+            )
+            (input_layernorm): LlamaRMSNorm()
+            (post_attention_layernorm): LlamaRMSNorm()
+            )
+        )
+        (norm): LlamaRMSNorm()
+        )
+        """
         print("self.pretraining_tp\n", self.pretraining_tp)
         print("self.vocab_size\n", self.vocab_size)
         print("self.lm_head\n", self.lm_head)

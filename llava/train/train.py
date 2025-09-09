@@ -852,7 +852,7 @@ def train():
     compute_dtype = (torch.float16 if training_args.fp16 else (torch.bfloat16 if training_args.bf16 else torch.float32))
 
     bnb_model_from_pretrained_args = {}
-    # bfloat16 なので 以下の if 文はスキップされる
+    # 【SKIP】bfloat16 なので 以下の if 文はスキップされる
     print(f"[COND] bits={training_args.bits}")
     if training_args.bits in [4, 8]:
         print("【ENTER】if training_args.bits in [4, 8]:")
@@ -875,11 +875,11 @@ def train():
         print("【EXIT】if training_args.bits in [4, 8]:")
 
     print(f"[COND] vision_tower={model_args.vision_tower}")
-    # vision_tower=openai/clip-vit-large-patch14-336 なので、この分岐に入る
+    # 【ENTER】 vision_tower=openai/clip-vit-large-patch14-336 なので、この分岐に入る
     if model_args.vision_tower is not None:
         print("【ENTER】if model_args.vision_tower is not None:")
         print(f"[COND] mpt_in_model_name_or_path={'mpt' in model_args.model_name_or_path}")
-        # model_args.model_name_or_path に mptは含まれていないので、この分岐には入らない
+        #【SKIP】model_args.model_name_or_path に mptは含まれていないので、この分岐はskipされる
         if 'mpt' in model_args.model_name_or_path:
             print("【ENTER】if 'mpt' in model_args.model_name_or_path:")
             config = transformers.AutoConfig.from_pretrained(model_args.model_name_or_path, trust_remote_code=True)
@@ -891,6 +891,7 @@ def train():
                 **bnb_model_from_pretrained_args
             )
             print("【EXIT】if 'mpt' in model_args.model_name_or_path:")
+        #【ENTER】 model_args.model_name_or_path に mptは含まれていないので、この分岐に入る
         else:
             print("[COND] not_mpt_in_model_name_or_path={'mpt' not in model_args.model_name_or_path}")
             print("【ENTER】else of if 'mpt' in model_args.model_name_or_path:")
@@ -899,16 +900,21 @@ def train():
                 cache_dir=training_args.cache_dir,
                 **bnb_model_from_pretrained_args
             )
+            print("model defined as LlavaLlamaForCausalLM \n", model)
             print("【EXIT】else of if 'mpt' in model_args.model_name_or_path:")
         print("【EXIT】if model_args.vision_tower is not None:")
+    # 【SKIP】 vision_tower=clip-vit-large-patch14-336 なので、この分岐には入らない
     else:
         print("[COND] vision_tower=None")
         print("【ENTER】else of if model_args.vision_tower is not None:")
+        # modelのロード（ここがたいへん重要）
+        # model_name_or_path は lmsys/vicuna-7b-v1.5; https://huggingface.co/lmsys/vicuna-7b-v1.5/blob/main/config.json
         model = transformers.LlamaForCausalLM.from_pretrained(
             model_args.model_name_or_path,
             cache_dir=training_args.cache_dir,
             **bnb_model_from_pretrained_args
         )
+        print("model defined as LlamaForCausalLM \n", model)
         print("【EXIT】else of if model_args.vision_tower is not None:")
     model.config.use_cache = False
 

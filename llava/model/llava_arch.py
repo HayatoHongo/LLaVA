@@ -31,7 +31,7 @@ class LlavaMetaModel:
     def __init__(self, config):
 
         print("current file path", "llava/model/llava_arch.py")
-        print("def __init__(self, config)")
+        print("LlavaMetaModel.__init__(self, config)")
         print("config\n", config)
         super(LlavaMetaModel, self).__init__(config)
 
@@ -71,13 +71,25 @@ class LlavaMetaModel:
         self.config.mm_vision_tower = vision_tower
         
         # 最初はこちら側の処理に入る
+        print("[COND] self.get_vision_tower()\n", self.get_vision_tower())
         if self.get_vision_tower() is None:
+            print("[ENTER] self.get_vision_tower() is None")
             vision_tower = build_vision_tower(model_args)
 
+            print("[COND] fsdp\n", fsdp)
             if fsdp is not None and len(fsdp) > 0:
+                print("[COND] len(fsdp)\n", len(fsdp))
+                print("[ENTER] if fsdp is not None and len(fsdp) > 0:")
                 self.vision_tower = [vision_tower]
+                print("self.vision_tower\n", self.vision_tower)
+                print("【EXIT】if self.get_vision_tower() is None:")
             else:
+                print("[ENTER] else if fsdp is not None and len(fsdp) > 0:")
                 self.vision_tower = vision_tower
+                print("self.vision_tower\n", self.vision_tower)
+                print("【EXIT】else if fsdp is not None and len(fsdp) > 0:")
+
+            print("【EXIT】if self.get_vision_tower() is None:")
         else:
             if fsdp is not None and len(fsdp) > 0:
                 vision_tower = self.vision_tower[0]
