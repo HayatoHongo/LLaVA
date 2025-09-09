@@ -57,6 +57,10 @@ class LlavaLlamaForCausalLM(LlamaForCausalLM, LlavaMetaForCausalLM):
         self.pretraining_tp = config.pretraining_tp
         self.vocab_size = config.vocab_size
         self.lm_head = nn.Linear(config.hidden_size, config.vocab_size, bias=False)
+        print("self.model\n", self.model)
+        print("self.pretraining_tp\n", self.pretraining_tp)
+        print("self.vocab_size\n", self.vocab_size)
+        print("self.lm_head\n", self.lm_head)
 
         # Initialize weights and apply final processing
         self.post_init()
@@ -136,6 +140,7 @@ class LlavaLlamaForCausalLM(LlamaForCausalLM, LlavaMetaForCausalLM):
             output_hidden_states=output_hidden_states,
             return_dict=return_dict
         )
+        print("Return of \ndef LlavaLlamaForCausalLM.forward(self, input_ids, attention_mask, position_ids, past_key_values, inputs_embeds, labels, use_cache, output_attentions, output_hidden_states, images, image_sizes, return_dict)")
         print("result (return)\n", result)
         return result
 

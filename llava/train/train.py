@@ -849,7 +849,9 @@ def train():
     compute_dtype = (torch.float16 if training_args.fp16 else (torch.bfloat16 if training_args.bf16 else torch.float32))
 
     bnb_model_from_pretrained_args = {}
+    print(f"[COND] bits={training_args.bits}")
     if training_args.bits in [4, 8]:
+        print("【ENTER】if training_args.bits in [4, 8]:")
         from transformers import BitsAndBytesConfig
         bnb_model_from_pretrained_args.update(dict(
             device_map={"": training_args.device},
@@ -866,9 +868,14 @@ def train():
                 bnb_4bit_quant_type=training_args.quant_type # {'fp4', 'nf4'}
             )
         ))
+        print("【EXIT】if training_args.bits in [4, 8]:")
 
+    print(f"[COND] vision_tower={model_args.vision_tower}")
     if model_args.vision_tower is not None:
+        print("【ENTER】if model_args.vision_tower is not None:")
+        print(f"[COND] mpt_in_model_name_or_path={'mpt' in model_args.model_name_or_path}")
         if 'mpt' in model_args.model_name_or_path:
+            print("【ENTER】if 'mpt' in model_args.model_name_or_path:")
             config = transformers.AutoConfig.from_pretrained(model_args.model_name_or_path, trust_remote_code=True)
             config.attn_config['attn_impl'] = training_args.mpt_attn_impl
             model = LlavaMPTForCausalLM.from_pretrained(
@@ -877,37 +884,61 @@ def train():
                 cache_dir=training_args.cache_dir,
                 **bnb_model_from_pretrained_args
             )
+            print("【EXIT】if 'mpt' in model_args.model_name_or_path:")
         else:
+            print("[COND] not_mpt_in_model_name_or_path={'mpt' not in model_args.model_name_or_path}")
+            print("【ENTER】else of if 'mpt' in model_args.model_name_or_path:")
             model = LlavaLlamaForCausalLM.from_pretrained(
                 model_args.model_name_or_path,
                 cache_dir=training_args.cache_dir,
                 **bnb_model_from_pretrained_args
             )
+            print("【EXIT】else of if 'mpt' in model_args.model_name_or_path:")
+        print("【EXIT】if model_args.vision_tower is not None:")
     else:
+        print("[COND] vision_tower=None")
+        print("【ENTER】else of if model_args.vision_tower is not None:")
         model = transformers.LlamaForCausalLM.from_pretrained(
             model_args.model_name_or_path,
             cache_dir=training_args.cache_dir,
             **bnb_model_from_pretrained_args
         )
+        print("【EXIT】else of if model_args.vision_tower is not None:")
     model.config.use_cache = False
 
+    print(f"[COND] freeze_backbone={model_args.freeze_backbone}")
     if model_args.freeze_backbone:
+        print("【ENTER】if model_args.freeze_backbone:")
         model.model.requires_grad_(False)
+        print("【EXIT】if model_args.freeze_backbone:")
 
+    print(f"[COND] bits={training_args.bits}")
     if training_args.bits in [4, 8]:
+        print("【ENTER】if training_args.bits in [4, 8]:")
         from peft import prepare_model_for_kbit_training
         model.config.torch_dtype=(torch.float32 if training_args.fp16 else (torch.bfloat16 if training_args.bf16 else torch.float32))
         model = prepare_model_for_kbit_training(model, use_gradient_checkpointing=training_args.gradient_checkpointing)
+        print("【EXIT】if training_args.bits in [4, 8]:")
 
+    print(f"[COND] gradient_checkpointing={training_args.gradient_checkpointing}")
     if training_args.gradient_checkpointing:
+        print("【ENTER】if training_args.gradient_checkpointing:")
+        print(f"[COND] has_enable_input_require_grads={hasattr(model, 'enable_input_require_grads')}")
         if hasattr(model, "enable_input_require_grads"):
+            print("【ENTER】if hasattr(model, 'enable_input_require_grads'):")
             model.enable_input_require_grads()
+            print("【EXIT】if hasattr(model, 'enable_input_require_grads'):")
         else:
+            print("【ENTER】else of if hasattr(model, 'enable_input_require_grads'):")
             def make_inputs_require_grad(module, input, output):
                 output.requires_grad_(True)
             model.get_input_embeddings().register_forward_hook(make_inputs_require_grad)
+            print("【EXIT】else of if hasattr(model, 'enable_input_require_grads'):")
+        print("【EXIT】if training_args.gradient_checkpointing:")
 
+    print(f"[COND] lora_enable={training_args.lora_enable}")
     if training_args.lora_enable:
+        print("【ENTER】if training_args.lora_enable:")
         from peft import LoraConfig, get_peft_model
         lora_config = LoraConfig(
             r=training_args.lora_r,
@@ -917,22 +948,37 @@ def train():
             bias=training_args.lora_bias,
             task_type="CAUSAL_LM",
         )
+        print("LoraConfig =\n", lora_config)
+        print(f"[COND] bits={training_args.bits}")
         if training_args.bits == 16:
+            print("【ENTER】if training_args.bits == 16:")
+            print(f"[COND] bf16={training_args.bf16}")
             if training_args.bf16:
                 model.to(torch.bfloat16)
+                print("【EXIT】if training_args.bf16:")
+            print(f"[COND] fp16={training_args.fp16}")
             if training_args.fp16:
+                print("【ENTER】if training_args.fp16:")
                 model.to(torch.float16)
+                print("【EXIT】if training_args.fp16:")
+            print("【EXIT】if training_args.bits == 16:")
         rank0_print("Adding LoRA adapters...")
         model = get_peft_model(model, lora_config)
+        print("【EXIT】if training_args.lora_enable:")
 
+    print(f"[COND] mpt_in_model_name_or_path={'mpt' in model_args.model_name_or_path}")
     if 'mpt' in model_args.model_name_or_path:
+        print("【ENTER】if 'mpt' in model_args.model_name_or_path:")
         tokenizer = transformers.AutoTokenizer.from_pretrained(
             model_args.model_name_or_path,
             cache_dir=training_args.cache_dir,
             model_max_length=training_args.model_max_length,
             padding_side="right"
         )
+        print("【EXIT】if 'mpt' in model_args.model_name_or_path:")
     else:
+        print("[COND] not_mpt_in_model_name_or_path={'mpt' not in model_args.model_name_or_path}")
+        print("【ENTER】else of if 'mpt' in model_args.model_name_or_path:")
         tokenizer = transformers.AutoTokenizer.from_pretrained(
             model_args.model_name_or_path,
             cache_dir=training_args.cache_dir,
@@ -940,24 +986,42 @@ def train():
             padding_side="right",
             use_fast=False,
         )
+        print("【EXIT】else of if 'mpt' in model_args.model_name_or_path:")
 
+    print(f"[COND] version={model_args.version}")
     if model_args.version == "v0":
+        print("【ENTER】if model_args.version == 'v0':")
+        print(f"[COND] pad_token_is_None={tokenizer.pad_token is None}")
         if tokenizer.pad_token is None:
+            print("【ENTER】if tokenizer.pad_token is None:")
             smart_tokenizer_and_embedding_resize(
                 special_tokens_dict=dict(pad_token="[PAD]"),
                 tokenizer=tokenizer,
                 model=model,
             )
+            print("【EXIT】if tokenizer.pad_token is None:")
+        print("【EXIT】if model_args.version == 'v0':")
     elif model_args.version == "v0.5":
+        print("【ENTER】elif model_args.version == 'v0.5':")
         tokenizer.pad_token = tokenizer.unk_token
+        print("【EXIT】elif model_args.version == 'v0.5':")
     else:
+        print("【ENTER】else of if model_args.version == 'v0' and elif 'v0.5':")
         tokenizer.pad_token = tokenizer.unk_token
+        print(f"[COND] version_in_conv_templates={model_args.version in conversation_lib.conv_templates}")
         if model_args.version in conversation_lib.conv_templates:
+            print("【ENTER】if model_args.version in conversation_lib.conv_templates:")
             conversation_lib.default_conversation = conversation_lib.conv_templates[model_args.version]
+            print("【EXIT】if model_args.version in conversation_lib.conv_templates:")
         else:
+            print("【ENTER】else of if model_args.version in conversation_lib.conv_templates:")
             conversation_lib.default_conversation = conversation_lib.conv_templates["vicuna_v1"]
+            print("【EXIT】else of if model_args.version in conversation_lib.conv_templates:")
+        print("【EXIT】else of if model_args.version == 'v0' and elif 'v0.5':")
 
+    print(f"[COND] vision_tower={model_args.vision_tower}")
     if model_args.vision_tower is not None:
+        print("【ENTER】if model_args.vision_tower is not None:")
         model.get_model().initialize_vision_modules(
             model_args=model_args,
             fsdp=training_args.fsdp
@@ -974,37 +1038,63 @@ def train():
         model.config.tokenizer_model_max_length = tokenizer.model_max_length
 
         model.config.tune_mm_mlp_adapter = training_args.tune_mm_mlp_adapter = model_args.tune_mm_mlp_adapter
+        print(f"[COND] tune_mm_mlp_adapter={model_args.tune_mm_mlp_adapter}")
         if model_args.tune_mm_mlp_adapter:
+            print("【ENTER】if model_args.tune_mm_mlp_adapter:")
             model.requires_grad_(False)
             for p in model.get_model().mm_projector.parameters():
                 p.requires_grad = True
+            print("【EXIT】if model_args.tune_mm_mlp_adapter:")
 
         model.config.freeze_mm_mlp_adapter = training_args.freeze_mm_mlp_adapter
+        print(f"[COND] freeze_mm_mlp_adapter={training_args.freeze_mm_mlp_adapter}")
         if training_args.freeze_mm_mlp_adapter:
+            print("【ENTER】if training_args.freeze_mm_mlp_adapter:")
             for p in model.get_model().mm_projector.parameters():
                 p.requires_grad = False
+            print("【EXIT】if training_args.freeze_mm_mlp_adapter:")
 
+        print(f"[COND] bits={training_args.bits}")
         if training_args.bits in [4, 8]:
+            print("【ENTER】if training_args.bits in [4, 8]:")
             model.get_model().mm_projector.to(dtype=compute_dtype, device=training_args.device)
+            print("【EXIT】if training_args.bits in [4, 8]:")
 
         model.config.mm_use_im_start_end = data_args.mm_use_im_start_end = model_args.mm_use_im_start_end
         model.config.mm_projector_lr = training_args.mm_projector_lr
         training_args.use_im_start_end = model_args.mm_use_im_start_end
         model.config.mm_use_im_patch_token = model_args.mm_use_im_patch_token
         model.initialize_vision_tokenizer(model_args, tokenizer=tokenizer)
+        print("【EXIT】if model_args.vision_tower is not None:")
 
+    print(f"[COND] bits={training_args.bits}")
     if training_args.bits in [4, 8]:
+        print("【ENTER】if training_args.bits in [4, 8]:")
         from peft.tuners.lora import LoraLayer
         for name, module in model.named_modules():
+            print(f"[COND] is_LoraLayer={isinstance(module, LoraLayer)} name={name}")
             if isinstance(module, LoraLayer):
+                print(f"[COND] bf16={training_args.bf16}")
                 if training_args.bf16:
+                    print("【ENTER】if training_args.bf16:")
                     module = module.to(torch.bfloat16)
+                    print("【EXIT】if training_args.bf16:")
+            print(f"[COND] 'norm'_in_name={'norm' in name}")
             if 'norm' in name:
+                print("【ENTER】if 'norm' in name:")
                 module = module.to(torch.float32)
+                print("【EXIT】if 'norm' in name:")
+            print(f"[COND] 'lm_head'_or_'embed_tokens'_in_name={('lm_head' in name or 'embed_tokens' in name)}")
             if 'lm_head' in name or 'embed_tokens' in name:
+                print("【ENTER】if 'lm_head' in name or 'embed_tokens' in name:")
                 if hasattr(module, 'weight'):
+                    print(f"[COND] bf16={training_args.bf16} weight_dtype_is_float32={module.weight.dtype == torch.float32}")
                     if training_args.bf16 and module.weight.dtype == torch.float32:
+                        print("【ENTER】if training_args.bf16 and module.weight.dtype == torch.float32:")
                         module = module.to(torch.bfloat16)
+                        print("【EXIT】if training_args.bf16 and module.weight.dtype == torch.float32:")
+                print("【EXIT】if 'lm_head' in name or 'embed_tokens' in name:")
+        print("【EXIT】if training_args.bits in [4, 8]:")
 
     data_module = make_supervised_data_module(tokenizer=tokenizer,
                                               data_args=data_args)

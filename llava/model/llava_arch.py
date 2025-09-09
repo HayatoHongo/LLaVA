@@ -50,6 +50,7 @@ class LlavaMetaModel:
         print("def get_vision_tower(self)")
         vision_tower = getattr(self, 'vision_tower', None)
         print("vision_tower (raw)\n", vision_tower)
+        print("type(vision_tower)\n", type(vision_tower))
         if type(vision_tower) is list:
             vision_tower = vision_tower[0]
         print("vision_tower (return)\n", vision_tower)
@@ -68,7 +69,8 @@ class LlavaMetaModel:
         mm_patch_merge_type = model_args.mm_patch_merge_type
 
         self.config.mm_vision_tower = vision_tower
-
+        
+        # 最初はこちら側の処理に入る
         if self.get_vision_tower() is None:
             vision_tower = build_vision_tower(model_args)
 

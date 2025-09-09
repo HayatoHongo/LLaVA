@@ -75,11 +75,13 @@ def build_vision_projector(config, delay_load=False, **kwargs):
     print("kwargs\n", kwargs)
     projector_type = getattr(config, 'mm_projector_type', 'linear')
 
+    print("projector_type\n", projector_type)
     if projector_type == 'linear':
         result = nn.Linear(config.mm_hidden_size, config.hidden_size)
         print("result (return)\n", result)
         return result
 
+    print("mlp_gelu_match\n", mlp_gelu_match)
     mlp_gelu_match = re.match(r'^mlp(\d+)x_gelu$', projector_type)
     if mlp_gelu_match:
         mlp_depth = int(mlp_gelu_match.group(1))
@@ -91,6 +93,7 @@ def build_vision_projector(config, delay_load=False, **kwargs):
         print("result (return)\n", result)
         return result
 
+    print("projector_type\n", projector_type)
     if projector_type == 'identity':
         result = IdentityMap()
         print("result (return)\n", result)

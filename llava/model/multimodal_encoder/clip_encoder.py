@@ -120,6 +120,8 @@ class CLIPVisionTower(nn.Module):
         print("current file path", "llava/llava/model/multimodal_encoder/clip_encoder.py")
         print("def CLIPVisionTower.config(self)")
         print("self\n", type(self))
+        # おそらく is_loaded は True
+        print("self.is_loaded\n", self.is_loaded)
         if self.is_loaded:
             result = self.vision_tower.config
         else:

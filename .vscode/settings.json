@@ -1,0 +1,13 @@
+{
+  "highlight.regexes": {
+    "abc": {
+      "decorations": [
+        {
+          "backgroundColor": "#ff00ff",
+          "color": "#000000",
+          "fontWeight": "bold"
+        }
+      ]
+    }
+  }
+}
