@@ -91,10 +91,20 @@ class LlavaMetaModel:
 
             print("【EXIT】if self.get_vision_tower() is None:")
         else:
+            print("[ENTER] else of if self.get_vision_tower() is None:")
+            print("vision_tower before load_model\n", self.get_vision_tower())
+            print("[COND] fsdp\n", fsdp)
             if fsdp is not None and len(fsdp) > 0:
+                print("[COND] len(fsdp)\n", len(fsdp))
+                print("[ENTER] if fsdp is not None and len(fsdp) > 0:")
                 vision_tower = self.vision_tower[0]
+                print("vision_tower\n", vision_tower)
+                print("【EXIT】if self.get_vision_tower() is None:")
             else:
+                print("[ENTER] else if fsdp is not None and len(fsdp) > 0:")
                 vision_tower = self.vision_tower
+                print("vision_tower\n", vision_tower)
+                print("【EXIT】else if fsdp is not None and len(fsdp) > 0:")
             vision_tower.load_model()
 
         self.config.use_mm_proj = True

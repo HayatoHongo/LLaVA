@@ -35,8 +35,11 @@ class CLIPVisionTower(nn.Module):
         print("current file path", "llava/llava/model/multimodal_encoder/clip_encoder.py")
         print("def CLIPVisionTower.load_model(self)")
         print("self\n", type(self))
+        print("self.vision_tower_name\n", self.vision_tower_name)
         self.image_processor = CLIPImageProcessor.from_pretrained(self.vision_tower_name)
+        print("self.image_processor\n", self.image_processor)
         self.vision_tower = CLIPVisionModel.from_pretrained(self.vision_tower_name)
+        print("self.vision_tower\n", self.vision_tower)
         self.vision_tower.requires_grad_(False)
 
         self.is_loaded = True
