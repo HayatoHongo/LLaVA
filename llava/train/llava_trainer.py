@@ -24,14 +24,25 @@ def maybe_zero_3(param, ignore_status=False, name=None):
     print("name\n", name)
     from deepspeed import zero
     from deepspeed.runtime.zero.partition_parameters import ZeroParamStatus
+    print(f"[COND] hasattr_ds_id={hasattr(param, 'ds_id')}")
     if hasattr(param, "ds_id"):
+        print("【ENTER】if hasattr(param, 'ds_id'):")
+        print(f"[COND] ds_status={getattr(param, 'ds_status', None)}, ignore_status={ignore_status}")
         if param.ds_status == ZeroParamStatus.NOT_AVAILABLE:
+            print("【ENTER】if param.ds_status == ZeroParamStatus.NOT_AVAILABLE:")
+            print(f"[COND] ignore_status={ignore_status}")
             if not ignore_status:
+                print("【ENTER】if not ignore_status:")
                 print(name, 'no ignore status')
+                print("【EXIT】if not ignore_status:")
+            print("【EXIT】if param.ds_status == ZeroParamStatus.NOT_AVAILABLE:")
         with zero.GatheredParameters([param]):
             param = param.data.detach().cpu().clone()
+        print("【EXIT】if hasattr(param, 'ds_id'):")
     else:
+        print("【ENTER】else (not hasattr(param, 'ds_id')):")
         param = param.detach().cpu().clone()
+        print("【EXIT】else (not hasattr(param, 'ds_id')):")
     print("param (to return)\n", param)
     return param
 
@@ -59,8 +70,13 @@ def split_to_even_chunks(indices, lengths, num_chunks):
     Split a list of indices into `chunks` chunks of roughly equal lengths.
     """
 
+
+    print(f"[COND] len_indices={len(indices)}, num_chunks={num_chunks}")
     if len(indices) % num_chunks != 0:
-        return [indices[i::num_chunks] for i in range(num_chunks)]
+        print("【ENTER】if len(indices) % num_chunks != 0:")
+        result = [indices[i::num_chunks] for i in range(num_chunks)]
+        print("【EXIT】if len(indices) % num_chunks != 0:")
+        return result
 
     num_indices_per_chunk = len(indices) // num_chunks
 
@@ -87,9 +103,13 @@ def get_modality_length_grouped_indices(lengths, batch_size, world_size, generat
     print("generator\n", generator)
     # We need to use torch for the random part as a distributed sampler will set the random seed for torch.
     assert all(l != 0 for l in lengths), "Should not have zero length."
+    print(f"[COND] all_gt0={all(l > 0 for l in lengths)}, all_lt0={all(l < 0 for l in lengths)}")
     if all(l > 0 for l in lengths) or all(l < 0 for l in lengths):
+        print("【ENTER】if all(l > 0 for l in lengths) or all(l < 0 for l in lengths):")
         # all samples are in the same modality
-        return get_length_grouped_indices(lengths, batch_size, world_size, generator=generator)
+        result = get_length_grouped_indices(lengths, batch_size, world_size, generator=generator)
+        print("【EXIT】if all(l > 0 for l in lengths) or all(l < 0 for l in lengths):")
+        return result
     mm_indices, mm_lengths = zip(*[(i, l) for i, l in enumerate(lengths) if l > 0])
     lang_indices, lang_lengths = zip(*[(i, -l) for i, l in enumerate(lengths) if l < 0])
 
@@ -129,7 +149,15 @@ def get_length_grouped_indices(lengths, batch_size, world_size, generator=None, 
     megabatches = [sorted(megabatch, key=lambda i: lengths[i], reverse=True) for megabatch in megabatches]
     megabatches = [split_to_even_chunks(megabatch, lengths, world_size) for megabatch in megabatches]
 
-    result = [i for megabatch in megabatches for batch in megabatch for i in batch]
+    print(f"[COND] merge={merge}")
+    if merge:
+        print("【ENTER】if merge:")
+        result = [i for megabatch in megabatches for batch in megabatch for i in batch]
+        print("【EXIT】if merge:")
+    else:
+        print("【ENTER】else (not merge):")
+        result = megabatches
+        print("【EXIT】else (not merge):")
     print("result\n", result)
     return result
 
@@ -189,19 +217,30 @@ class LLaVATrainer(Trainer):
         print("current file path", "llava/train/llava_trainer.py")
         print("def _get_train_sampler(self)")
         print("self\n", self)
+        print(f"[COND] train_dataset_is_None={self.train_dataset is None}, has_length={has_length(self.train_dataset) if self.train_dataset is not None else 'N/A'}")
         if self.train_dataset is None or not has_length(self.train_dataset):
-            return None
+            print("【ENTER】if self.train_dataset is None or not has_length(self.train_dataset):")
+            result = None
+            print("【EXIT】if self.train_dataset is None or not has_length(self.train_dataset):")
+            return result
 
+        print(f"[COND] group_by_modality_length={self.args.group_by_modality_length}")
         if self.args.group_by_modality_length:
+            print("【ENTER】if self.args.group_by_modality_length:")
             lengths = self.train_dataset.modality_lengths
-            return LengthGroupedSampler(
+            result = LengthGroupedSampler(
                 self.args.train_batch_size,
                 world_size=self.args.world_size * self.args.gradient_accumulation_steps,
                 lengths=lengths,
                 group_by_modality=True,
             )
+            print("【EXIT】if self.args.group_by_modality_length:")
+            return result
         else:
-            return super()._get_train_sampler()
+            print("【ENTER】else (not group_by_modality_length):")
+            result = super()._get_train_sampler()
+            print("【EXIT】else (not group_by_modality_length):")
+            return result
 
     def create_optimizer(self):
 
@@ -214,14 +253,27 @@ class LLaVATrainer(Trainer):
         We provide a reasonable default that works well. If you want to use something else, you can pass a tuple in the
         Trainer's init through `optimizers`, or subclass and override this method in a subclass.
         """
+        print(f"[COND] sagemaker_mp_enabled={is_sagemaker_mp_enabled()}")
         if is_sagemaker_mp_enabled():
-            return super().create_optimizer()
+            print("【ENTER】if is_sagemaker_mp_enabled():")
+            result = super().create_optimizer()
+            print("【EXIT】if is_sagemaker_mp_enabled():")
+            print("result for super().create_optimizer()\n", result)
+            return result
+        print(f"[COND] sharded_ddp={self.sharded_ddp}, SHARDED_DDP_SIMPLE={ShardedDDPOption.SIMPLE}")
         if self.sharded_ddp == ShardedDDPOption.SIMPLE:
-            return super().create_optimizer()
+            print("【ENTER】if self.sharded_ddp == ShardedDDPOption.SIMPLE:")
+            result = super().create_optimizer()
+            print("【EXIT】if self.sharded_ddp == ShardedDDPOption.SIMPLE:")
+            print("result for super().create_optimizer()\n", result)
+            return result
 
         opt_model = self.model
+        print("opt_model\n", opt_model)
 
+        print(f"[COND] optimizer_is_None={self.optimizer is None}")
         if self.optimizer is None:
+            print("【ENTER】if self.optimizer is None:")
 
             # Risky print: self.args, opt_model, optimizer_grouped_parameters, optimizer_cls, optimizer_kwargs
             print("print(risk): print(self.args) disabled for safety")
@@ -232,7 +284,9 @@ class LLaVATrainer(Trainer):
 
             decay_parameters = get_parameter_names(opt_model, ALL_LAYERNORM_LAYERS)
             decay_parameters = [name for name in decay_parameters if "bias" not in name]
+            print(f"[COND] mm_projector_lr={self.args.mm_projector_lr}")
             if self.args.mm_projector_lr is not None:
+                print("【ENTER】if self.args.mm_projector_lr is not None:")
                 projector_parameters = [name for name, _ in opt_model.named_parameters() if "mm_projector" in name]
                 optimizer_grouped_parameters = [
                     {
@@ -262,7 +316,9 @@ class LLaVATrainer(Trainer):
                         "lr": self.args.mm_projector_lr,
                     },
                 ]
+                print("【EXIT】if self.args.mm_projector_lr is not None:")
             else:
+                print("【ENTER】else (mm_projector_lr is None):")
                 optimizer_grouped_parameters = [
                     {
                         "params": [
@@ -280,15 +336,21 @@ class LLaVATrainer(Trainer):
 
             optimizer_cls, optimizer_kwargs = Trainer.get_optimizer_cls_and_kwargs(self.args)
 
+            print(f"[COND] sharded_ddp={self.sharded_ddp}, SHARDED_DDP_SIMPLE={ShardedDDPOption.SIMPLE}")
             if self.sharded_ddp == ShardedDDPOption.SIMPLE:
+                print("【ENTER】if self.sharded_ddp == ShardedDDPOption.SIMPLE:")
                 self.optimizer = OSS(
                     params=optimizer_grouped_parameters,
                     optim=optimizer_cls,
                     **optimizer_kwargs,
                 )
+                print("【EXIT】if self.sharded_ddp == ShardedDDPOption.SIMPLE:")
             else:
+                print("【ENTER】else (not sharded_ddp SIMPLE):")
                 self.optimizer = optimizer_cls(optimizer_grouped_parameters, **optimizer_kwargs)
+                print(f"[COND] optimizer_cls_name={optimizer_cls.__name__}")
                 if optimizer_cls.__name__ == "Adam8bit":
+                    print("【ENTER】if optimizer_cls.__name__ == 'Adam8bit':")
                     import bitsandbytes
 
                     manager = bitsandbytes.optim.GlobalOptimManager.get_instance()
@@ -302,6 +364,8 @@ class LLaVATrainer(Trainer):
                             logger.debug(f"bitsandbytes: will optimize {module} in fp32")
                     logger.info(f"skipped: {skipped/2**20}M params")
                     
+                    print("【EXIT】if optimizer_cls.__name__ == 'Adam8bit':")
+            print("【EXIT】if self.optimizer is None:")
         print("self.optimizer\n", self.optimizer)
         return self.optimizer
 
@@ -313,7 +377,9 @@ class LLaVATrainer(Trainer):
         print("model\n", model)
         print("trial\n", trial)
         print("metrics\n", metrics)
+        print(f"[COND] tune_mm_mlp_adapter={getattr(self.args, 'tune_mm_mlp_adapter', False)}")
         if getattr(self.args, 'tune_mm_mlp_adapter', False):
+            print("【ENTER】if getattr(self.args, 'tune_mm_mlp_adapter', False):")
             from transformers.trainer_utils import PREFIX_CHECKPOINT_DIR
             checkpoint_folder = f"{PREFIX_CHECKPOINT_DIR}-{self.state.global_step}"
 
@@ -322,16 +388,24 @@ class LLaVATrainer(Trainer):
 
             # Only save Adapter
             keys_to_match = ['mm_projector', 'vision_resampler']
+            print(f"[COND] use_im_start_end={getattr(self.args, 'use_im_start_end', False)}")
             if getattr(self.args, "use_im_start_end", False):
+                print("【ENTER】if getattr(self.args, 'use_im_start_end', False):")
                 keys_to_match.extend(['embed_tokens', 'embed_in'])
 
             weight_to_save = get_mm_adapter_state_maybe_zero_3(self.model.named_parameters(), keys_to_match)
 
+            print(f"[COND] local_rank={self.args.local_rank}")
             if self.args.local_rank == 0 or self.args.local_rank == -1:
+                print("【ENTER】if self.args.local_rank == 0 or self.args.local_rank == -1:")
                 self.model.config.save_pretrained(output_dir)
                 torch.save(weight_to_save, os.path.join(output_dir, f'mm_projector.bin'))
+                print("【EXIT】if self.args.local_rank == 0 or self.args.local_rank == -1:")
+            print("【EXIT】if getattr(self.args, 'tune_mm_mlp_adapter', False):")
         else:
+            print("【ENTER】else (not tune_mm_mlp_adapter):")
             super(LLaVATrainer, self)._save_checkpoint(model, trial, metrics)
+            print("【EXIT】else (not tune_mm_mlp_adapter):")
 
     def _save(self, output_dir: Optional[str] = None, state_dict=None):
 
@@ -340,7 +414,12 @@ class LLaVATrainer(Trainer):
         print("self\n", self)
         print("output_dir\n", output_dir)
         print("state_dict\n", state_dict)
+        print(f"[COND] tune_mm_mlp_adapter={getattr(self.args, 'tune_mm_mlp_adapter', False)}")
         if getattr(self.args, 'tune_mm_mlp_adapter', False):
+            print("【ENTER】if getattr(self.args, 'tune_mm_mlp_adapter', False):")
             pass
+            print("【EXIT】if getattr(self.args, 'tune_mm_mlp_adapter', False):")
         else:
+            print("【ENTER】else (not tune_mm_mlp_adapter):")
             super(LLaVATrainer, self)._save(output_dir, state_dict)
+            print("【EXIT】else (not tune_mm_mlp_adapter):")

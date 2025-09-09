@@ -20,8 +20,10 @@ class CLIPVisionTower(nn.Module):
         self.vision_tower_name = vision_tower
         self.select_layer = args.mm_vision_select_layer
         self.select_feature = getattr(args, 'mm_vision_select_feature', 'patch')
-
+        
+        print(f"[COND] delay_load={delay_load}")
         if not delay_load:
+            print("【ENTER】if not delay_load:")
             self.load_model()
         elif getattr(args, 'unfreeze_mm_vision_tower', False):
             self.load_model()
@@ -47,13 +49,21 @@ class CLIPVisionTower(nn.Module):
         image_features = image_forward_outs.hidden_states[self.select_layer]
         if hasattr(image_features, 'shape'):
             print("image_features.shape\n", image_features.shape)
+        print(f"[COND] select_feature={self.select_feature}")
         if self.select_feature == 'patch':
+            print("【ENTER】if self.select_feature == 'patch':")
             image_features = image_features[:, 1:]
+            print("【EXIT】if self.select_feature == 'patch':")
         elif self.select_feature == 'cls_patch':
+            print("【ENTER】elif self.select_feature == 'cls_patch':")
             image_features = image_features
+            print("【EXIT】elif self.select_feature == 'cls_patch':")
         else:
+            print(f"[COND] select_feature={self.select_feature}")
+            print("【ENTER】else (unexpected select_feature):")
             print("print(risk): print(self.select_feature) disabled for safety")
             raise ValueError(f'Unexpected select feature: {self.select_feature}')
+            print("【EXIT】else (unexpected select_feature):")
         print("image_features (return)\n", image_features)
         if hasattr(image_features, 'shape'):
             print("image_features.shape\n", image_features.shape)
@@ -67,15 +77,20 @@ class CLIPVisionTower(nn.Module):
         print("images\n", images)
         if hasattr(images, 'shape'):
             print("images.shape\n", images.shape)
+        print(f"[COND] type_images_is_list={type(images) is list}")
         if type(images) is list:
+            print("【ENTER】if type(images) is list:")
             image_features = []
             for image in images:
                 image_forward_out = self.vision_tower(image.to(device=self.device, dtype=self.dtype).unsqueeze(0), output_hidden_states=True)
                 image_feature = self.feature_select(image_forward_out).to(image.dtype)
                 image_features.append(image_feature)
+            print("【EXIT】if type(images) is list:")
         else:
+            print("【ENTER】else (type(images) is not list):")
             image_forward_outs = self.vision_tower(images.to(device=self.device, dtype=self.dtype), output_hidden_states=True)
             image_features = self.feature_select(image_forward_outs).to(images.dtype)
+            print("【EXIT】else (type(images) is not list):")
 
         print("image_features (return)\n", image_features)
         if hasattr(image_features, 'shape'):
@@ -122,10 +137,15 @@ class CLIPVisionTower(nn.Module):
         print("self\n", type(self))
         # おそらく is_loaded は True
         print("self.is_loaded\n", self.is_loaded)
+        print(f"[COND] is_loaded={self.is_loaded}")
         if self.is_loaded:
+            print("【ENTER】if self.is_loaded:")
             result = self.vision_tower.config
+            print("【EXIT】if self.is_loaded:")
         else:
+            print("【ENTER】else (not is_loaded):")
             result = self.cfg_only
+            print("【EXIT】else (not is_loaded):")
         print("result (return)\n", result)
         return result
 
@@ -136,7 +156,7 @@ class CLIPVisionTower(nn.Module):
         print("def CLIPVisionTower.hidden_size(self)")
         print("self\n", type(self))
         result = self.config.hidden_size
-        print("result (return)\n", result)
+        print("result (return), self.config.hidden_size\n", result)
         return result
 
     @property
