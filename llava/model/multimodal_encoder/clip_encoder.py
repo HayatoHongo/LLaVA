@@ -16,19 +16,28 @@ class CLIPVisionTower(nn.Module):
         super().__init__()
 
         self.is_loaded = False
+        print("self.is_loaded\n", self.is_loaded)
 
         self.vision_tower_name = vision_tower
+        print("self.vision_tower_name\n", self.vision_tower_name)
         self.select_layer = args.mm_vision_select_layer
+        print("self.select_layer\n", self.select_layer)
         self.select_feature = getattr(args, 'mm_vision_select_feature', 'patch')
+        print("self.select_feature\n", self.select_feature)
         
         print(f"[COND] delay_load={delay_load}")
         if not delay_load:
             print("【ENTER】if not delay_load:")
             self.load_model()
         elif getattr(args, 'unfreeze_mm_vision_tower', False):
+            print("【ENTER】elif getattr(args, 'unfreeze_mm_vision_tower', False):")
             self.load_model()
+            print("【EXIT】elif getattr(args, 'unfreeze_mm_vision_tower', False):")
         else:
+            print("【ENTER】else of if not delay_load/elif getattr(args, 'unfreeze_mm_vision_tower', False):")
             self.cfg_only = CLIPVisionConfig.from_pretrained(self.vision_tower_name)
+            print("self.cfg_only\n", self.cfg_only)
+            print("【EXIT】else of if not delay_load/elif getattr(args, 'unfreeze_mm_vision_tower', False):")
 
     def load_model(self):
 
@@ -50,12 +59,15 @@ class CLIPVisionTower(nn.Module):
         print("def CLIPVisionTower.feature_select(self, image_forward_outs)")
         print("image_forward_outs\n", image_forward_outs)
         image_features = image_forward_outs.hidden_states[self.select_layer]
+        print("image_features (after select_layer)\n", type(image_features))
         if hasattr(image_features, 'shape'):
             print("image_features.shape\n", image_features.shape)
         print(f"[COND] select_feature={self.select_feature}")
         if self.select_feature == 'patch':
             print("【ENTER】if self.select_feature == 'patch':")
+            print("original image_features\n", image_features)
             image_features = image_features[:, 1:]
+            print("after process\n", image_features)
             print("【EXIT】if self.select_feature == 'patch':")
         elif self.select_feature == 'cls_patch':
             print("【ENTER】elif self.select_feature == 'cls_patch':")
@@ -84,15 +96,23 @@ class CLIPVisionTower(nn.Module):
         if type(images) is list:
             print("【ENTER】if type(images) is list:")
             image_features = []
+            print("original images\n", images)
             for image in images:
+                print("original image\n", image)
                 image_forward_out = self.vision_tower(image.to(device=self.device, dtype=self.dtype).unsqueeze(0), output_hidden_states=True)
+                print("after process image_forward_out\n", type(image_forward_out))
                 image_feature = self.feature_select(image_forward_out).to(image.dtype)
+                print("after process image_feature\n", type(image_feature))
                 image_features.append(image_feature)
+            print("after process image_features (list)\n", type(image_features))
             print("【EXIT】if type(images) is list:")
         else:
             print("【ENTER】else (type(images) is not list):")
+            print("original images\n", images)
             image_forward_outs = self.vision_tower(images.to(device=self.device, dtype=self.dtype), output_hidden_states=True)
+            print("after process image_forward_outs\n", type(image_forward_outs))
             image_features = self.feature_select(image_forward_outs).to(images.dtype)
+            print("after process image_features\n", type(image_features))
             print("【EXIT】else (type(images) is not list):")
 
         print("image_features (return)\n", image_features)
@@ -144,10 +164,12 @@ class CLIPVisionTower(nn.Module):
         if self.is_loaded:
             print("【ENTER】if self.is_loaded:")
             result = self.vision_tower.config
+            print("result (return)\n", type(result))
             print("【EXIT】if self.is_loaded:")
         else:
             print("【ENTER】else (not is_loaded):")
             result = self.cfg_only
+            print("result (return)\n", type(result))
             print("【EXIT】else (not is_loaded):")
         print("result (return)\n", result)
         return result

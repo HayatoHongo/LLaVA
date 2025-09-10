@@ -15,7 +15,7 @@ class IdentityMap(nn.Module):
 
         print("current file path", "llava/llava/model/multimodal_projector/builder.py")
         print("def IdentityMap.forward(self, x, *args, **kwargs)")
-        print("x\n", x)
+        print("【COND】x\n", x)
         if hasattr(x, 'shape'):
             print("x.shape\n", x.shape)
         print("args\n", args)
@@ -75,14 +75,14 @@ def build_vision_projector(config, delay_load=False, **kwargs):
     print("kwargs\n", kwargs)
     projector_type = getattr(config, 'mm_projector_type', 'linear')
 
-    print("projector_type\n", projector_type)
+    print("【COND】 projector_type\n", projector_type)
     if projector_type == 'linear':
         result = nn.Linear(config.mm_hidden_size, config.hidden_size)
         print("result (return)\n", result)
         return result
         
     mlp_gelu_match = re.match(r'^mlp(\d+)x_gelu$', projector_type)
-    print("mlp_gelu_match\n", mlp_gelu_match)
+    print("【COND】mlp_gelu_match\n", mlp_gelu_match)
     if mlp_gelu_match:
         print("【ENTER】if mlp_gelu_match:")
         mlp_depth = int(mlp_gelu_match.group(1))
@@ -95,7 +95,7 @@ def build_vision_projector(config, delay_load=False, **kwargs):
         print("【EXIT】if mlp_gelu_match:")
         return result
 
-    print("projector_type\n", projector_type)
+    print("【COND】projector_type\n", projector_type)
     if projector_type == 'identity':
         print("【ENTER】if projector_type == 'identity':")
         result = IdentityMap()

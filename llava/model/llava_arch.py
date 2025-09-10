@@ -35,14 +35,20 @@ class LlavaMetaModel:
         print("config\n", config)
         super(LlavaMetaModel, self).__init__(config)
 
+        print(f"[COND] mm_vision_tower={hasattr(config, 'mm_vision_tower')}")
         if hasattr(config, "mm_vision_tower"):
+            print("【ENTER】if hasattr(config, 'mm_vision_tower'):")
             self.vision_tower = build_vision_tower(config, delay_load=True)
             self.mm_projector = build_vision_projector(config)
 
+            print(f"[COND] unpad_in_mm_patch_merge_type={'unpad' in getattr(config, 'mm_patch_merge_type', '')}")
             if 'unpad' in getattr(config, 'mm_patch_merge_type', ''):
+                print("【ENTER】if 'unpad' in getattr(config, 'mm_patch_merge_type', ''):")
                 self.image_newline = nn.Parameter(
                     torch.empty(config.hidden_size, dtype=self.dtype)
                 )
+                print("【EXIT】if 'unpad' in getattr(config, 'mm_patch_merge_type', ''):")
+            print("【EXIT】if hasattr(config, 'mm_vision_tower'):")
 
     def get_vision_tower(self):
 
@@ -51,8 +57,11 @@ class LlavaMetaModel:
         vision_tower = getattr(self, 'vision_tower', None)
         print("vision_tower (raw)\n", vision_tower)
         print("type(vision_tower)\n", type(vision_tower))
+        print(f"[COND] type_vision_tower_is_list={type(vision_tower) is list}")
         if type(vision_tower) is list:
+            print("【ENTER】if type(vision_tower) is list:")
             vision_tower = vision_tower[0]
+            print("【EXIT】if type(vision_tower) is list:")
         print("vision_tower (return)\n", vision_tower)
         return vision_tower
 
@@ -69,43 +78,49 @@ class LlavaMetaModel:
         mm_patch_merge_type = model_args.mm_patch_merge_type
 
         self.config.mm_vision_tower = vision_tower
-        
-        # 最初はこちら側の処理に入る
+
         print("[COND] self.get_vision_tower()\n", self.get_vision_tower())
+        print(f"[COND] get_vision_tower_is_None={self.get_vision_tower() is None}")
         if self.get_vision_tower() is None:
+            print("【ENTER】if self.get_vision_tower() is None:")
             print("[ENTER] self.get_vision_tower() is None")
             vision_tower = build_vision_tower(model_args)
 
             print("[COND] fsdp\n", fsdp)
+            print(f"[COND] fsdp_is_not_None={fsdp is not None} len_fsdp={len(fsdp) if fsdp is not None else 'N/A'}")
             if fsdp is not None and len(fsdp) > 0:
+                print("【ENTER】if fsdp is not None and len(fsdp) > 0:")
                 print("[COND] len(fsdp)\n", len(fsdp))
                 print("[ENTER] if fsdp is not None and len(fsdp) > 0:")
                 self.vision_tower = [vision_tower]
                 print("self.vision_tower\n", self.vision_tower)
-                print("【EXIT】if self.get_vision_tower() is None:")
+                print("【EXIT】if fsdp is not None and len(fsdp) > 0:")
             else:
-                print("[ENTER] else if fsdp is not None and len(fsdp) > 0:")
+                print("[COND] else_fsdp_is_not_None_and_len_fsdp_gt_0=True")
+                print("【ENTER】else of if fsdp is not None and len(fsdp) > 0:")
                 self.vision_tower = vision_tower
                 print("self.vision_tower\n", self.vision_tower)
-                print("【EXIT】else if fsdp is not None and len(fsdp) > 0:")
+                print("【EXIT】else of if fsdp is not None and len(fsdp) > 0:")
 
             print("【EXIT】if self.get_vision_tower() is None:")
         else:
-            print("[ENTER] else of if self.get_vision_tower() is None:")
+            print("[COND] else_get_vision_tower_is_None=True")
+            print("【ENTER】else of if self.get_vision_tower() is None:")
             print("vision_tower before load_model\n", self.get_vision_tower())
-            print("[COND] fsdp\n", fsdp)
+            print(f"[COND] fsdp_is_not_None={fsdp is not None} len_fsdp={len(fsdp) if fsdp is not None else 'N/A'}")
             if fsdp is not None and len(fsdp) > 0:
-                print("[COND] len(fsdp)\n", len(fsdp))
-                print("[ENTER] if fsdp is not None and len(fsdp) > 0:")
+                print("【ENTER】if fsdp is not None and len(fsdp) > 0:")
                 vision_tower = self.vision_tower[0]
                 print("vision_tower\n", vision_tower)
-                print("【EXIT】if self.get_vision_tower() is None:")
+                print("【EXIT】if fsdp is not None and len(fsdp) > 0:")
             else:
-                print("[ENTER] else if fsdp is not None and len(fsdp) > 0:")
+                print("[COND] else_fsdp_is_not_None_and_len_fsdp_gt_0=True")
+                print("【ENTER】else of if fsdp is not None and len(fsdp) > 0:")
                 vision_tower = self.vision_tower
                 print("vision_tower\n", vision_tower)
-                print("【EXIT】else if fsdp is not None and len(fsdp) > 0:")
+                print("【EXIT】else of if fsdp is not None and len(fsdp) > 0:")
             vision_tower.load_model()
+            print("【EXIT】else of if self.get_vision_tower() is None:")
 
         self.config.use_mm_proj = True
         self.config.mm_projector_type = getattr(model_args, 'mm_projector_type', 'linear')
@@ -114,20 +129,28 @@ class LlavaMetaModel:
         self.config.mm_vision_select_feature = mm_vision_select_feature
         self.config.mm_patch_merge_type = mm_patch_merge_type
 
+        print(f"[COND] mm_projector_is_None={getattr(self, 'mm_projector', None) is None}")
         if getattr(self, 'mm_projector', None) is None:
+            print("【ENTER】if getattr(self, 'mm_projector', None) is None:")
             self.mm_projector = build_vision_projector(self.config)
 
+            print(f"[COND] unpad_in_mm_patch_merge_type={'unpad' in mm_patch_merge_type}")
             if 'unpad' in mm_patch_merge_type:
+                print("【ENTER】if 'unpad' in mm_patch_merge_type:")
                 embed_std = 1 / torch.sqrt(torch.tensor(self.config.hidden_size, dtype=self.dtype))
                 self.image_newline = nn.Parameter(
                     torch.randn(self.config.hidden_size, dtype=self.dtype) * embed_std
                 )
+                print("【EXIT】if 'unpad' in mm_patch_merge_type:")
+            print("【EXIT】if getattr(self, 'mm_projector', None) is None:")
         else:
             # In case it is frozen by LoRA
             for p in self.mm_projector.parameters():
                 p.requires_grad = True
 
+        print(f"[COND] pretrain_mm_mlp_adapter_is_not_None={pretrain_mm_mlp_adapter is not None}")
         if pretrain_mm_mlp_adapter is not None:
+            print("【ENTER】if pretrain_mm_mlp_adapter is not None:")
             mm_projector_weights = torch.load(pretrain_mm_mlp_adapter, map_location='cpu')
             def get_w(weights, keyword):
                 print("current file path", "llava/model/llava_arch.py")
@@ -139,6 +162,7 @@ class LlavaMetaModel:
                 return result
 
             self.mm_projector.load_state_dict(get_w(mm_projector_weights, 'mm_projector'))
+            print("【EXIT】if pretrain_mm_mlp_adapter is not None:")
 
 
 def unpad_image(tensor, original_size):
@@ -152,16 +176,20 @@ def unpad_image(tensor, original_size):
     original_aspect_ratio = original_width / original_height
     current_aspect_ratio = current_width / current_height
 
+    print(f"[COND] original_aspect_ratio_gt_current_aspect_ratio={original_aspect_ratio > current_aspect_ratio}")
     if original_aspect_ratio > current_aspect_ratio:
+        print("【ENTER】if original_aspect_ratio > current_aspect_ratio:")
         scale_factor = current_width / original_width
         new_height = int(original_height * scale_factor)
         padding = (current_height - new_height) // 2
         unpadded_tensor = tensor[:, padding:current_height - padding, :]
     else:
+        print("【ENTER】else of if original_aspect_ratio > current_aspect_ratio:")
         scale_factor = current_height / original_height
         new_width = int(original_width * scale_factor)
         padding = (current_width - new_width) // 2
         unpadded_tensor = tensor[:, :, padding:current_width - padding]
+        print("【EXIT】else of if original_aspect_ratio > current_aspect_ratio:")
 
     print("unpadded_tensor (return)\n", unpadded_tensor)
     return unpadded_tensor
@@ -363,9 +391,17 @@ class LlavaMetaForCausalLM(ABC):
         return None, position_ids, attention_mask, past_key_values, new_input_embeds, new_labels
 
     def initialize_vision_tokenizer(self, model_args, tokenizer):
+        print("current file path", "llava/model/llava_arch.py")
+        print("def initialize_vision_tokenizer(self, model_args, tokenizer)")
+        print("model_args\n", model_args)
+        print("tokenizer\n", tokenizer)
+
+        print(f"[COND] mm_use_im_patch_token={model_args.mm_use_im_patch_token}")
         if model_args.mm_use_im_patch_token:
+            print("【ENTER】if mm_use_im_patch_token:")
             tokenizer.add_tokens([DEFAULT_IMAGE_PATCH_TOKEN], special_tokens=True)
             self.resize_token_embeddings(len(tokenizer))
+            print("【EXIT】if mm_use_im_patch_token:")
 
         if model_args.mm_use_im_start_end:
             num_new_tokens = tokenizer.add_tokens([DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN], special_tokens=True)
