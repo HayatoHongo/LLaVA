@@ -72,12 +72,17 @@ class LlavaMetaModel:
         print("model_args\n", model_args)
         print("fsdp\n", fsdp)
         vision_tower = model_args.vision_tower
+        print("vision_tower from model_args\n", vision_tower)
         mm_vision_select_layer = model_args.mm_vision_select_layer
+        print("mm_vision_select_layer from model_args\n", mm_vision_select_layer)
         mm_vision_select_feature = model_args.mm_vision_select_feature
+        print("mm_vision_select_feature from model_args\n", mm_vision_select_feature)
         pretrain_mm_mlp_adapter = model_args.pretrain_mm_mlp_adapter
+        print("pretrain_mm_mlp_adapter from model_args\n", pretrain_mm_mlp_adapter)
         mm_patch_merge_type = model_args.mm_patch_merge_type
 
         self.config.mm_vision_tower = vision_tower
+        print("self.config.mm_vision_tower\n", self.config.mm_vision_tower)
 
         print("[COND] self.get_vision_tower()\n", self.get_vision_tower())
         print(f"[COND] get_vision_tower_is_None={self.get_vision_tower() is None}")
@@ -85,6 +90,7 @@ class LlavaMetaModel:
             print("【ENTER】if self.get_vision_tower() is None:")
             print("[ENTER] self.get_vision_tower() is None")
             vision_tower = build_vision_tower(model_args)
+            print("vision_tower after build_vision_tower\n", vision_tower)
 
             print("[COND] fsdp\n", fsdp)
             print(f"[COND] fsdp_is_not_None={fsdp is not None} len_fsdp={len(fsdp) if fsdp is not None else 'N/A'}")
@@ -120,14 +126,21 @@ class LlavaMetaModel:
                 print("vision_tower\n", vision_tower)
                 print("【EXIT】else of if fsdp is not None and len(fsdp) > 0:")
             vision_tower.load_model()
+            print("vision_tower after load_model\n", vision_tower)
             print("【EXIT】else of if self.get_vision_tower() is None:")
 
         self.config.use_mm_proj = True
+        print("self.config.use_mm_proj set to True")
         self.config.mm_projector_type = getattr(model_args, 'mm_projector_type', 'linear')
+        print("self.config.mm_projector_type\n", self.config.mm_projector_type)
         self.config.mm_hidden_size = vision_tower.hidden_size
+        print("self.config.mm_hidden_size\n", self.config.mm_hidden_size)
         self.config.mm_vision_select_layer = mm_vision_select_layer
+        print("self.config.mm_vision_select_layer\n", self.config.mm_vision_select_layer)
         self.config.mm_vision_select_feature = mm_vision_select_feature
+        print("self.config.mm_vision_select_feature\n", self.config.mm_vision_select_feature)
         self.config.mm_patch_merge_type = mm_patch_merge_type
+        print("self.config.mm_patch_merge_type\n", self.config.mm_patch_merge_type)
 
         print(f"[COND] mm_projector_is_None={getattr(self, 'mm_projector', None) is None}")
         if getattr(self, 'mm_projector', None) is None:
@@ -199,20 +212,39 @@ class LlavaMetaForCausalLM(ABC):
 
     @abstractmethod
     def get_model(self):
+        print("current file path", "llava/model/llava_arch.py")
+        print("class LlavaMetaForCausalLM(ABC).get_model(self)")
         pass
 
     def get_vision_tower(self):
-        return self.get_model().get_vision_tower()
+        print("current file path", "llava/model/llava_arch.py")
+        print("class LlavaMetaForCausalLM(ABC).get_vision_tower(self)")
+        result = self.get_model().get_vision_tower()
+        print("result (return)\n", result)
+        return result
 
     def encode_images(self, images):
+        print("current file path", "llava/model/llava_arch.py")
+        print("def LlavaMetaForCausalLM(ABC).encode_images(self, images)")
+        print("images\n", images)
         image_features = self.get_model().get_vision_tower()(images)
         image_features = self.get_model().mm_projector(image_features)
+        print("image_features (return)\n", image_features)
         return image_features
 
     def prepare_inputs_labels_for_multimodal(
         self, input_ids, position_ids, attention_mask, past_key_values, labels,
         images, image_sizes=None
     ):
+        print("current file path", "llava/model/llava_arch.py")
+        print("def LlavaMetaForCausalLM(ABC).prepare_inputs_labels_for_multimodal(self, input_ids, position_ids, attention_mask, past_key_values, labels, images, image_sizes=None)")
+        print("input_ids\n", input_ids)
+        print("position_ids\n", position_ids)
+        print("attention_mask\n", attention_mask)
+        print("past_key_values\n", past_key_values)
+        print("labels\n", labels)
+        print("images\n", images)
+        print("image_sizes\n", image_sizes)
         vision_tower = self.get_vision_tower()
         if vision_tower is None or images is None or input_ids.shape[1] == 1:
             return input_ids, position_ids, attention_mask, past_key_values, None, labels

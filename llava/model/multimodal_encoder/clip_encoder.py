@@ -52,6 +52,7 @@ class CLIPVisionTower(nn.Module):
         self.vision_tower.requires_grad_(False)
 
         self.is_loaded = True
+        print("self.is_loaded\n", self.is_loaded)
 
     def feature_select(self, image_forward_outs):
 
@@ -158,7 +159,6 @@ class CLIPVisionTower(nn.Module):
         print("current file path", "llava/llava/model/multimodal_encoder/clip_encoder.py")
         print("def CLIPVisionTower.config(self)")
         print("self\n", type(self))
-        # おそらく is_loaded は True
         print("self.is_loaded\n", self.is_loaded)
         print(f"[COND] is_loaded={self.is_loaded}")
         if self.is_loaded:

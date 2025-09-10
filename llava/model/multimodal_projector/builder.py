@@ -74,6 +74,7 @@ def build_vision_projector(config, delay_load=False, **kwargs):
     print("delay_load\n", delay_load)
     print("kwargs\n", kwargs)
     projector_type = getattr(config, 'mm_projector_type', 'linear')
+    print("projector_type from config\n", projector_type)
 
     print("【COND】 projector_type\n", projector_type)
     if projector_type == 'linear':

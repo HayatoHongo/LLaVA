@@ -9,7 +9,9 @@ def build_vision_tower(vision_tower_cfg, **kwargs):
     print("vision_tower_cfg\n", vision_tower_cfg)
     print("kwargs\n", kwargs)
     vision_tower = getattr(vision_tower_cfg, 'mm_vision_tower', getattr(vision_tower_cfg, 'vision_tower', None))
+    print("vision_tower from vision_tower_cfg\n", vision_tower)
     is_absolute_path_exists = os.path.exists(vision_tower)
+    print("is_absolute_path_exists\n", is_absolute_path_exists)
     print(f"[COND] is_absolute_path_exists={is_absolute_path_exists} vision_tower={vision_tower}")
     if is_absolute_path_exists or vision_tower.startswith("openai") or vision_tower.startswith("laion") or "ShareGPT4V" in vision_tower:
         print("【ENTER】if is_absolute_path_exists or vision_tower.startswith('openai') or vision_tower.startswith('laion') or 'ShareGPT4V' in vision_tower:")

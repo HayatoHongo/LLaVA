@@ -10,17 +10,17 @@
     {
       "epoch": 1.0,
       "learning_rate": 0.001,
-      "loss": 9.2137,
+      "loss": 8.2383,
       "step": 1
     },
     {
       "epoch": 1.0,
       "step": 1,
       "total_flos": 998098534400.0,
-      "train_loss": 9.213690757751465,
-      "train_runtime": 9.8621,
-      "train_samples_per_second": 0.101,
-      "train_steps_per_second": 0.101
+      "train_loss": 8.238262176513672,
+      "train_runtime": 7.2286,
+      "train_samples_per_second": 0.138,
+      "train_steps_per_second": 0.138
     }
   ],
   "max_steps": 1,
