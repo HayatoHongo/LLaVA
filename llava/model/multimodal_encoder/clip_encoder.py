@@ -9,21 +9,21 @@ class CLIPVisionTower(nn.Module):
 
         print("current file path", "llava/llava/model/multimodal_encoder/clip_encoder.py")
         print("def CLIPVisionTower.__init__(self, vision_tower, args, delay_load=False)")
-        print("self\n", type(self))
-        print("vision_tower\n", vision_tower)
-        print("args\n", args)
-        print("delay_load\n", delay_load)
+        print("self\n", type(self)) 
+        print("vision_tower\n", vision_tower) # openai/clip-vit-large-patch14-336
+        print("args\n", args) #  ModelArguments(model_name_or_path='lmsys/vicuna-7b-v1.5', version='plain', freeze_backbone=False, tune_mm_mlp_adapter=True, vision_tower='openai/clip-vit-large-patch14-336', mm_vision_select_layer=-2, pretrain_mm_mlp_adapter=None, mm_projector_type='mlp2x_gelu', mm_use_im_start_end=False, mm_use_im_patch_token=False, mm_patch_merge_type='flat', mm_vision_select_feature='patch')
+        print("delay_load\n", delay_load) # False
         super().__init__()
 
         self.is_loaded = False
-        print("self.is_loaded\n", self.is_loaded)
+        print("self.is_loaded\n", self.is_loaded) # False
 
         self.vision_tower_name = vision_tower
-        print("self.vision_tower_name\n", self.vision_tower_name)
+        print("self.vision_tower_name\n", self.vision_tower_name) # openai/clip-vit-large-patch14-336
         self.select_layer = args.mm_vision_select_layer
-        print("self.select_layer\n", self.select_layer)
-        self.select_feature = getattr(args, 'mm_vision_select_feature', 'patch')
-        print("self.select_feature\n", self.select_feature)
+        print("self.select_layer\n", self.select_layer) # -2
+        self.select_feature = getattr(args, 'mm_vision_select_feature', 'patch') 
+        print("self.select_feature\n", self.select_feature) # patch
         
         print(f"[COND] delay_load={delay_load}")
         if not delay_load:
@@ -44,15 +44,76 @@ class CLIPVisionTower(nn.Module):
         print("current file path", "llava/llava/model/multimodal_encoder/clip_encoder.py")
         print("def CLIPVisionTower.load_model(self)")
         print("self\n", type(self))
-        print("self.vision_tower_name\n", self.vision_tower_name)
+        print("self.vision_tower_name\n", self.vision_tower_name) # openai/clip-vit-large-patch14-336
         self.image_processor = CLIPImageProcessor.from_pretrained(self.vision_tower_name)
         print("self.image_processor\n", self.image_processor)
+        """
+        CLIPImageProcessor {
+        "crop_size": {
+            "height": 336,
+            "width": 336
+        },
+        "do_center_crop": true,
+        "do_convert_rgb": true,
+        "do_normalize": true,
+        "do_rescale": true,
+        "do_resize": true,
+        "feature_extractor_type": "CLIPFeatureExtractor",
+        "image_mean": [
+            0.48145466,
+            0.4578275,
+            0.40821073
+        ],
+        "image_processor_type": "CLIPImageProcessor",
+        "image_std": [
+            0.26862954,
+            0.26130258,
+            0.27577711
+        ],
+        "resample": 3,
+        "rescale_factor": 0.00392156862745098,
+        "size": {
+            "shortest_edge": 336
+        }
+        }
+        """
         self.vision_tower = CLIPVisionModel.from_pretrained(self.vision_tower_name)
         print("self.vision_tower\n", self.vision_tower)
+        """
+        CLIPVisionModel(
+        (vision_model): CLIPVisionTransformer(
+            (embeddings): CLIPVisionEmbeddings(
+            (patch_embedding): Conv2d(3, 1024, kernel_size=(14, 14), stride=(14, 14), bias=False)
+            (position_embedding): Embedding(577, 1024)
+            )
+            (pre_layrnorm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+            (encoder): CLIPEncoder(
+            (layers): ModuleList(
+                (0-23): 24 x CLIPEncoderLayer(
+                (self_attn): CLIPAttention(
+                    (k_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                    (v_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                    (q_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                    (out_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                )
+                (layer_norm1): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+                (mlp): CLIPMLP(
+                    (activation_fn): QuickGELUActivation()
+                    (fc1): Linear(in_features=1024, out_features=4096, bias=True)
+                    (fc2): Linear(in_features=4096, out_features=1024, bias=True)
+                )
+                (layer_norm2): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+                )
+            )
+            )
+            (post_layernorm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+        )
+        )
+        """
         self.vision_tower.requires_grad_(False)
 
         self.is_loaded = True
-        print("self.is_loaded\n", self.is_loaded)
+        print("self.is_loaded\n", self.is_loaded) # True
 
     def feature_select(self, image_forward_outs):
 
@@ -158,20 +219,43 @@ class CLIPVisionTower(nn.Module):
 
         print("current file path", "llava/llava/model/multimodal_encoder/clip_encoder.py")
         print("def CLIPVisionTower.config(self)")
-        print("self\n", type(self))
-        print("self.is_loaded\n", self.is_loaded)
+        print("self\n", type(self)) 
+        print("self.is_loaded\n", self.is_loaded) # True
         print(f"[COND] is_loaded={self.is_loaded}")
         if self.is_loaded:
+            # 【ENTER】
             print("【ENTER】if self.is_loaded:")
             result = self.vision_tower.config
             print("result (return)\n", type(result))
             print("【EXIT】if self.is_loaded:")
         else:
+            # 【SKIP】
             print("【ENTER】else (not is_loaded):")
             result = self.cfg_only
             print("result (return)\n", type(result))
             print("【EXIT】else (not is_loaded):")
         print("result (return)\n", result)
+        """
+        CLIPVisionConfig {
+        "_name_or_path": "openai/clip-vit-large-patch14-336",
+        "attention_dropout": 0.0,
+        "dropout": 0.0,
+        "hidden_act": "quick_gelu",
+        "hidden_size": 1024,
+        "image_size": 336,
+        "initializer_factor": 1.0,
+        "initializer_range": 0.02,
+        "intermediate_size": 4096,
+        "layer_norm_eps": 1e-05,
+        "model_type": "clip_vision_model",
+        "num_attention_heads": 16,
+        "num_channels": 3,
+        "num_hidden_layers": 24,
+        "patch_size": 14,
+        "projection_dim": 768,
+        "transformers_version": "4.31.0"
+        }
+        """
         return result
 
     @property
@@ -181,7 +265,7 @@ class CLIPVisionTower(nn.Module):
         print("def CLIPVisionTower.hidden_size(self)")
         print("self\n", type(self))
         result = self.config.hidden_size
-        print("result (return), self.config.hidden_size\n", result)
+        print("result (return), self.config.hidden_size\n", result) # 1024
         return result
 
     @property

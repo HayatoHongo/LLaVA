@@ -80,21 +80,57 @@ class LlavaMetaModel:
         pretrain_mm_mlp_adapter = model_args.pretrain_mm_mlp_adapter
         print("pretrain_mm_mlp_adapter from model_args\n", pretrain_mm_mlp_adapter)
         mm_patch_merge_type = model_args.mm_patch_merge_type
-
+        # 下記はself.config.mm_vision_towerに関するもの。self.vision_towerは依然としてNone
         self.config.mm_vision_tower = vision_tower
         print("self.config.mm_vision_tower\n", self.config.mm_vision_tower)
 
         print("[COND] self.get_vision_tower()\n", self.get_vision_tower())
         print(f"[COND] get_vision_tower_is_None={self.get_vision_tower() is None}")
         if self.get_vision_tower() is None:
+            #【ENTER】self.vision_tower, self.get_vision_towerはNoneなのでこの分岐に入る。
             print("【ENTER】if self.get_vision_tower() is None:")
             print("[ENTER] self.get_vision_tower() is None")
+            # build_vision_tower(model_args) はちょっと奥の依存関係が深い
             vision_tower = build_vision_tower(model_args)
             print("vision_tower after build_vision_tower\n", vision_tower)
-
-            print("[COND] fsdp\n", fsdp)
-            print(f"[COND] fsdp_is_not_None={fsdp is not None} len_fsdp={len(fsdp) if fsdp is not None else 'N/A'}")
+            """
+            CLIPVisionTower(
+            (vision_tower): CLIPVisionModel(
+            (vision_model): CLIPVisionTransformer(
+                (embeddings): CLIPVisionEmbeddings(
+                (patch_embedding): Conv2d(3, 1024, kernel_size=(14, 14), stride=(14, 14), bias=False)
+                (position_embedding): Embedding(577, 1024)
+                )
+                (pre_layrnorm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+                (encoder): CLIPEncoder(
+                (layers): ModuleList(
+                    (0-23): 24 x CLIPEncoderLayer(
+                    (self_attn): CLIPAttention(
+                        (k_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                        (v_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                        (q_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                        (out_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                    )
+                    (layer_norm1): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+                    (mlp): CLIPMLP(
+                        (activation_fn): QuickGELUActivation()
+                        (fc1): Linear(in_features=1024, out_features=4096, bias=True)
+                        (fc2): Linear(in_features=4096, out_features=1024, bias=True)
+                    )
+                    (layer_norm2): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+                    )
+                )
+                )
+                (post_layernorm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+            )
+            )
+            )
+            """
+            # 分散学習(FSDP)を使うかどうか. 今回は [] 空のリストとなるので、Noneではないが、len(fsdp) == 0
+            print("[COND] fsdp\n", fsdp) # []
+            print(f"[COND] fsdp_is_not_None={fsdp is not None} len_fsdp={len(fsdp) if fsdp is not None else 'N/A'}") # fsdp_is_not_None=True len_fsdp=0
             if fsdp is not None and len(fsdp) > 0:
+                # 【SKIP】
                 print("【ENTER】if fsdp is not None and len(fsdp) > 0:")
                 print("[COND] len(fsdp)\n", len(fsdp))
                 print("[ENTER] if fsdp is not None and len(fsdp) > 0:")
@@ -102,14 +138,49 @@ class LlavaMetaModel:
                 print("self.vision_tower\n", self.vision_tower)
                 print("【EXIT】if fsdp is not None and len(fsdp) > 0:")
             else:
+                # 【ENTER】else of if fsdp is not None and len(fsdp) > 0:
                 print("[COND] else_fsdp_is_not_None_and_len_fsdp_gt_0=True")
                 print("【ENTER】else of if fsdp is not None and len(fsdp) > 0:")
                 self.vision_tower = vision_tower
                 print("self.vision_tower\n", self.vision_tower)
+                """
+                CLIPVisionTower(
+                (vision_tower): CLIPVisionModel(
+                    (vision_model): CLIPVisionTransformer(
+                    (embeddings): CLIPVisionEmbeddings(
+                        (patch_embedding): Conv2d(3, 1024, kernel_size=(14, 14), stride=(14, 14), bias=False)
+                        (position_embedding): Embedding(577, 1024)
+                    )
+                    (pre_layrnorm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+                    (encoder): CLIPEncoder(
+                        (layers): ModuleList(
+                        (0-23): 24 x CLIPEncoderLayer(
+                            (self_attn): CLIPAttention(
+                            (k_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                            (v_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                            (q_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                            (out_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                            )
+                            (layer_norm1): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+                            (mlp): CLIPMLP(
+                            (activation_fn): QuickGELUActivation()
+                            (fc1): Linear(in_features=1024, out_features=4096, bias=True)
+                            (fc2): Linear(in_features=4096, out_features=1024, bias=True)
+                            )
+                            (layer_norm2): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+                        )
+                        )
+                    )
+                    (post_layernorm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+                    )
+                )
+                )
+                """
                 print("【EXIT】else of if fsdp is not None and len(fsdp) > 0:")
 
             print("【EXIT】if self.get_vision_tower() is None:")
         else:
+            # 【SKIP】
             print("[COND] else_get_vision_tower_is_None=True")
             print("【ENTER】else of if self.get_vision_tower() is None:")
             print("vision_tower before load_model\n", self.get_vision_tower())
