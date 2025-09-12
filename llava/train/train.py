@@ -1273,7 +1273,6 @@ def train():
         trainer.train()
         print("【EXIT】else of if list(pathlib.Path(training_args.output_dir).glob(checkpoint-*)):")
     trainer.save_state()
-    print("trainer.state_dict()\n", trainer.state_dict())
 
     model.config.use_cache = True
     print("model.config.use_cache = True", model.config.use_cache)
