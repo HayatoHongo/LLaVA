@@ -4,8 +4,8 @@ deepspeed llava/train/train_mem.py \
     --deepspeed ./scripts/zero2.json \
     --model_name_or_path lmsys/vicuna-7b-v1.5 \
     --version plain \
-    --data_path /home/ubuntu/llava-virginia/blip_laion_cc_sbu_1.json \
-    --image_folder /home/ubuntu/llava-virginia/images \
+    --data_path /content/LLaVA/blip_laion_cc_sbu_1.json \
+    --image_folder /content/LLaVA/images \
     --vision_tower openai/clip-vit-large-patch14-336 \
     --mm_projector_type mlp2x_gelu \
     --tune_mm_mlp_adapter True \
