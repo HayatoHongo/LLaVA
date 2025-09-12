@@ -44,7 +44,7 @@ def rank0_print(*args):
 
     print("current file path", "llava/train/train.py")
     print("def rank0_print(*args)")
-    print("args\n", args)
+    print("args\n", args) # 
     if local_rank == 0:
         print(*args)
 
@@ -143,11 +143,17 @@ def get_peft_state_maybe_zero_3(named_params, bias):
     print("def get_peft_state_maybe_zero_3(named_params, bias)")
     print("named_params\n", named_params)
     print("bias\n", bias)
+    print(f"[COND] bias={bias}")
     if bias == "none":
+        print("【ENTER】if bias == 'none':")
         to_return = {k: t for k, t in named_params if "lora_" in k}
+        print("【EXIT】if bias == 'none':")
     elif bias == "all":
+        print("【ENTER】elif bias == 'all':")
         to_return = {k: t for k, t in named_params if "lora_" in k or "bias" in k}
+        print("【EXIT】elif bias == 'all':")
     elif bias == "lora_only":
+        print("【ENTER】elif bias == 'lora_only':")
         to_return = {}
         maybe_lora_bias = {}
         lora_bias_names = set()
@@ -161,8 +167,11 @@ def get_peft_state_maybe_zero_3(named_params, bias):
         for k, t in maybe_lora_bias:
             if bias_name in lora_bias_names:
                 to_return[bias_name] = t
+        print("【EXIT】elif bias == 'lora_only':")
     else:
+        print("【ENTER】else of if bias == ...:")
         raise NotImplementedError
+        print("【EXIT】else of if bias == ...:")
     to_return = {k: maybe_zero_3(v, ignore_status=True) for k, v in to_return.items()}
     print("to_return (return)\n", to_return)
     for k, v in to_return.items():
@@ -229,6 +238,11 @@ def find_all_linear_names(model):
 
 def safe_save_model_for_hf_trainer(trainer: transformers.Trainer,
                                    output_dir: str):
+
+    print("current file path", "llava/train/train.py")
+    print("def safe_save_model_for_hf_trainer(trainer: transformers.Trainer, output_dir: str)")
+    print("trainer\n", type(trainer))
+    print("output_dir\n", output_dir)
     """Collects the state dict and dump to disk."""
 
     if getattr(trainer.args, "tune_mm_mlp_adapter", False):
@@ -275,6 +289,12 @@ def smart_tokenizer_and_embedding_resize(
     tokenizer: transformers.PreTrainedTokenizer,
     model: transformers.PreTrainedModel,
 ):
+
+    print("current file path", "llava/train/train.py")
+    print("def smart_tokenizer_and_embedding_resize(special_tokens_dict, tokenizer, model)")
+    print("special_tokens_dict\n", special_tokens_dict)
+    print("tokenizer\n", type(tokenizer))
+    print("model\n", type(model))
     """Resize tokenizer and embedding.
 
     Note: This is the unoptimized version that may make your embedding size not be divisible by 64.
@@ -297,6 +317,11 @@ def smart_tokenizer_and_embedding_resize(
 
 def _tokenize_fn(strings: Sequence[str],
                  tokenizer: transformers.PreTrainedTokenizer) -> Dict:
+
+    print("current file path", "llava/train/train.py")
+    print("def _tokenize_fn(strings, tokenizer)")
+    print("strings\n", strings)
+    print("tokenizer\n", type(tokenizer))
     """Tokenize a list of strings."""
     tokenized_list = [
         tokenizer(
@@ -326,6 +351,12 @@ def _tokenize_fn(strings: Sequence[str],
 
 
 def _mask_targets(target, tokenized_lens, speakers):
+
+    print("current file path", "llava/train/train.py")
+    print("def _mask_targets(target, tokenized_lens, speakers)")
+    print("target\n", target)
+    print("tokenized_lens\n", tokenized_lens)
+    print("speakers\n", speakers)
     # cur_idx = 0
     cur_idx = tokenized_lens[0]
     tokenized_lens = tokenized_lens[1:]
@@ -337,6 +368,12 @@ def _mask_targets(target, tokenized_lens, speakers):
 
 
 def _add_speaker_and_signal(header, source, get_conversation=True):
+
+    print("current file path", "llava/train/train.py")
+    print("def _add_speaker_and_signal(header, source, get_conversation=True)")
+    print("header\n", header)
+    print("source\n", source)
+    print("get_conversation\n", get_conversation)
     """Add speaker and start/end signal on each round."""
     BEGIN_SIGNAL = "### "
     END_SIGNAL = "\n"
@@ -361,6 +398,11 @@ def preprocess_multimodal(
     sources: Sequence[str],
     data_args: DataArguments
 ) -> Dict:
+
+    print("current file path", "llava/train/train.py")
+    print("def preprocess_multimodal(sources, data_args)")
+    print("sources\n", sources)
+    print("data_args\n", data_args)
     is_multimodal = data_args.is_multimodal
     if not is_multimodal:
         return sources
@@ -386,6 +428,12 @@ def preprocess_llama_2(
     tokenizer: transformers.PreTrainedTokenizer,
     has_image: bool = False
 ) -> Dict:
+
+    print("current file path", "llava/train/train.py")
+    print("def preprocess_llama_2(sources, tokenizer, has_image=False)")
+    print("sources\n", sources)
+    print("tokenizer\n", type(tokenizer))
+    print("has_image\n", has_image)
     conv = conversation_lib.default_conversation.copy()
     roles = {"human": conv.roles[0], "gpt": conv.roles[1]}
 
@@ -470,6 +518,12 @@ def preprocess_v1(
     tokenizer: transformers.PreTrainedTokenizer,
     has_image: bool = False
 ) -> Dict:
+
+    print("current file path", "llava/train/train.py")
+    print("def preprocess_v1(sources, tokenizer, has_image=False)")
+    print("sources\n", sources)
+    print("tokenizer\n", type(tokenizer))
+    print("has_image\n", has_image)
     conv = conversation_lib.default_conversation.copy()
     roles = {"human": conv.roles[0], "gpt": conv.roles[1]}
 
@@ -553,6 +607,11 @@ def preprocess_mpt(
     sources,
     tokenizer: transformers.PreTrainedTokenizer,
 ) -> Dict:
+
+    print("current file path", "llava/train/train.py")
+    print("def preprocess_mpt(sources, tokenizer)")
+    print("sources\n", sources)
+    print("tokenizer\n", type(tokenizer))
     conv = conversation_lib.default_conversation.copy()
     roles = {"human": conv.roles[0], "gpt": conv.roles[1]}
 
@@ -621,6 +680,11 @@ def preprocess_plain(
     sources: Sequence[str],
     tokenizer: transformers.PreTrainedTokenizer,
 ) -> Dict:
+
+    print("current file path", "llava/train/train.py")
+    print("def preprocess_plain(sources, tokenizer)")
+    print("sources\n", sources)
+    print("tokenizer\n", type(tokenizer))
     # add end signal and concatenate together
     conversations = []
     for source in sources:
@@ -650,6 +714,12 @@ def preprocess(
     tokenizer: transformers.PreTrainedTokenizer,
     has_image: bool = False
 ) -> Dict:
+
+    print("current file path", "llava/train/train.py")
+    print("def preprocess(sources, tokenizer, has_image=False)")
+    print("sources\n", sources)
+    print("tokenizer\n", type(tokenizer))
+    print("has_image\n", has_image)
     """
     Given a list of sources, each is a conversation list. This transform:
     1. Add signal '### ' at the beginning each sentence, with end signal '\n';
@@ -708,6 +778,12 @@ class LazySupervisedDataset(Dataset):
     def __init__(self, data_path: str,
                  tokenizer: transformers.PreTrainedTokenizer,
                  data_args: DataArguments):
+
+        print("current file path", "llava/train/train.py")
+        print("def LazySupervisedDataset.__init__(self, data_path, tokenizer, data_args)")
+        print("data_path\n", data_path)
+        print("tokenizer\n", type(tokenizer))
+        print("data_args\n", data_args)
         super(LazySupervisedDataset, self).__init__()
         list_data_dict = json.load(open(data_path, "r"))
 
@@ -717,10 +793,16 @@ class LazySupervisedDataset(Dataset):
         self.data_args = data_args
 
     def __len__(self):
+
+        print("current file path", "llava/train/train.py")
+        print("def LazySupervisedDataset.__len__(self)")
         return len(self.list_data_dict)
 
     @property
     def lengths(self):
+
+        print("current file path", "llava/train/train.py")
+        print("def LazySupervisedDataset.lengths(self)")
         length_list = []
         for sample in self.list_data_dict:
             img_tokens = 128 if 'image' in sample else 0
@@ -729,6 +811,9 @@ class LazySupervisedDataset(Dataset):
 
     @property
     def modality_lengths(self):
+
+        print("current file path", "llava/train/train.py")
+        print("def LazySupervisedDataset.modality_lengths(self)")
         length_list = []
         for sample in self.list_data_dict:
             cur_len = sum(len(conv['value'].split()) for conv in sample['conversations'])
@@ -737,6 +822,10 @@ class LazySupervisedDataset(Dataset):
         return length_list
 
     def __getitem__(self, i) -> Dict[str, torch.Tensor]:
+
+        print("current file path", "llava/train/train.py")
+        print("def LazySupervisedDataset.__getitem__(self, i)")
+        print("i\n", i)
         sources = self.list_data_dict[i]
         if isinstance(i, int):
             sources = [sources]
@@ -798,6 +887,10 @@ class DataCollatorForSupervisedDataset(object):
     tokenizer: transformers.PreTrainedTokenizer
 
     def __call__(self, instances: Sequence[Dict]) -> Dict[str, torch.Tensor]:
+
+        print("current file path", "llava/train/train.py")
+        print("def DataCollatorForSupervisedDataset.__call__(self, instances)")
+        print("instances\n", instances)
         # Noneを除外
         instances = [x for x in instances if x is not None]
         input_ids, labels = tuple([instance[key] for instance in instances]
@@ -829,29 +922,47 @@ class DataCollatorForSupervisedDataset(object):
 
 def make_supervised_data_module(tokenizer: transformers.PreTrainedTokenizer,
                                 data_args) -> Dict:
+
+    print("current file path", "llava/train/train.py")
+    print("def make_supervised_data_module(tokenizer, data_args)")
+    print("tokenizer\n", type(tokenizer))
+    print("data_args\n", data_args)
     """Make dataset and collator for supervised fine-tuning."""
+    print("current file path", "llava/train/train.py")
+    print("def make_supervised_data_module(tokenizer: transformers.PreTrainedTokenizer, data_args) -> Dict")
     train_dataset = LazySupervisedDataset(tokenizer=tokenizer,
                                 data_path=data_args.data_path,
                                 data_args=data_args)
+    print("train_dataset\n", train_dataset)
+    print("len(train_dataset)\n", len(train_dataset))
     data_collator = DataCollatorForSupervisedDataset(tokenizer=tokenizer)
-    return dict(train_dataset=train_dataset,
-                eval_dataset=None,
-                data_collator=data_collator)
-
+    print("data_collator\n", data_collator)
+    result = dict(train_dataset=train_dataset,
+                  eval_dataset=None,
+                  data_collator=data_collator)
+    print("def make_supervised_data_module: result (return)\n", result)
+    return result
 
 def train():
+
+    print("current file path", "llava/train/train.py")
+    print("def train()")
     global local_rank
 
     parser = transformers.HfArgumentParser(
         (ModelArguments, DataArguments, TrainingArguments))
+    print("original parser\n", parser)
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
     print("model_args\n", model_args)
     print("data_args\n", data_args)
     print("training_args\n", training_args)
     local_rank = training_args.local_rank
+    print("local_rank\n", local_rank)
     compute_dtype = (torch.float16 if training_args.fp16 else (torch.bfloat16 if training_args.bf16 else torch.float32))
+    print("compute_dtype\n", compute_dtype)
 
     bnb_model_from_pretrained_args = {}
+    print("bnb_model_from_pretrained_args\n", bnb_model_from_pretrained_args)
     # 【SKIP】bfloat16 なので 以下の if 文はスキップされる
     print(f"[COND] bits={training_args.bits}")
     if training_args.bits in [4, 8]:
@@ -883,13 +994,16 @@ def train():
         if 'mpt' in model_args.model_name_or_path:
             print("【ENTER】if 'mpt' in model_args.model_name_or_path:")
             config = transformers.AutoConfig.from_pretrained(model_args.model_name_or_path, trust_remote_code=True)
+            print("config\n", config)
             config.attn_config['attn_impl'] = training_args.mpt_attn_impl
+            print("config.attn_config['attn_impl']\n", config.attn_config['attn_impl'])
             model = LlavaMPTForCausalLM.from_pretrained(
                 model_args.model_name_or_path,
                 config=config,
                 cache_dir=training_args.cache_dir,
                 **bnb_model_from_pretrained_args
             )
+            print("model\n", model)
             print("【EXIT】if 'mpt' in model_args.model_name_or_path:")
         #【ENTER】 model_args.model_name_or_path に mptは含まれていないので、この分岐に入る
         else:
@@ -917,13 +1031,16 @@ def train():
         print("model defined as LlamaForCausalLM \n", model)
         print("【EXIT】else of if model_args.vision_tower is not None:")
     model.config.use_cache = False
+    print("model.config.use_cache\n", model.config.use_cache)
 
     print(f"[COND] freeze_backbone={model_args.freeze_backbone}")
+    # 【SKIP】 freeze_backbone=False なので、この分岐はskipされる
     if model_args.freeze_backbone:
         print("【ENTER】if model_args.freeze_backbone:")
         model.model.requires_grad_(False)
         print("【EXIT】if model_args.freeze_backbone:")
 
+    # 【SKIP】 bfloat16 なので 以下の if 文はスキップされる
     print(f"[COND] bits={training_args.bits}")
     if training_args.bits in [4, 8]:
         print("【ENTER】if training_args.bits in [4, 8]:")
@@ -933,13 +1050,16 @@ def train():
         print("【EXIT】if training_args.bits in [4, 8]:")
 
     print(f"[COND] gradient_checkpointing={training_args.gradient_checkpointing}")
+    # 【ENTER】 gradient_checkpointing=True なので、この分岐に入る
     if training_args.gradient_checkpointing:
         print("【ENTER】if training_args.gradient_checkpointing:")
         print(f"[COND] has_enable_input_require_grads={hasattr(model, 'enable_input_require_grads')}")
+        # 【ENTER】 model に enable_input_require_grads メソッドがあるので、この分岐に入る
         if hasattr(model, "enable_input_require_grads"):
             print("【ENTER】if hasattr(model, 'enable_input_require_grads'):")
             model.enable_input_require_grads()
             print("【EXIT】if hasattr(model, 'enable_input_require_grads'):")
+        # 【SKIP】 model に enable_input_require_grads メソッドがあるので、この分岐はskipされる
         else:
             print("【ENTER】else of if hasattr(model, 'enable_input_require_grads'):")
             def make_inputs_require_grad(module, input, output):
@@ -949,6 +1069,7 @@ def train():
         print("【EXIT】if training_args.gradient_checkpointing:")
 
     print(f"[COND] lora_enable={training_args.lora_enable}")
+    # 【SKIP】 lora_enable=False なので、この分岐はskipされる
     if training_args.lora_enable:
         print("【ENTER】if training_args.lora_enable:")
         from peft import LoraConfig, get_peft_model
@@ -979,6 +1100,7 @@ def train():
         print("【EXIT】if training_args.lora_enable:")
 
     print(f"[COND] mpt_in_model_name_or_path={'mpt' in model_args.model_name_or_path}")
+    # 【SKIP】model_args.model_name_or_path に mptは含まれていないので、この分岐はskipされる
     if 'mpt' in model_args.model_name_or_path:
         print("【ENTER】if 'mpt' in model_args.model_name_or_path:")
         tokenizer = transformers.AutoTokenizer.from_pretrained(
@@ -988,6 +1110,7 @@ def train():
             padding_side="right"
         )
         print("【EXIT】if 'mpt' in model_args.model_name_or_path:")
+    #【ENTER】 model_args.model_name_or_path に mptは含まれていないので、この分岐に入る
     else:
         print("[COND] not_mpt_in_model_name_or_path={'mpt' not in model_args.model_name_or_path}")
         print("【ENTER】else of if 'mpt' in model_args.model_name_or_path:")
@@ -998,9 +1121,11 @@ def train():
             padding_side="right",
             use_fast=False,
         )
+        print("tokenizer defined by AutoTokenizer.from_pretrained \n", tokenizer)
         print("【EXIT】else of if 'mpt' in model_args.model_name_or_path:")
 
     print(f"[COND] version={model_args.version}")
+    # 【SKIP】 version=plain なので、この分岐はskipされる
     if model_args.version == "v0":
         print("【ENTER】if model_args.version == 'v0':")
         print(f"[COND] pad_token_is_None={tokenizer.pad_token is None}")
@@ -1013,18 +1138,23 @@ def train():
             )
             print("【EXIT】if tokenizer.pad_token is None:")
         print("【EXIT】if model_args.version == 'v0':")
+    # 【SKIP】 version=plain なので、この分岐はskipされる
     elif model_args.version == "v0.5":
         print("【ENTER】elif model_args.version == 'v0.5':")
         tokenizer.pad_token = tokenizer.unk_token
         print("【EXIT】elif model_args.version == 'v0.5':")
+    # 【ENTER】 version=plain なので、この分岐に入る
     else:
         print("【ENTER】else of if model_args.version == 'v0' and elif 'v0.5':")
         tokenizer.pad_token = tokenizer.unk_token
         print(f"[COND] version_in_conv_templates={model_args.version in conversation_lib.conv_templates}")
+        # 【ENTER】 model_args.version=plain は conversation_lib.conv_templates に含まれている（"plain": conv_llava_plain）ので、この分岐に入る
         if model_args.version in conversation_lib.conv_templates:
             print("【ENTER】if model_args.version in conversation_lib.conv_templates:")
             conversation_lib.default_conversation = conversation_lib.conv_templates[model_args.version]
+            print(f"conversation_lib.default_conversation set to {model_args.version}")
             print("【EXIT】if model_args.version in conversation_lib.conv_templates:")
+        # 【SKIP】 model_args.version=plain は conversation_lib.conv_templates に含まれているので、この分岐はskipされる
         else:
             print("【ENTER】else of if model_args.version in conversation_lib.conv_templates:")
             conversation_lib.default_conversation = conversation_lib.conv_templates["vicuna_v1"]
@@ -1032,6 +1162,7 @@ def train():
         print("【EXIT】else of if model_args.version == 'v0' and elif 'v0.5':")
 
     print(f"[COND] vision_tower={model_args.vision_tower}")
+    # 【ENTER】 vision_tower=openai/clip-vit-large-patch14-336 なので、この分岐に入る
     if model_args.vision_tower is not None:
         print("【ENTER】if model_args.vision_tower is not None:")
         model.get_model().initialize_vision_modules(
@@ -1050,37 +1181,50 @@ def train():
         model.config.tokenizer_model_max_length = tokenizer.model_max_length
 
         model.config.tune_mm_mlp_adapter = training_args.tune_mm_mlp_adapter = model_args.tune_mm_mlp_adapter
-        print(f"[COND] tune_mm_mlp_adapter={model_args.tune_mm_mlp_adapter}")
+        print(f"[COND] tune_mm_mlp_adapter={model_args.tune_mm_mlp_adapter}") # True
         if model_args.tune_mm_mlp_adapter:
+            # 【ENTER】 tune_mm_mlp_adapter=True なので、この分岐に入る
             print("【ENTER】if model_args.tune_mm_mlp_adapter:")
+            # モデル全体の全パラメータを「学習不可（requires_grad=False）」にする
+            # これで通常の重みは全て凍結される
             model.requires_grad_(False)
             for p in model.get_model().mm_projector.parameters():
+                # mm_projector（画像特徴量→テキスト特徴量への変換層）の全パラメータだけを「学習可能（requires_grad=True）」に戻す
+                # これで mm_projector のみ学習されることになる
+                print("model.get_model().mm_projector.parameters()", model.get_model().mm_projector.parameters())
                 p.requires_grad = True
             print("【EXIT】if model_args.tune_mm_mlp_adapter:")
 
         model.config.freeze_mm_mlp_adapter = training_args.freeze_mm_mlp_adapter
-        print(f"[COND] freeze_mm_mlp_adapter={training_args.freeze_mm_mlp_adapter}")
+        print(f"[COND] freeze_mm_mlp_adapter={training_args.freeze_mm_mlp_adapter}") # False
         if training_args.freeze_mm_mlp_adapter:
+            # 【SKIP】 freeze_mm_mlp_adapter=False なので、この分岐はskipされる
             print("【ENTER】if training_args.freeze_mm_mlp_adapter:")
             for p in model.get_model().mm_projector.parameters():
                 p.requires_grad = False
             print("【EXIT】if training_args.freeze_mm_mlp_adapter:")
 
-        print(f"[COND] bits={training_args.bits}")
+        print(f"[COND] bits={training_args.bits}") # 16
         if training_args.bits in [4, 8]:
+            # 【SKIP】 bfloat16 なので 以下の if 文はスキップされる
             print("【ENTER】if training_args.bits in [4, 8]:")
             model.get_model().mm_projector.to(dtype=compute_dtype, device=training_args.device)
             print("【EXIT】if training_args.bits in [4, 8]:")
 
         model.config.mm_use_im_start_end = data_args.mm_use_im_start_end = model_args.mm_use_im_start_end
+        print("model_args.mm_use_im_start_end", model_args.mm_use_im_start_end)
         model.config.mm_projector_lr = training_args.mm_projector_lr
+        print("training_args.mm_projector_lr", training_args.mm_projector_lr)
         training_args.use_im_start_end = model_args.mm_use_im_start_end
+        print("training_args.use_im_start_end", training_args.use_im_start_end)
         model.config.mm_use_im_patch_token = model_args.mm_use_im_patch_token
+        print("model_args.mm_use_im_patch_token", model_args.mm_use_im_patch_token)
         model.initialize_vision_tokenizer(model_args, tokenizer=tokenizer)
         print("【EXIT】if model_args.vision_tower is not None:")
 
-    print(f"[COND] bits={training_args.bits}")
+    print(f"[COND] bits={training_args.bits}") # 16
     if training_args.bits in [4, 8]:
+        # 【SKIP】 bfloat16 なので 以下の if 文はスキップされる
         print("【ENTER】if training_args.bits in [4, 8]:")
         from peft.tuners.lora import LoraLayer
         for name, module in model.named_modules():
@@ -1108,35 +1252,59 @@ def train():
                 print("【EXIT】if 'lm_head' in name or 'embed_tokens' in name:")
         print("【EXIT】if training_args.bits in [4, 8]:")
 
+
     data_module = make_supervised_data_module(tokenizer=tokenizer,
                                               data_args=data_args)
+    print("data_module\n", data_module)
+
     trainer = LLaVATrainer(model=model,
                     tokenizer=tokenizer,
                     args=training_args,
                     **data_module)
+    print("trainer\n", trainer)
 
+    print("【COND】list(pathlib.Path(training_args.output_dir).glob('checkpoint-*'))\n", list(pathlib.Path(training_args.output_dir).glob("checkpoint-*")))
     if list(pathlib.Path(training_args.output_dir).glob("checkpoint-*")):
+        print("【ENTER】if list(pathlib.Path(training_args.output_dir).glob(checkpoint-*)):")
         trainer.train(resume_from_checkpoint=False)
+        print("【EXIT】if list(pathlib.Path(training_args.output_dir).glob(checkpoint-*)):")
     else:
+        print("【ENTER】else of if list(pathlib.Path(training_args.output_dir).glob(checkpoint-*)):")
         trainer.train()
+        print("【EXIT】else of if list(pathlib.Path(training_args.output_dir).glob(checkpoint-*)):")
     trainer.save_state()
+    print("trainer.state_dict()\n", trainer.state_dict())
 
     model.config.use_cache = True
+    print("model.config.use_cache = True", model.config.use_cache)
 
+    print(f"【COND】lora_enable={training_args.lora_enable}")
     if training_args.lora_enable:
+        print("【ENTER】if training_args.lora_enable:")
         state_dict = get_peft_state_maybe_zero_3(
             model.named_parameters(), training_args.lora_bias
         )
+        print("state_dict for LoRA:\n", state_dict)
         non_lora_state_dict = get_peft_state_non_lora_maybe_zero_3(
             model.named_parameters()
         )
+        print("non_lora_state_dict:\n", non_lora_state_dict)
+        print("【EXIT】if training_args.lora_enable:")
+        print(f"[COND] local_rank={training_args.local_rank} (0 or -1)")
         if training_args.local_rank == 0 or training_args.local_rank == -1:
+            print("【ENTER】if training_args.local_rank == 0 or training_args.local_rank == -1:")
+            print("training_args.output_dir", training_args.output_dir)
             model.config.save_pretrained(training_args.output_dir)
+            print("state_dict to be saved to \n", state_dict)
             model.save_pretrained(training_args.output_dir, state_dict=state_dict)
             torch.save(non_lora_state_dict, os.path.join(training_args.output_dir, 'non_lora_trainables.bin'))
+            print("【EXIT】if training_args.local_rank == 0 or training_args.local_rank == -1:")
     else:
+        print("【ENTER】else of if training_args.lora_enable:")
+        print("trainer", trainer)
         safe_save_model_for_hf_trainer(trainer=trainer,
                                        output_dir=training_args.output_dir)
+        print("【EXIT】else of if training_args.lora_enable:")
 
 
 if __name__ == "__main__":

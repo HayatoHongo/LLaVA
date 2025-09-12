@@ -39,7 +39,9 @@ class LlavaMetaModel:
         if hasattr(config, "mm_vision_tower"):
             print("【ENTER】if hasattr(config, 'mm_vision_tower'):")
             self.vision_tower = build_vision_tower(config, delay_load=True)
+            print("self.vision_tower\n", self.vision_tower)
             self.mm_projector = build_vision_projector(config)
+            print("self.mm_projector\n", self.mm_projector)
 
             print(f"[COND] unpad_in_mm_patch_merge_type={'unpad' in getattr(config, 'mm_patch_merge_type', '')}")
             if 'unpad' in getattr(config, 'mm_patch_merge_type', ''):
@@ -56,13 +58,81 @@ class LlavaMetaModel:
         print("def get_vision_tower(self)")
         vision_tower = getattr(self, 'vision_tower', None)
         print("vision_tower (raw)\n", vision_tower)
+        """
+        CLIPVisionTower(
+        (vision_tower): CLIPVisionModel(
+            (vision_model): CLIPVisionTransformer(
+            (embeddings): CLIPVisionEmbeddings(
+                (patch_embedding): Conv2d(3, 1024, kernel_size=(14, 14), stride=(14, 14), bias=False)
+                (position_embedding): Embedding(577, 1024)
+            )
+            (pre_layrnorm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+            (encoder): CLIPEncoder(
+                (layers): ModuleList(
+                (0-23): 24 x CLIPEncoderLayer(
+                    (self_attn): CLIPAttention(
+                    (k_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                    (v_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                    (q_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                    (out_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                    )
+                    (layer_norm1): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+                    (mlp): CLIPMLP(
+                    (activation_fn): QuickGELUActivation()
+                    (fc1): Linear(in_features=1024, out_features=4096, bias=True)
+                    (fc2): Linear(in_features=4096, out_features=1024, bias=True)
+                    )
+                    (layer_norm2): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+                )
+                )
+            )
+            (post_layernorm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+            )
+        )
+        )
+        """
         print("type(vision_tower)\n", type(vision_tower))
-        print(f"[COND] type_vision_tower_is_list={type(vision_tower) is list}")
+        print(f"[COND] type_vision_tower_is_list={type(vision_tower) is list}")  # False
         if type(vision_tower) is list:
+            # 【SKIP】
             print("【ENTER】if type(vision_tower) is list:")
             vision_tower = vision_tower[0]
             print("【EXIT】if type(vision_tower) is list:")
         print("vision_tower (return)\n", vision_tower)
+        """
+        vision_tower (return)
+        CLIPVisionTower(
+        (vision_tower): CLIPVisionModel(
+            (vision_model): CLIPVisionTransformer(
+            (embeddings): CLIPVisionEmbeddings(
+                (patch_embedding): Conv2d(3, 1024, kernel_size=(14, 14), stride=(14, 14), bias=False)
+                (position_embedding): Embedding(577, 1024)
+            )
+            (pre_layrnorm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+            (encoder): CLIPEncoder(
+                (layers): ModuleList(
+                (0-23): 24 x CLIPEncoderLayer(
+                    (self_attn): CLIPAttention(
+                    (k_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                    (v_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                    (q_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                    (out_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                    )
+                    (layer_norm1): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+                    (mlp): CLIPMLP(
+                    (activation_fn): QuickGELUActivation()
+                    (fc1): Linear(in_features=1024, out_features=4096, bias=True)
+                    (fc2): Linear(in_features=4096, out_features=1024, bias=True)
+                    )
+                    (layer_norm2): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+                )
+                )
+            )
+            (post_layernorm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+            )
+        )
+        )
+        """
         return vision_tower
 
     def initialize_vision_modules(self, model_args, fsdp=None):
@@ -201,25 +271,29 @@ class LlavaMetaModel:
             print("【EXIT】else of if self.get_vision_tower() is None:")
 
         self.config.use_mm_proj = True
-        print("self.config.use_mm_proj set to True")
+        print("self.config.use_mm_proj set to True") # True
         self.config.mm_projector_type = getattr(model_args, 'mm_projector_type', 'linear')
-        print("self.config.mm_projector_type\n", self.config.mm_projector_type)
-        self.config.mm_hidden_size = vision_tower.hidden_size
-        print("self.config.mm_hidden_size\n", self.config.mm_hidden_size)
-        self.config.mm_vision_select_layer = mm_vision_select_layer
-        print("self.config.mm_vision_select_layer\n", self.config.mm_vision_select_layer)
+        print("self.config.mm_projector_type\n", self.config.mm_projector_type) # mlp2x_gelu
+        self.config.mm_hidden_size = vision_tower.hidden_size 
+        print("self.config.mm_hidden_size\n", self.config.mm_hidden_size) # 1024
+        self.config.mm_vision_select_layer = mm_vision_select_layer 
+        print("self.config.mm_vision_select_layer\n", self.config.mm_vision_select_layer) # -2
         self.config.mm_vision_select_feature = mm_vision_select_feature
-        print("self.config.mm_vision_select_feature\n", self.config.mm_vision_select_feature)
+        print("self.config.mm_vision_select_feature\n", self.config.mm_vision_select_feature) # patch
         self.config.mm_patch_merge_type = mm_patch_merge_type
-        print("self.config.mm_patch_merge_type\n", self.config.mm_patch_merge_type)
+        print("self.config.mm_patch_merge_type\n", self.config.mm_patch_merge_type) # flat
 
+        # mm_projector_is_None=True
         print(f"[COND] mm_projector_is_None={getattr(self, 'mm_projector', None) is None}")
         if getattr(self, 'mm_projector', None) is None:
+            # 【ENTER】
             print("【ENTER】if getattr(self, 'mm_projector', None) is None:")
             self.mm_projector = build_vision_projector(self.config)
-
+            print("self.mm_projector after build_vision_projector\n", self.mm_projector)
+            print("mm_patch_merge_type\n", mm_patch_merge_type) # flat
             print(f"[COND] unpad_in_mm_patch_merge_type={'unpad' in mm_patch_merge_type}")
             if 'unpad' in mm_patch_merge_type:
+                # 【SKIP】
                 print("【ENTER】if 'unpad' in mm_patch_merge_type:")
                 embed_std = 1 / torch.sqrt(torch.tensor(self.config.hidden_size, dtype=self.dtype))
                 self.image_newline = nn.Parameter(
@@ -228,7 +302,9 @@ class LlavaMetaModel:
                 print("【EXIT】if 'unpad' in mm_patch_merge_type:")
             print("【EXIT】if getattr(self, 'mm_projector', None) is None:")
         else:
+            # 【SKIP】
             # In case it is frozen by LoRA
+            print("[COND] else_mm_projector_is_None=True")
             for p in self.mm_projector.parameters():
                 p.requires_grad = True
 
@@ -291,7 +367,40 @@ class LlavaMetaForCausalLM(ABC):
         print("current file path", "llava/model/llava_arch.py")
         print("class LlavaMetaForCausalLM(ABC).get_vision_tower(self)")
         result = self.get_model().get_vision_tower()
-        print("result (return)\n", result)
+        print("LlavaMetaForCausalLM(ABC).get_vision_tower(self) result (return)\n", result)
+        """
+        CLIPVisionTower(
+        (vision_tower): CLIPVisionModel(
+            (vision_model): CLIPVisionTransformer(
+            (embeddings): CLIPVisionEmbeddings(
+                (patch_embedding): Conv2d(3, 1024, kernel_size=(14, 14), stride=(14, 14), bias=False)
+                (position_embedding): Embedding(577, 1024)
+            )
+            (pre_layrnorm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+            (encoder): CLIPEncoder(
+                (layers): ModuleList(
+                (0-23): 24 x CLIPEncoderLayer(
+                    (self_attn): CLIPAttention(
+                    (k_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                    (v_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                    (q_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                    (out_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                    )
+                    (layer_norm1): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+                    (mlp): CLIPMLP(
+                    (activation_fn): QuickGELUActivation()
+                    (fc1): Linear(in_features=1024, out_features=4096, bias=True)
+                    (fc2): Linear(in_features=4096, out_features=1024, bias=True)
+                    )
+                    (layer_norm2): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+                )
+                )
+            )
+            (post_layernorm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+            )
+        )
+        )
+        """
         return result
 
     def encode_images(self, images):
@@ -496,17 +605,20 @@ class LlavaMetaForCausalLM(ABC):
     def initialize_vision_tokenizer(self, model_args, tokenizer):
         print("current file path", "llava/model/llava_arch.py")
         print("def initialize_vision_tokenizer(self, model_args, tokenizer)")
-        print("model_args\n", model_args)
-        print("tokenizer\n", tokenizer)
+        print("model_args\n", model_args) # ModelArguments(model_name_or_path='lmsys/vicuna-7b-v1.5', version='plain', freeze_backbone=False, tune_mm_mlp_adapter=True, vision_tower='openai/clip-vit-large-patch14-336', mm_vision_select_layer=-2, pretrain_mm_mlp_adapter=None, mm_projector_type='mlp2x_gelu', mm_use_im_start_end=False, mm_use_im_patch_token=False, mm_patch_merge_type='flat', mm_vision_select_feature='patch')
+        print("tokenizer\n", tokenizer) # LlamaTokenizer(name_or_path='lmsys/vicuna-7b-v1.5', vocab_size=32000, model_max_length=2048, is_fast=False, padding_side='right', truncation_side='right', special_tokens={'bos_token': AddedToken("<s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'eos_token': AddedToken("</s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'unk_token': AddedToken("<unk>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'pad_token': '<unk>'}, clean_up_tokenization_spaces=False)
 
-        print(f"[COND] mm_use_im_patch_token={model_args.mm_use_im_patch_token}")
+        print(f"[COND] mm_use_im_patch_token={model_args.mm_use_im_patch_token}") # False
         if model_args.mm_use_im_patch_token:
+            # 【SKIP】
             print("【ENTER】if mm_use_im_patch_token:")
             tokenizer.add_tokens([DEFAULT_IMAGE_PATCH_TOKEN], special_tokens=True)
             self.resize_token_embeddings(len(tokenizer))
             print("【EXIT】if mm_use_im_patch_token:")
 
-        if model_args.mm_use_im_start_end:
+        if model_args.mm_use_im_start_end: # False
+            # 【SKIP】
+            print("【ENTER】if model_args.mm_use_im_start_end:")
             num_new_tokens = tokenizer.add_tokens([DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN], special_tokens=True)
             self.resize_token_embeddings(len(tokenizer))
 
@@ -538,9 +650,14 @@ class LlavaMetaForCausalLM(ABC):
                     input_embeddings[-num_new_tokens:] = embed_tokens_weight
                 else:
                     raise ValueError(f"Unexpected embed_tokens_weight shape. Pretrained: {embed_tokens_weight.shape}. Current: {input_embeddings.shape}. Numer of new tokens: {num_new_tokens}.")
-        elif model_args.mm_use_im_patch_token:
+            print("【EXIT】if model_args.mm_use_im_start_end:")
+
+        elif model_args.mm_use_im_patch_token: # False
+            # 【SKIP】
+            print("【ENTER】elif mm_use_im_patch_token:")
             if model_args.tune_mm_mlp_adapter:
                 for p in self.get_input_embeddings().parameters():
                     p.requires_grad = False
                 for p in self.get_output_embeddings().parameters():
                     p.requires_grad = False
+            print("【EXIT】elif mm_use_im_patch_token:")

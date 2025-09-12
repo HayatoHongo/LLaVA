@@ -973,6 +973,7 @@ tokenizer
 [COND] mm_use_im_patch_token=False
 【EXIT】if model_args.vision_tower is not None:
 [COND] bits=16
+### このあたりまで 20250911
 current file path llava/train/train.py
 def rank0_print(*args)
 args

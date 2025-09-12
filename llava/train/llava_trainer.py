@@ -217,15 +217,17 @@ class LLaVATrainer(Trainer):
         print("current file path", "llava/train/llava_trainer.py")
         print("def _get_train_sampler(self)")
         print("self\n", self)
-        print(f"[COND] train_dataset_is_None={self.train_dataset is None}, has_length={has_length(self.train_dataset) if self.train_dataset is not None else 'N/A'}")
+        print(f"[COND] train_dataset_is_None={self.train_dataset is None}, has_length={has_length(self.train_dataset) if self.train_dataset is not None else 'N/A'}") # train_dataset_is_None=False, has_length=True
         if self.train_dataset is None or not has_length(self.train_dataset):
+            #【SKIP】
             print("【ENTER】if self.train_dataset is None or not has_length(self.train_dataset):")
             result = None
             print("【EXIT】if self.train_dataset is None or not has_length(self.train_dataset):")
             return result
 
-        print(f"[COND] group_by_modality_length={self.args.group_by_modality_length}")
+        print(f"[COND] group_by_modality_length={self.args.group_by_modality_length}") # group_by_modality_length=False
         if self.args.group_by_modality_length:
+            # 【SKIP】
             print("【ENTER】if self.args.group_by_modality_length:")
             lengths = self.train_dataset.modality_lengths
             result = LengthGroupedSampler(
@@ -237,8 +239,10 @@ class LLaVATrainer(Trainer):
             print("【EXIT】if self.args.group_by_modality_length:")
             return result
         else:
+            # 【ENTER】
             print("【ENTER】else (not group_by_modality_length):")
             result = super()._get_train_sampler()
+            print("result, super()._get_train_sampler()\n", result)
             print("【EXIT】else (not group_by_modality_length):")
             return result
 
@@ -253,8 +257,9 @@ class LLaVATrainer(Trainer):
         We provide a reasonable default that works well. If you want to use something else, you can pass a tuple in the
         Trainer's init through `optimizers`, or subclass and override this method in a subclass.
         """
-        print(f"[COND] sagemaker_mp_enabled={is_sagemaker_mp_enabled()}")
+        print(f"[COND] sagemaker_mp_enabled={is_sagemaker_mp_enabled()}") # False
         if is_sagemaker_mp_enabled():
+            # 【SKIP】
             print("【ENTER】if is_sagemaker_mp_enabled():")
             result = super().create_optimizer()
             print("【EXIT】if is_sagemaker_mp_enabled():")

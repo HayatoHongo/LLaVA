@@ -71,13 +71,50 @@ def build_vision_projector(config, delay_load=False, **kwargs):
     print("current file path", "llava/llava/model/multimodal_projector/builder.py")
     print("def build_vision_projector(config, delay_load=False, **kwargs)")
     print("config\n", config)
-    print("delay_load\n", delay_load)
-    print("kwargs\n", kwargs)
-    projector_type = getattr(config, 'mm_projector_type', 'linear')
-    print("projector_type from config\n", projector_type)
+    """
+    config
+    LlavaConfig {
+    "_name_or_path": "lmsys/vicuna-7b-v1.5",
+    "architectures": [
+        "LlamaForCausalLM"
+    ],
+    "bos_token_id": 1,
+    "eos_token_id": 2,
+    "hidden_act": "silu",
+    "hidden_size": 4096,
+    "initializer_range": 0.02,
+    "intermediate_size": 11008,
+    "max_position_embeddings": 4096,
+    "mm_hidden_size": 1024,
+    "mm_patch_merge_type": "flat",
+    "mm_projector_type": "mlp2x_gelu",
+    "mm_vision_select_feature": "patch",
+    "mm_vision_select_layer": -2,
+    "mm_vision_tower": "openai/clip-vit-large-patch14-336",
+    "model_type": "llava_llama",
+    "num_attention_heads": 32,
+    "num_hidden_layers": 32,
+    "num_key_value_heads": 32,
+    "pad_token_id": 0,
+    "pretraining_tp": 1,
+    "rms_norm_eps": 1e-05,
+    "rope_scaling": null,
+    "tie_word_embeddings": false,
+    "torch_dtype": "float16",
+    "transformers_version": "4.31.0",
+    "use_cache": false,
+    "use_mm_proj": true,
+    "vocab_size": 32000
+    }
+    """
+    print("delay_load\n", delay_load) # False
+    print("kwargs\n", kwargs) # {}
+    projector_type = getattr(config, 'mm_projector_type', 'linear') 
+    print("projector_type from config\n", projector_type) # mlp2x_gelu
 
-    print("【COND】 projector_type\n", projector_type)
+    print("【COND】 projector_type\n", projector_type) # mlp2x_gelu
     if projector_type == 'linear':
+        #【SKIP】
         result = nn.Linear(config.mm_hidden_size, config.hidden_size)
         print("result (return)\n", result)
         return result
@@ -85,14 +122,25 @@ def build_vision_projector(config, delay_load=False, **kwargs):
     mlp_gelu_match = re.match(r'^mlp(\d+)x_gelu$', projector_type)
     print("【COND】mlp_gelu_match\n", mlp_gelu_match)
     if mlp_gelu_match:
+        #【ENTER】if mlp_gelu_match:
         print("【ENTER】if mlp_gelu_match:")
         mlp_depth = int(mlp_gelu_match.group(1))
+        print("mlp_depth from mlp_gelu_match.group(1)\n", mlp_depth)
         modules = [nn.Linear(config.mm_hidden_size, config.hidden_size)]
+        print("modules after first Linear\n", modules)
         for _ in range(1, mlp_depth):
             modules.append(nn.GELU())
             modules.append(nn.Linear(config.hidden_size, config.hidden_size))
-        result = nn.Sequential(*modules)
+        print("modules before Sequential\n", modules)
+        result = nn.Sequential(*modules) # * はリストをアンパックして引数に展開する
         print("result (return)\n", result)
+        """
+        Sequential(
+        (0): Linear(in_features=1024, out_features=4096, bias=True)
+        (1): GELU(approximate='none')
+        (2): Linear(in_features=4096, out_features=4096, bias=True)
+        )
+        """
         print("【EXIT】if mlp_gelu_match:")
         return result
 
