@@ -51,6 +51,7 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
             tokenizer = AutoTokenizer.from_pretrained(model_base, use_fast=False)
             print('Loading LLaVA from base model...')
             model = LlavaLlamaForCausalLM.from_pretrained(model_base, low_cpu_mem_usage=True, config=lora_cfg_pretrained, **kwargs)
+
             token_num, tokem_dim = model.lm_head.out_features, model.lm_head.in_features
             if model.lm_head.weight.shape[0] != token_num:
                 model.lm_head.weight = torch.nn.Parameter(torch.empty(token_num, tokem_dim, device=model.device, dtype=model.dtype))
@@ -134,6 +135,24 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
                 tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=False)
                 model = AutoModelForCausalLM.from_pretrained(model_path, low_cpu_mem_usage=True, **kwargs)
 
+    # === FORCE OVERRIDE: replace projector from mm_projector.bin when present ===
+    # マージ済みシャード（pytorch_model-000xx.bin）内に projector が含まれていても、
+    # ここで明示的に mm_projector.bin をロードして上書きする。
+    if 'llava' in model_name.lower() and model_base is None:
+        try:
+            proj_path = os.path.join(model_path, 'mm_projector.bin')
+            if not os.path.exists(proj_path):
+                # HF Hub 上のファイルを直接取得（model_path が repo_id のとき）
+                from huggingface_hub import hf_hub_download
+                proj_path = hf_hub_download(repo_id=model_path, filename='mm_projector.bin')
+            mm_projector_weights = torch.load(proj_path, map_location='cpu')
+            mm_projector_weights = {k: v.to(torch.float16) for k, v in mm_projector_weights.items()}
+            missing, unexpected = model.load_state_dict(mm_projector_weights, strict=False)
+            print(f"[INFO] Overrode mm_projector from {proj_path} "
+                  f"(missing={len(missing)}, unexpected={len(unexpected)})")
+        except Exception as e:
+            print(f"[WARN] mm_projector override skipped: {e}")
+            
     image_processor = None
 
     if 'llava' in model_name.lower():
@@ -157,3 +176,4 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
         context_len = 2048
 
     return tokenizer, model, image_processor, context_len
+    
