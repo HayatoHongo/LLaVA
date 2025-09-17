@@ -216,7 +216,7 @@ class LLaVATrainer(Trainer):
 
         print("current file path", "llava/train/llava_trainer.py")
         print("def _get_train_sampler(self)")
-        print("self\n", self)
+        print("self\n", self) 
         print(f"[COND] train_dataset_is_None={self.train_dataset is None}, has_length={has_length(self.train_dataset) if self.train_dataset is not None else 'N/A'}") # train_dataset_is_None=False, has_length=True
         if self.train_dataset is None or not has_length(self.train_dataset):
             #【SKIP】
@@ -242,7 +242,7 @@ class LLaVATrainer(Trainer):
             # 【ENTER】
             print("【ENTER】else (not group_by_modality_length):")
             result = super()._get_train_sampler()
-            print("result, super()._get_train_sampler()\n", result)
+            print("result, super()._get_train_sampler()\n", result) # <torch.utils.data.sampler.RandomSampler object at 0x7ed63e925e70>
             print("【EXIT】else (not group_by_modality_length):")
             return result
 
@@ -265,8 +265,9 @@ class LLaVATrainer(Trainer):
             print("【EXIT】if is_sagemaker_mp_enabled():")
             print("result for super().create_optimizer()\n", result)
             return result
-        print(f"[COND] sharded_ddp={self.sharded_ddp}, SHARDED_DDP_SIMPLE={ShardedDDPOption.SIMPLE}")
+        print(f"[COND] sharded_ddp={self.sharded_ddp}, SHARDED_DDP_SIMPLE={ShardedDDPOption.SIMPLE}") # sharded_ddp=None, SHARDED_DDP_SIMPLE=simple
         if self.sharded_ddp == ShardedDDPOption.SIMPLE:
+            # 【SKIP】
             print("【ENTER】if self.sharded_ddp == ShardedDDPOption.SIMPLE:")
             result = super().create_optimizer()
             print("【EXIT】if self.sharded_ddp == ShardedDDPOption.SIMPLE:")
@@ -275,9 +276,73 @@ class LLaVATrainer(Trainer):
 
         opt_model = self.model
         print("opt_model\n", opt_model)
-
-        print(f"[COND] optimizer_is_None={self.optimizer is None}")
+        """
+        LlavaLlamaForCausalLM(
+        (model): LlavaLlamaModel(
+            (embed_tokens): Embedding(32000, 4096, padding_idx=0)
+            (layers): ModuleList(
+            (0-31): 32 x LlamaDecoderLayer(
+                (self_attn): LlamaAttention(
+                (q_proj): Linear(in_features=4096, out_features=4096, bias=False)
+                (k_proj): Linear(in_features=4096, out_features=4096, bias=False)
+                (v_proj): Linear(in_features=4096, out_features=4096, bias=False)
+                (o_proj): Linear(in_features=4096, out_features=4096, bias=False)
+                (rotary_emb): LlamaRotaryEmbedding()
+                )
+                (mlp): LlamaMLP(
+                (gate_proj): Linear(in_features=4096, out_features=11008, bias=False)
+                (up_proj): Linear(in_features=4096, out_features=11008, bias=False)
+                (down_proj): Linear(in_features=11008, out_features=4096, bias=False)
+                (act_fn): SiLUActivation()
+                )
+                (input_layernorm): LlamaRMSNorm()
+                (post_attention_layernorm): LlamaRMSNorm()
+            )
+            )
+            (norm): LlamaRMSNorm()
+            (vision_tower): CLIPVisionTower(
+            (vision_tower): CLIPVisionModel(
+                (vision_model): CLIPVisionTransformer(
+                (embeddings): CLIPVisionEmbeddings(
+                    (patch_embedding): Conv2d(3, 1024, kernel_size=(14, 14), stride=(14, 14), bias=False)
+                    (position_embedding): Embedding(577, 1024)
+                )
+                (pre_layrnorm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+                (encoder): CLIPEncoder(
+                    (layers): ModuleList(
+                    (0-23): 24 x CLIPEncoderLayer(
+                        (self_attn): CLIPAttention(
+                        (k_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                        (v_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                        (q_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                        (out_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                        )
+                        (layer_norm1): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+                        (mlp): CLIPMLP(
+                        (activation_fn): QuickGELUActivation()
+                        (fc1): Linear(in_features=1024, out_features=4096, bias=True)
+                        (fc2): Linear(in_features=4096, out_features=1024, bias=True)
+                        )
+                        (layer_norm2): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+                    )
+                    )
+                )
+                (post_layernorm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+                )
+            )
+            )
+            (mm_projector): Sequential(
+            (0): Linear(in_features=1024, out_features=4096, bias=True)
+            (1): GELU(approximate='none')
+            (2): Linear(in_features=4096, out_features=4096, bias=True)
+            )
+        )
+        (lm_head): Linear(in_features=4096, out_features=32000, bias=False)
+        )
+        """
+        print(f"[COND] optimizer_is_None={self.optimizer is None}") # 1回目: True, 2回目: False
         if self.optimizer is None:
+            # 1回目【ENTER】, 2回目【SKIP】
             print("【ENTER】if self.optimizer is None:")
 
             # Risky print: self.args, opt_model, optimizer_grouped_parameters, optimizer_cls, optimizer_kwargs
@@ -289,8 +354,9 @@ class LLaVATrainer(Trainer):
 
             decay_parameters = get_parameter_names(opt_model, ALL_LAYERNORM_LAYERS)
             decay_parameters = [name for name in decay_parameters if "bias" not in name]
-            print(f"[COND] mm_projector_lr={self.args.mm_projector_lr}")
+            print(f"[COND] mm_projector_lr={self.args.mm_projector_lr}") # None
             if self.args.mm_projector_lr is not None:
+                #【SKIP】
                 print("【ENTER】if self.args.mm_projector_lr is not None:")
                 projector_parameters = [name for name, _ in opt_model.named_parameters() if "mm_projector" in name]
                 optimizer_grouped_parameters = [
@@ -323,6 +389,7 @@ class LLaVATrainer(Trainer):
                 ]
                 print("【EXIT】if self.args.mm_projector_lr is not None:")
             else:
+                #【ENTER】else (mm_projector_lr is None):
                 print("【ENTER】else (mm_projector_lr is None):")
                 optimizer_grouped_parameters = [
                     {
@@ -341,9 +408,10 @@ class LLaVATrainer(Trainer):
 
             optimizer_cls, optimizer_kwargs = Trainer.get_optimizer_cls_and_kwargs(self.args)
 
-            print(f"[COND] sharded_ddp={self.sharded_ddp}, SHARDED_DDP_SIMPLE={ShardedDDPOption.SIMPLE}")
+            print(f"[COND] sharded_ddp={self.sharded_ddp}, SHARDED_DDP_SIMPLE={ShardedDDPOption.SIMPLE}") # sharded_ddp=None, SHARDED_DDP_SIMPLE=simple
             if self.sharded_ddp == ShardedDDPOption.SIMPLE:
-                print("【ENTER】if self.sharded_ddp == ShardedDDPOption.SIMPLE:")
+                # 【SKIP】
+                print("【ENTER】if self.sharded_ddp == ShardedDDPOption.SIMPLE:")               
                 self.optimizer = OSS(
                     params=optimizer_grouped_parameters,
                     optim=optimizer_cls,
@@ -353,8 +421,9 @@ class LLaVATrainer(Trainer):
             else:
                 print("【ENTER】else (not sharded_ddp SIMPLE):")
                 self.optimizer = optimizer_cls(optimizer_grouped_parameters, **optimizer_kwargs)
-                print(f"[COND] optimizer_cls_name={optimizer_cls.__name__}")
+                print(f"[COND] optimizer_cls_name={optimizer_cls.__name__}") # AdamW
                 if optimizer_cls.__name__ == "Adam8bit":
+                    # 【SKIP】
                     print("【ENTER】if optimizer_cls.__name__ == 'Adam8bit':")
                     import bitsandbytes
 
@@ -372,18 +441,113 @@ class LLaVATrainer(Trainer):
                     print("【EXIT】if optimizer_cls.__name__ == 'Adam8bit':")
             print("【EXIT】if self.optimizer is None:")
         print("self.optimizer\n", self.optimizer)
+        """
+        AdamW (
+        Parameter Group 0
+            amsgrad: False
+            betas: (0.9, 0.999)
+            capturable: False
+            differentiable: False
+            eps: 1e-08
+            foreach: None
+            fused: None
+            lr: 0.001
+            maximize: False
+            weight_decay: 0.0
+
+        Parameter Group 1
+            amsgrad: False
+            betas: (0.9, 0.999)
+            capturable: False
+            differentiable: False
+            eps: 1e-08
+            foreach: None
+            fused: None
+            lr: 0.001
+            maximize: False
+            weight_decay: 0.0
+        )
+        """
         return self.optimizer
 
     def _save_checkpoint(self, model, trial, metrics=None):
 
         print("current file path", "llava/train/llava_trainer.py")
         print("def _save_checkpoint(self, model, trial, metrics=None)")
-        print("self\n", self)
+        print("self\n", self) # <llava.train.llava_trainer.LLaVATrainer object at 0x7ed6341f4490>
         print("model\n", model)
-        print("trial\n", trial)
-        print("metrics\n", metrics)
-        print(f"[COND] tune_mm_mlp_adapter={getattr(self.args, 'tune_mm_mlp_adapter', False)}")
+        """
+        model
+        DeepSpeedEngine(
+        (module): LlavaLlamaForCausalLM(
+            (model): LlavaLlamaModel(
+            (embed_tokens): Embedding(32000, 4096, padding_idx=0)
+            (layers): ModuleList(
+                (0-31): 32 x LlamaDecoderLayer(
+                (self_attn): LlamaAttention(
+                    (q_proj): Linear(in_features=4096, out_features=4096, bias=False)
+                    (k_proj): Linear(in_features=4096, out_features=4096, bias=False)
+                    (v_proj): Linear(in_features=4096, out_features=4096, bias=False)
+                    (o_proj): Linear(in_features=4096, out_features=4096, bias=False)
+                    (rotary_emb): LlamaRotaryEmbedding()
+                )
+                (mlp): LlamaMLP(
+                    (gate_proj): Linear(in_features=4096, out_features=11008, bias=False)
+                    (up_proj): Linear(in_features=4096, out_features=11008, bias=False)
+                    (down_proj): Linear(in_features=11008, out_features=4096, bias=False)
+                    (act_fn): SiLUActivation()
+                )
+                (input_layernorm): LlamaRMSNorm()
+                (post_attention_layernorm): LlamaRMSNorm()
+                )
+            )
+            (norm): LlamaRMSNorm()
+            (vision_tower): CLIPVisionTower(
+                (vision_tower): CLIPVisionModel(
+                (vision_model): CLIPVisionTransformer(
+                    (embeddings): CLIPVisionEmbeddings(
+                    (patch_embedding): Conv2d(3, 1024, kernel_size=(14, 14), stride=(14, 14), bias=False)
+                    (position_embedding): Embedding(577, 1024)
+                    )
+                    (pre_layrnorm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+                    (encoder): CLIPEncoder(
+                    (layers): ModuleList(
+                        (0-23): 24 x CLIPEncoderLayer(
+                        (self_attn): CLIPAttention(
+                            (k_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                            (v_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                            (q_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                            (out_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                        )
+                        (layer_norm1): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+                        (mlp): CLIPMLP(
+                            (activation_fn): QuickGELUActivation()
+                            (fc1): Linear(in_features=1024, out_features=4096, bias=True)
+                            (fc2): Linear(in_features=4096, out_features=1024, bias=True)
+                        )
+                        (layer_norm2): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+                        )
+                    )
+                    )
+                    (post_layernorm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+                )
+                )
+            )
+            (mm_projector): Sequential(
+                (0): Linear(in_features=1024, out_features=4096, bias=True)
+                (1): GELU(approximate='none')
+                (2): Linear(in_features=4096, out_features=4096, bias=True)
+            )
+            )
+            (lm_head): Linear(in_features=4096, out_features=32000, bias=False)
+        )
+        )
+        """
+        print("trial\n", trial) # None
+        print("metrics\n", metrics) # None
+        print(f"[COND] tune_mm_mlp_adapter={getattr(self.args, 'tune_mm_mlp_adapter', False)}") # True
         if getattr(self.args, 'tune_mm_mlp_adapter', False):
+            # 【ENTER】
             print("【ENTER】if getattr(self.args, 'tune_mm_mlp_adapter', False):")
             from transformers.trainer_utils import PREFIX_CHECKPOINT_DIR
             checkpoint_folder = f"{PREFIX_CHECKPOINT_DIR}-{self.state.global_step}"
@@ -393,21 +557,24 @@ class LLaVATrainer(Trainer):
 
             # Only save Adapter
             keys_to_match = ['mm_projector', 'vision_resampler']
-            print(f"[COND] use_im_start_end={getattr(self.args, 'use_im_start_end', False)}")
+            print(f"[COND] use_im_start_end={getattr(self.args, 'use_im_start_end', False)}") # False
             if getattr(self.args, "use_im_start_end", False):
+                # 【SKIP】
                 print("【ENTER】if getattr(self.args, 'use_im_start_end', False):")
                 keys_to_match.extend(['embed_tokens', 'embed_in'])
 
             weight_to_save = get_mm_adapter_state_maybe_zero_3(self.model.named_parameters(), keys_to_match)
 
-            print(f"[COND] local_rank={self.args.local_rank}")
+            print(f"[COND] local_rank={self.args.local_rank}") # 0
             if self.args.local_rank == 0 or self.args.local_rank == -1:
+                # 【ENTER】
                 print("【ENTER】if self.args.local_rank == 0 or self.args.local_rank == -1:")
                 self.model.config.save_pretrained(output_dir)
                 torch.save(weight_to_save, os.path.join(output_dir, f'mm_projector.bin'))
                 print("【EXIT】if self.args.local_rank == 0 or self.args.local_rank == -1:")
             print("【EXIT】if getattr(self.args, 'tune_mm_mlp_adapter', False):")
         else:
+            # 【SKIP】
             print("【ENTER】else (not tune_mm_mlp_adapter):")
             super(LLaVATrainer, self)._save_checkpoint(model, trial, metrics)
             print("【EXIT】else (not tune_mm_mlp_adapter):")

@@ -1302,8 +1302,10 @@ def LazySupervisedDataset.__len__(self)
 trainer
  <llava.train.llava_trainer.LLaVATrainer object at 0x7ed6341f4490>
 【COND】list(pathlib.Path(training_args.output_dir).glob('checkpoint-*'))
+### 再開
  [PosixPath('checkpoints/llava-v1.5-7b-pretrain/checkpoint-250'), PosixPath('checkpoints/llava-v1.5-7b-pretrain/checkpoint-1')]
 【ENTER】if list(pathlib.Path(training_args.output_dir).glob(checkpoint-*)):
+# なんとここから 2759行目まで trainer.train(resume_from_checkpoint=False) の処理！
 current file path llava/train/llava_trainer.py
 def _get_train_sampler(self)
 self

@@ -33,6 +33,7 @@ class LlavaMetaModel:
         print("current file path", "llava/model/llava_arch.py")
         print("LlavaMetaModel.__init__(self, config)")
         print("config\n", config)
+        # LlamaModelの__init_を呼び出す 
         super(LlavaMetaModel, self).__init__(config)
 
         print(f"[COND] mm_vision_tower={hasattr(config, 'mm_vision_tower')}")
@@ -407,6 +408,33 @@ class LlavaMetaForCausalLM(ABC):
         print("current file path", "llava/model/llava_arch.py")
         print("def LlavaMetaForCausalLM(ABC).encode_images(self, images)")
         print("images\n", images)
+        """
+        tensor([[[[ 0.0325,  0.0325,  0.0325,  ..., -0.7109, -0.3613, -0.1279],
+                [ 0.0325,  0.0325,  0.0325,  ..., -0.3906, -0.1719, -0.0259],
+                [ 0.0325,  0.0325,  0.0325,  ..., -0.0112,  0.0471,  0.0908],
+                ...,
+                [-1.0312, -1.0312, -1.0312,  ..., -1.0625, -1.0625, -1.0625],
+                [-1.0469, -1.0312, -1.0312,  ..., -1.0625, -1.0625, -1.0625],
+                [-1.0469, -1.0312, -1.0312,  ..., -1.0625, -1.0625, -1.0625]],
+
+                [[ 0.3184,  0.3184,  0.3184,  ..., -0.3867, -0.0112,  0.2139],
+                [ 0.3184,  0.3184,  0.3184,  ..., -0.0713,  0.1543,  0.3184],
+                [ 0.3184,  0.3184,  0.3184,  ...,  0.2891,  0.3633,  0.4395],
+                ...,
+                [-1.0156, -1.0156, -1.0156,  ..., -1.0000, -1.0000, -1.0000],
+                [-1.0312, -1.0156, -1.0156,  ..., -1.0000, -1.0000, -1.0000],
+                [-1.0312, -1.0156, -1.0156,  ..., -1.0000, -1.0000, -1.0000]],
+
+                [[ 0.9648,  0.9648,  0.9648,  ...,  0.0981,  0.4531,  0.6680],
+                [ 0.9648,  0.9648,  0.9648,  ...,  0.3965,  0.6094,  0.7539],
+                [ 0.9648,  0.9648,  0.9648,  ...,  0.7539,  0.8086,  0.8359],
+                ...,
+                [-0.3711, -0.3848, -0.4004,  ..., -0.4277, -0.4277, -0.4277],
+                [-0.3711, -0.3711, -0.3848,  ..., -0.4277, -0.4277, -0.4277],
+                [-0.3848, -0.3711, -0.3711,  ..., -0.4277, -0.4277, -0.4277]]]],
+            device='cuda:0', dtype=torch.bfloat16)
+        """
+
         image_features = self.get_model().get_vision_tower()(images)
         image_features = self.get_model().mm_projector(image_features)
         print("image_features (return)\n", image_features)
@@ -419,17 +447,99 @@ class LlavaMetaForCausalLM(ABC):
         print("current file path", "llava/model/llava_arch.py")
         print("def LlavaMetaForCausalLM(ABC).prepare_inputs_labels_for_multimodal(self, input_ids, position_ids, attention_mask, past_key_values, labels, images, image_sizes=None)")
         print("input_ids\n", input_ids)
-        print("position_ids\n", position_ids)
+        """
+        tensor([[    1,  -200,   278, 25616, 26624,   297,   902, 19430, 11105, 29879,
+        10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114,
+        411,  2654, 11315,    13]], device='cuda:0')
+        """
+        print("position_ids\n", position_ids) # None
         print("attention_mask\n", attention_mask)
-        print("past_key_values\n", past_key_values)
+        """
+        tensor([[True, True, True, True, True, True, True, True, True, True, True, True,
+                True, True, True, True, True, True, True, True, True, True, True, True]],
+            device='cuda:0')     
+        """
+        print("past_key_values\n", past_key_values) # None
         print("labels\n", labels)
+        """
+        tensor([[ -100,  -100,   278, 25616, 26624,   297,   902, 19430, 11105, 29879,
+                10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114,
+                411,  2654, 11315,    13]], device='cuda:0')
+        """
         print("images\n", images)
-        print("image_sizes\n", image_sizes)
+        """
+        tensor([[[[ 0.0325,  0.0325,  0.0325,  ..., -0.7109, -0.3613, -0.1279],
+                [ 0.0325,  0.0325,  0.0325,  ..., -0.3906, -0.1719, -0.0259],
+                [ 0.0325,  0.0325,  0.0325,  ..., -0.0112,  0.0471,  0.0908],
+                ...,
+                [-1.0312, -1.0312, -1.0312,  ..., -1.0625, -1.0625, -1.0625],
+                [-1.0469, -1.0312, -1.0312,  ..., -1.0625, -1.0625, -1.0625],
+                [-1.0469, -1.0312, -1.0312,  ..., -1.0625, -1.0625, -1.0625]],
+
+                [[ 0.3184,  0.3184,  0.3184,  ..., -0.3867, -0.0112,  0.2139],
+                [ 0.3184,  0.3184,  0.3184,  ..., -0.0713,  0.1543,  0.3184],
+                [ 0.3184,  0.3184,  0.3184,  ...,  0.2891,  0.3633,  0.4395],
+                ...,
+                [-1.0156, -1.0156, -1.0156,  ..., -1.0000, -1.0000, -1.0000],
+                [-1.0312, -1.0156, -1.0156,  ..., -1.0000, -1.0000, -1.0000],
+                [-1.0312, -1.0156, -1.0156,  ..., -1.0000, -1.0000, -1.0000]],
+
+                [[ 0.9648,  0.9648,  0.9648,  ...,  0.0981,  0.4531,  0.6680],
+                [ 0.9648,  0.9648,  0.9648,  ...,  0.3965,  0.6094,  0.7539],
+                [ 0.9648,  0.9648,  0.9648,  ...,  0.7539,  0.8086,  0.8359],
+                ...,
+                [-0.3711, -0.3848, -0.4004,  ..., -0.4277, -0.4277, -0.4277],
+                [-0.3711, -0.3711, -0.3848,  ..., -0.4277, -0.4277, -0.4277],
+                [-0.3848, -0.3711, -0.3711,  ..., -0.4277, -0.4277, -0.4277]]]],
+            device='cuda:0', dtype=torch.bfloat16)
+        """
+        print("image_sizes\n", image_sizes) # None
         vision_tower = self.get_vision_tower()
+        print("vision_tower\n", vision_tower)
+        """
+        LlavaMetaForCausalLM(ABC).get_vision_tower(self) result (return)
+        CLIPVisionTower(
+        (vision_tower): CLIPVisionModel(
+            (vision_model): CLIPVisionTransformer(
+            (embeddings): CLIPVisionEmbeddings(
+                (patch_embedding): Conv2d(3, 1024, kernel_size=(14, 14), stride=(14, 14), bias=False)
+                (position_embedding): Embedding(577, 1024)
+            )
+            (pre_layrnorm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+            (encoder): CLIPEncoder(
+                (layers): ModuleList(
+                (0-23): 24 x CLIPEncoderLayer(
+                    (self_attn): CLIPAttention(
+                    (k_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                    (v_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                    (q_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                    (out_proj): Linear(in_features=1024, out_features=1024, bias=True)
+                    )
+                    (layer_norm1): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+                    (mlp): CLIPMLP(
+                    (activation_fn): QuickGELUActivation()
+                    (fc1): Linear(in_features=1024, out_features=4096, bias=True)
+                    (fc2): Linear(in_features=4096, out_features=1024, bias=True)
+                    )
+                    (layer_norm2): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+                )
+                )
+            )
+            (post_layernorm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+            )
+        )
+        )
+        """
+        print(f"[COND] vision_tower_is_None={vision_tower is None} images_is_None={images is None} input_ids_shape_1_eq_1={input_ids.shape[1] == 1}")
         if vision_tower is None or images is None or input_ids.shape[1] == 1:
+            # 【SKIP】
             return input_ids, position_ids, attention_mask, past_key_values, None, labels
 
+        print("【COND】type(images)\n", type(images))
+        print("【COND】images.ndim\n", images.ndim)
         if type(images) is list or images.ndim == 5:
+            # 【SKIP】
+            print("【ENTER】if type(images) is list or images.ndim == 5:")
             if type(images) is list:
                 images = [x.unsqueeze(0) if x.ndim == 3 else x for x in images]
             concat_images = torch.cat([image for image in images], dim=0)
@@ -477,8 +587,14 @@ class LlavaMetaForCausalLM(ABC):
                 image_features = new_image_features
             else:
                 raise ValueError(f"Unexpected mm_patch_merge_type: {self.config.mm_patch_merge_type}")
+            print("image_features after processing\n", image_features)
+            print("【EXIT】if type(images) is list or images.ndim == 5:")
         else:
+            # 【ENTER】
+            print("【ENTER】else of if type(images) is list or images.ndim == 5:")
             image_features = self.encode_images(images)
+            print("image_features after encode_images\n", image_features)
+            print("【EXIT】else of if type(images) is list or images.ndim == 5:")
 
         # TODO: image start / end is not implemented here to support pretraining.
         if getattr(self.config, 'tune_mm_mlp_adapter', False) and getattr(self.config, 'mm_use_im_start_end', False):
@@ -600,6 +716,11 @@ class LlavaMetaForCausalLM(ABC):
         if _position_ids is None:
             position_ids = None
 
+        print("position_ids (return)\n", position_ids)
+        print("attention_mask (return)\n", attention_mask)
+        print("past_key_values (return)\n", past_key_values)
+        print("new_input_embeds (return)\n", new_input_embeds)
+        print("new_labels (return)\n", new_labels)
         return None, position_ids, attention_mask, past_key_values, new_input_embeds, new_labels
 
     def initialize_vision_tokenizer(self, model_args, tokenizer):

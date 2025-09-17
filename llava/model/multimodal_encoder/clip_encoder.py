@@ -119,31 +119,64 @@ class CLIPVisionTower(nn.Module):
 
         print("current file path", "llava/llava/model/multimodal_encoder/clip_encoder.py")
         print("def CLIPVisionTower.feature_select(self, image_forward_outs)")
-        print("image_forward_outs\n", image_forward_outs)
+        print("image_forward_outs\n", image_forward_outs) # 24層のtuple
         image_features = image_forward_outs.hidden_states[self.select_layer]
         print("image_features (after select_layer)\n", type(image_features))
         if hasattr(image_features, 'shape'):
-            print("image_features.shape\n", image_features.shape)
-        print(f"[COND] select_feature={self.select_feature}")
+            print("image_features.shape\n", image_features.shape) # torch.Size([1, 577, 1024])
+        print(f"[COND] select_feature={self.select_feature}") # patch
         if self.select_feature == 'patch':
             print("【ENTER】if self.select_feature == 'patch':")
             print("original image_features\n", image_features)
+            """
+            tensor([[[ 0.2236,  0.2432, -0.5938,  ...,  0.4863, -0.5273, -0.2041],
+                    [-0.0469, -0.1836, -0.0273,  ...,  0.3535,  0.3750,  0.3047],
+                    [-0.2598,  1.1484,  0.4844,  ...,  0.4961, -0.1719, -0.5117],
+                    ...,
+                    [ 1.7188,  0.9688,  0.8828,  ..., -0.2441, -0.8672,  1.3047],
+                    [ 0.7891, -0.3984,  0.6797,  ..., -0.3594, -0.9922,  0.3164],
+                    [ 1.5000,  0.6250,  0.3672,  ..., -0.5469, -0.4902,  0.9766]]],
+                device='cuda:0', dtype=torch.bfloat16)
+            """
             image_features = image_features[:, 1:]
             print("after process\n", image_features)
+            """
+            tensor([[[-0.0469, -0.1836, -0.0273,  ...,  0.3535,  0.3750,  0.3047],
+                    [-0.2598,  1.1484,  0.4844,  ...,  0.4961, -0.1719, -0.5117],
+                    [ 1.0625, -0.0635, -0.3730,  ...,  0.0220,  0.0820,  0.4805],
+                    ...,
+                    [ 1.7188,  0.9688,  0.8828,  ..., -0.2441, -0.8672,  1.3047],
+                    [ 0.7891, -0.3984,  0.6797,  ..., -0.3594, -0.9922,  0.3164],
+                    [ 1.5000,  0.6250,  0.3672,  ..., -0.5469, -0.4902,  0.9766]]],
+                device='cuda:0', dtype=torch.bfloat16)
+            """
             print("【EXIT】if self.select_feature == 'patch':")
         elif self.select_feature == 'cls_patch':
+            # 【SKIP】
             print("【ENTER】elif self.select_feature == 'cls_patch':")
             image_features = image_features
             print("【EXIT】elif self.select_feature == 'cls_patch':")
         else:
+            # 【SKIP】
             print(f"[COND] select_feature={self.select_feature}")
             print("【ENTER】else (unexpected select_feature):")
             print("print(risk): print(self.select_feature) disabled for safety")
             raise ValueError(f'Unexpected select feature: {self.select_feature}')
             print("【EXIT】else (unexpected select_feature):")
         print("image_features (return)\n", image_features)
+        """
+        image_features (return)
+        tensor([[[-0.0469, -0.1836, -0.0273,  ...,  0.3535,  0.3750,  0.3047],
+                [-0.2598,  1.1484,  0.4844,  ...,  0.4961, -0.1719, -0.5117],
+                [ 1.0625, -0.0635, -0.3730,  ...,  0.0220,  0.0820,  0.4805],
+                ...,
+                [ 1.7188,  0.9688,  0.8828,  ..., -0.2441, -0.8672,  1.3047],
+                [ 0.7891, -0.3984,  0.6797,  ..., -0.3594, -0.9922,  0.3164],
+                [ 1.5000,  0.6250,  0.3672,  ..., -0.5469, -0.4902,  0.9766]]],
+            device='cuda:0', dtype=torch.bfloat16)
+        """
         if hasattr(image_features, 'shape'):
-            print("image_features.shape\n", image_features.shape)
+            print("image_features.shape\n", image_features.shape) # torch.Size([1, 576, 1024])
         return image_features
 
     @torch.no_grad()
@@ -152,10 +185,38 @@ class CLIPVisionTower(nn.Module):
         print("current file path", "llava/llava/model/multimodal_encoder/clip_encoder.py")
         print("def CLIPVisionTower.forward(self, images)")
         print("images\n", images)
+        """
+        images
+        tensor([[[[ 0.0325,  0.0325,  0.0325,  ..., -0.7109, -0.3613, -0.1279],
+                [ 0.0325,  0.0325,  0.0325,  ..., -0.3906, -0.1719, -0.0259],
+                [ 0.0325,  0.0325,  0.0325,  ..., -0.0112,  0.0471,  0.0908],
+                ...,
+                [-1.0312, -1.0312, -1.0312,  ..., -1.0625, -1.0625, -1.0625],
+                [-1.0469, -1.0312, -1.0312,  ..., -1.0625, -1.0625, -1.0625],
+                [-1.0469, -1.0312, -1.0312,  ..., -1.0625, -1.0625, -1.0625]],
+
+                [[ 0.3184,  0.3184,  0.3184,  ..., -0.3867, -0.0112,  0.2139],
+                [ 0.3184,  0.3184,  0.3184,  ..., -0.0713,  0.1543,  0.3184],
+                [ 0.3184,  0.3184,  0.3184,  ...,  0.2891,  0.3633,  0.4395],
+                ...,
+                [-1.0156, -1.0156, -1.0156,  ..., -1.0000, -1.0000, -1.0000],
+                [-1.0312, -1.0156, -1.0156,  ..., -1.0000, -1.0000, -1.0000],
+                [-1.0312, -1.0156, -1.0156,  ..., -1.0000, -1.0000, -1.0000]],
+
+                [[ 0.9648,  0.9648,  0.9648,  ...,  0.0981,  0.4531,  0.6680],
+                [ 0.9648,  0.9648,  0.9648,  ...,  0.3965,  0.6094,  0.7539],
+                [ 0.9648,  0.9648,  0.9648,  ...,  0.7539,  0.8086,  0.8359],
+                ...,
+                [-0.3711, -0.3848, -0.4004,  ..., -0.4277, -0.4277, -0.4277],
+                [-0.3711, -0.3711, -0.3848,  ..., -0.4277, -0.4277, -0.4277],
+                [-0.3848, -0.3711, -0.3711,  ..., -0.4277, -0.4277, -0.4277]]]],
+            device='cuda:0', dtype=torch.bfloat16)
+        """
         if hasattr(images, 'shape'):
-            print("images.shape\n", images.shape)
-        print(f"[COND] type_images_is_list={type(images) is list}")
+            print("images.shape\n", images.shape) # torch.Size([1, 3, 336, 336])
+        print(f"[COND] type_images_is_list={type(images) is list}") # False
         if type(images) is list:
+            # 【SKIP】
             print("【ENTER】if type(images) is list:")
             image_features = []
             print("original images\n", images)
@@ -169,17 +230,29 @@ class CLIPVisionTower(nn.Module):
             print("after process image_features (list)\n", type(image_features))
             print("【EXIT】if type(images) is list:")
         else:
+            # 【ENTER】
             print("【ENTER】else (type(images) is not list):")
             print("original images\n", images)
             image_forward_outs = self.vision_tower(images.to(device=self.device, dtype=self.dtype), output_hidden_states=True)
-            print("after process image_forward_outs\n", type(image_forward_outs))
+            print("after process image_forward_outs\n", type(image_forward_outs)) # 24層のtuple
             image_features = self.feature_select(image_forward_outs).to(images.dtype)
-            print("after process image_features\n", type(image_features))
+            print("after process image_features\n", type(image_features)) # <class 'torch.Tensor'>
             print("【EXIT】else (type(images) is not list):")
 
         print("image_features (return)\n", image_features)
+        """
+        image_features (return)
+        tensor([[[-0.0469, -0.1836, -0.0273,  ...,  0.3535,  0.3750,  0.3047],
+                [-0.2598,  1.1484,  0.4844,  ...,  0.4961, -0.1719, -0.5117],
+                [ 1.0625, -0.0635, -0.3730,  ...,  0.0220,  0.0820,  0.4805],
+                ...,
+                [ 1.7188,  0.9688,  0.8828,  ..., -0.2441, -0.8672,  1.3047],
+                [ 0.7891, -0.3984,  0.6797,  ..., -0.3594, -0.9922,  0.3164],
+                [ 1.5000,  0.6250,  0.3672,  ..., -0.5469, -0.4902,  0.9766]]],
+            device='cuda:0', dtype=torch.bfloat16)
+        """
         if hasattr(image_features, 'shape'):
-            print("image_features.shape\n", image_features.shape)
+            print("image_features.shape\n", image_features.shape) # torch.Size([1, 576, 1024])
         return image_features
 
     @property

@@ -181,26 +181,68 @@ class LlavaLlamaForCausalLM(LlamaForCausalLM, LlavaMetaForCausalLM):
         print("current file path", "llava/llava/model/language_model/llava_llama.py")
         print("def LlavaLlamaForCausalLM.forward(self, input_ids, attention_mask, position_ids, past_key_values, inputs_embeds, labels, use_cache, output_attentions, output_hidden_states, images, image_sizes, return_dict)")
         print("input_ids\n", input_ids)
+        """
+        tensor([[    1,  -200,   278, 25616, 26624,   297,   902, 19430, 11105, 29879,
+                10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114,
+                411,  2654, 11315,    13]], device='cuda:0')        
+        """
         if hasattr(input_ids, 'shape'):
-            print("input_ids.shape\n", input_ids.shape)
+            print("input_ids.shape\n", input_ids.shape) # torch.Size([1, 24])
         print("attention_mask\n", attention_mask)
-        print("position_ids\n", position_ids)
-        print("past_key_values\n", past_key_values)
-        print("inputs_embeds\n", inputs_embeds)
+        """
+        tensor([[True, True, True, True, True, True, True, True, True, True, True, True,
+                True, True, True, True, True, True, True, True, True, True, True, True]],
+            device='cuda:0')
+        """
+        print("position_ids\n", position_ids) # None
+        print("past_key_values\n", past_key_values) # None
+        print("inputs_embeds\n", inputs_embeds) # None
         if hasattr(inputs_embeds, 'shape'):
             print("inputs_embeds.shape\n", inputs_embeds.shape)
         print("labels\n", labels)
-        print("use_cache\n", use_cache)
-        print("output_attentions\n", output_attentions)
-        print("output_hidden_states\n", output_hidden_states)
+        """
+        tensor([[ -100,  -100,   278, 25616, 26624,   297,   902, 19430, 11105, 29879,
+                10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114,
+                411,  2654, 11315,    13]], device='cuda:0')
+        """
+        print("use_cache\n", use_cache) # None
+        print("output_attentions\n", output_attentions) # None
+        print("output_hidden_states\n", output_hidden_states) # None
         print("images\n", images)
-        if hasattr(images, 'shape'):
-            print("images.shape\n", images.shape)
-        print("image_sizes\n", image_sizes)
-        print("return_dict\n", return_dict)
+        """
+        tensor([[[[ 0.0325,  0.0325,  0.0325,  ..., -0.7109, -0.3613, -0.1279],
+                [ 0.0325,  0.0325,  0.0325,  ..., -0.3906, -0.1719, -0.0259],
+                [ 0.0325,  0.0325,  0.0325,  ..., -0.0112,  0.0471,  0.0908],
+                ...,
+                [-1.0312, -1.0312, -1.0312,  ..., -1.0625, -1.0625, -1.0625],
+                [-1.0469, -1.0312, -1.0312,  ..., -1.0625, -1.0625, -1.0625],
+                [-1.0469, -1.0312, -1.0312,  ..., -1.0625, -1.0625, -1.0625]],
 
-        print(f"[COND] inputs_embeds_is_None={inputs_embeds is None}")
+                [[ 0.3184,  0.3184,  0.3184,  ..., -0.3867, -0.0112,  0.2139],
+                [ 0.3184,  0.3184,  0.3184,  ..., -0.0713,  0.1543,  0.3184],
+                [ 0.3184,  0.3184,  0.3184,  ...,  0.2891,  0.3633,  0.4395],
+                ...,
+                [-1.0156, -1.0156, -1.0156,  ..., -1.0000, -1.0000, -1.0000],
+                [-1.0312, -1.0156, -1.0156,  ..., -1.0000, -1.0000, -1.0000],
+                [-1.0312, -1.0156, -1.0156,  ..., -1.0000, -1.0000, -1.0000]],
+
+                [[ 0.9648,  0.9648,  0.9648,  ...,  0.0981,  0.4531,  0.6680],
+                [ 0.9648,  0.9648,  0.9648,  ...,  0.3965,  0.6094,  0.7539],
+                [ 0.9648,  0.9648,  0.9648,  ...,  0.7539,  0.8086,  0.8359],
+                ...,
+                [-0.3711, -0.3848, -0.4004,  ..., -0.4277, -0.4277, -0.4277],
+                [-0.3711, -0.3711, -0.3848,  ..., -0.4277, -0.4277, -0.4277],
+                [-0.3848, -0.3711, -0.3711,  ..., -0.4277, -0.4277, -0.4277]]]],
+            device='cuda:0', dtype=torch.bfloat16)
+        """
+        if hasattr(images, 'shape'):
+            print("images.shape\n", images.shape) # torch.Size([1, 3, 336, 336])
+        print("image_sizes\n", image_sizes) # None
+        print("return_dict\n", return_dict) # None
+
+        print(f"[COND] inputs_embeds_is_None={inputs_embeds is None}") # True
         if inputs_embeds is None:
+            # 【ENTER】
             print("【ENTER】if inputs_embeds is None:")
             (
                 input_ids,
@@ -232,8 +274,18 @@ class LlavaLlamaForCausalLM(LlamaForCausalLM, LlavaMetaForCausalLM):
             output_hidden_states=output_hidden_states,
             return_dict=return_dict
         )
-        print("Return of \ndef LlavaLlamaForCausalLM.forward(self, input_ids, attention_mask, position_ids, past_key_values, inputs_embeds, labels, use_cache, output_attentions, output_hidden_states, images, image_sizes, return_dict)")
+        print("Return of def LlavaLlamaForCausalLM.forward(self, input_ids, attention_mask, position_ids, past_key_values, inputs_embeds, labels, use_cache, output_attentions, output_hidden_states, images, image_sizes, return_dict)")
         print("result (return)\n", result)
+        """
+        CausalLMOutputWithPast(loss=tensor(7.3094, device='cuda:0', grad_fn=<NllLossBackward0>), logits=tensor([[[  0.8242,   0.1855,  -0.7031,  ...,   1.6719,   2.6719,   1.1875],
+                [ -9.0000,  -2.1562,   8.9375,  ...,  -6.4375,  -6.9688,  -5.9375],
+                [-12.4375,  -7.8750,   3.5625,  ..., -10.2500, -10.3750, -11.1875],
+                ...,
+                [ -6.7812,  -3.1406,   4.2188,  ...,  -4.6562,  -3.5312,  -4.8750],
+                [ -7.5312,  -4.7188,   4.1562,  ...,  -4.6250,  -4.5625,  -5.5000],
+                [ -4.3438,  -0.9023,   2.0625,  ...,  -3.5312,  -4.0625,  -2.5469]]],
+            device='cuda:0', grad_fn=<ToCopyBackward0>), past_key_values=None, hidden_states=None, attentions=None)
+        """
         return result
 
     @torch.no_grad()

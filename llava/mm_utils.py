@@ -240,10 +240,10 @@ def tokenizer_image_token(prompt, tokenizer, image_token_index=IMAGE_TOKEN_INDEX
 
     print("current file path", "llava/mm_utils.py")
     print("def tokenizer_image_token(prompt, tokenizer, image_token_index=IMAGE_TOKEN_INDEX, return_tensors=None)")
-    print("prompt\n", prompt)
-    print("tokenizer\n", tokenizer)
-    print("image_token_index\n", image_token_index)
-    print("return_tensors\n", return_tensors)
+    print("prompt\n", prompt) # <image>the divine queen in her elaborate masks canvas print featuring the face and hands of a woman with red hair
+    print("tokenizer\n", tokenizer) #  LlamaTokenizer(name_or_path='lmsys/vicuna-7b-v1.5', vocab_size=32000, model_max_length=2048, is_fast=False, padding_side='right', truncation_side='right', special_tokens={'bos_token': AddedToken("<s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'eos_token': AddedToken("</s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'unk_token': AddedToken("<unk>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'pad_token': '<unk>'}, clean_up_tokenization_spaces=False)
+    print("image_token_index\n", image_token_index) # -200
+    print("return_tensors\n", return_tensors) # pt
     prompt_chunks = [tokenizer(chunk).input_ids for chunk in prompt.split('<image>')]
 
     def insert_separator(X, sep):
