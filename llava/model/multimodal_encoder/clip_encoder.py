@@ -252,7 +252,7 @@ class CLIPVisionTower(nn.Module):
             device='cuda:0', dtype=torch.bfloat16)
         """
         if hasattr(image_features, 'shape'):
-            print("image_features.shape\n", image_features.shape) # torch.Size([1, 576, 1024])
+            print("image_features.shape\n", image_features.shape) # 
         return image_features
 
     @property

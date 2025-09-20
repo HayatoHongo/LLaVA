@@ -3,7 +3,7 @@ README.md
 pyproject.toml
 llava/__init__.py
 llava/constants.py
-llava/conversation.py
+llava/conversation_lib.py
 llava/mm_utils.py
 llava/utils.py
 llava.egg-info/PKG-INFO

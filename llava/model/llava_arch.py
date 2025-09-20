@@ -36,7 +36,7 @@ class LlavaMetaModel:
         # LlamaModelの__init_を呼び出す 
         super(LlavaMetaModel, self).__init__(config)
 
-        print(f"[COND] mm_vision_tower={hasattr(config, 'mm_vision_tower')}")
+        print(f"[COND] mm_vision_tower={hasattr(config, 'mm_vision_tower')}") # 1回目はFalse. lmsys/vicuna-7b-v1.5 の config.json に mm_vision_tower はない。
         if hasattr(config, "mm_vision_tower"):
             print("【ENTER】if hasattr(config, 'mm_vision_tower'):")
             self.vision_tower = build_vision_tower(config, delay_load=True)
@@ -44,8 +44,9 @@ class LlavaMetaModel:
             self.mm_projector = build_vision_projector(config)
             print("self.mm_projector\n", self.mm_projector)
 
-            print(f"[COND] unpad_in_mm_patch_merge_type={'unpad' in getattr(config, 'mm_patch_merge_type', '')}")
+            print(f"[COND] unpad_in_mm_patch_merge_type={'unpad' in getattr(config, 'mm_patch_merge_type', '')}") # False
             if 'unpad' in getattr(config, 'mm_patch_merge_type', ''):
+                # 【SKIP】
                 print("【ENTER】if 'unpad' in getattr(config, 'mm_patch_merge_type', ''):")
                 self.image_newline = nn.Parameter(
                     torch.empty(config.hidden_size, dtype=self.dtype)
@@ -140,22 +141,22 @@ class LlavaMetaModel:
 
         print("current file path", "llava/model/llava_arch.py")
         print("def initialize_vision_modules(self, model_args, fsdp=None)")
-        print("model_args\n", model_args)
-        print("fsdp\n", fsdp)
+        print("model_args\n", model_args) #  ModelArguments(model_name_or_path='lmsys/vicuna-7b-v1.5', version='plain', freeze_backbone=False, tune_mm_mlp_adapter=True, vision_tower='openai/clip-vit-large-patch14-336', mm_vision_select_layer=-2, pretrain_mm_mlp_adapter=None, mm_projector_type='mlp2x_gelu', mm_use_im_start_end=False, mm_use_im_patch_token=False, mm_patch_merge_type='flat', mm_vision_select_feature='patch')
+        print("fsdp\n", fsdp) # []
         vision_tower = model_args.vision_tower
-        print("vision_tower from model_args\n", vision_tower)
+        print("vision_tower from model_args\n", vision_tower) # openai/clip-vit-large-patch14-336
         mm_vision_select_layer = model_args.mm_vision_select_layer
-        print("mm_vision_select_layer from model_args\n", mm_vision_select_layer)
+        print("mm_vision_select_layer from model_args\n", mm_vision_select_layer) # -2
         mm_vision_select_feature = model_args.mm_vision_select_feature
-        print("mm_vision_select_feature from model_args\n", mm_vision_select_feature)
+        print("mm_vision_select_feature from model_args\n", mm_vision_select_feature) # patch
         pretrain_mm_mlp_adapter = model_args.pretrain_mm_mlp_adapter
-        print("pretrain_mm_mlp_adapter from model_args\n", pretrain_mm_mlp_adapter)
+        print("pretrain_mm_mlp_adapter from model_args\n", pretrain_mm_mlp_adapter) # None
         mm_patch_merge_type = model_args.mm_patch_merge_type
         # 下記はself.config.mm_vision_towerに関するもの。self.vision_towerは依然としてNone
         self.config.mm_vision_tower = vision_tower
-        print("self.config.mm_vision_tower\n", self.config.mm_vision_tower)
+        print("self.config.mm_vision_tower\n", self.config.mm_vision_tower) # None
 
-        print("[COND] self.get_vision_tower()\n", self.get_vision_tower())
+        print("[COND] self.get_vision_tower()\n", self.get_vision_tower()) # None
         print(f"[COND] get_vision_tower_is_None={self.get_vision_tower() is None}")
         if self.get_vision_tower() is None:
             #【ENTER】self.vision_tower, self.get_vision_towerはNoneなのでこの分岐に入る。
@@ -309,8 +310,9 @@ class LlavaMetaModel:
             for p in self.mm_projector.parameters():
                 p.requires_grad = True
 
-        print(f"[COND] pretrain_mm_mlp_adapter_is_not_None={pretrain_mm_mlp_adapter is not None}")
+        print(f"[COND] pretrain_mm_mlp_adapter_is_not_None={pretrain_mm_mlp_adapter is not None}") # False
         if pretrain_mm_mlp_adapter is not None:
+            # 【SKIP】
             print("【ENTER】if pretrain_mm_mlp_adapter is not None:")
             mm_projector_weights = torch.load(pretrain_mm_mlp_adapter, map_location='cpu')
             def get_w(weights, keyword):

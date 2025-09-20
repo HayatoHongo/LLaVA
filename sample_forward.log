@@ -275,7 +275,7 @@ self.model
         (rotary_emb): LlamaRotaryEmbedding()
       )
       (mlp): LlamaMLP(
-        (gate_proj): Linear(in_features=4096, out_features=11008, bias=False)
+        (gate_proj): Linear(in_features=4096, out_features=11008, bias=False)n
         (up_proj): Linear(in_features=4096, out_features=11008, bias=False)
         (down_proj): Linear(in_features=11008, out_features=4096, bias=False)
         (act_fn): SiLUActivation()
@@ -1263,7 +1263,7 @@ tokenizer
  LlamaTokenizer(name_or_path='lmsys/vicuna-7b-v1.5', vocab_size=32000, model_max_length=2048, is_fast=False, padding_side='right', truncation_side='right', special_tokens={'bos_token': AddedToken("<s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'eos_token': AddedToken("</s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'unk_token': AddedToken("<unk>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'pad_token': '<unk>'}, clean_up_tokenization_spaces=False)
 [COND] mm_use_im_patch_token=False
 【EXIT】if model_args.vision_tower is not None:
-[COND] bits=16 ### 再開
+[COND] bits=16
 current file path llava/train/train.py
 def make_supervised_data_module(tokenizer, data_args)
 tokenizer

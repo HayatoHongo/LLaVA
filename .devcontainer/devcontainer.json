@@ -1,0 +1,29 @@
+{
+  "name": "LLaVA notebook",
+  "build": {
+    "context": "..",
+    "dockerfile": "Dockerfile"
+  },
+
+  // GPU が不要なのでコメントアウト or 削除
+  //"runArgs": ["--gpus=all"],
+
+  "settings": {
+    "python.defaultInterpreterPath": "/opt/venv/bin/python"
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-toolsai.jupyter",
+        "ms-azuretools.vscode-docker",
+        "yahyabatulu.vscode-markdown-alert",
+        "tomoki1207.pdf",
+        "mechatroner.rainbow-csv"
+      ]
+    }
+  },
+
+  "postCreateCommand": "pip install -e . && pip install -e .[train]"
+}

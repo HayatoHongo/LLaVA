@@ -1011,14 +1011,16 @@ class DataCollatorForSupervisedDataset(object):
         10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114,
           411,  2654, 11315,    13]), 'labels': tensor([ -100,  -100,   278, 25616, 26624,   297,   902, 19430, 11105, 29879,
         10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114,
-          411,  2654, 11315,    13]), 'image': tensor([[[ 0.0325,  0.0325,  0.0325,  ..., -0.7120, -0.3616, -0.1280],
+          411,  2654, 11315,    13]), 
+        'image': 
+        tensor([[[ 0.0325,  0.0325,  0.0325,  ..., -0.7120, -0.3616, -0.1280],
          [ 0.0325,  0.0325,  0.0325,  ..., -0.3908, -0.1718, -0.0259],
          [ 0.0325,  0.0325,  0.0325,  ..., -0.0113,  0.0471,  0.0909],
          ...,
          [-1.0331, -1.0331, -1.0331,  ..., -1.0623, -1.0623, -1.0623],
          [-1.0477, -1.0331, -1.0331,  ..., -1.0623, -1.0623, -1.0623],
          [-1.0477, -1.0331, -1.0331,  ..., -1.0623, -1.0623, -1.0623]],
-
+         
         [[ 0.3190,  0.3190,  0.3190,  ..., -0.3864, -0.0112,  0.2139],
          [ 0.3190,  0.3190,  0.3190,  ..., -0.0712,  0.1539,  0.3190],
          [ 0.3190,  0.3190,  0.3190,  ...,  0.2890,  0.3640,  0.4390],
@@ -1026,7 +1028,7 @@ class DataCollatorForSupervisedDataset(object):
          [-1.0167, -1.0167, -1.0167,  ..., -1.0017, -1.0017, -1.0017],
          [-1.0317, -1.0167, -1.0167,  ..., -1.0017, -1.0017, -1.0017],
          [-1.0317, -1.0167, -1.0167,  ..., -1.0017, -1.0017, -1.0017]],
-
+         
         [[ 0.9656,  0.9656,  0.9656,  ...,  0.0982,  0.4537,  0.6670],
          [ 0.9656,  0.9656,  0.9656,  ...,  0.3968,  0.6101,  0.7523],
          [ 0.9656,  0.9656,  0.9656,  ...,  0.7523,  0.8092,  0.8377],
@@ -1035,19 +1037,30 @@ class DataCollatorForSupervisedDataset(object):
          [-0.3711, -0.3711, -0.3853,  ..., -0.4279, -0.4279, -0.4279],
          [-0.3853, -0.3711, -0.3711,  ..., -0.4279, -0.4279, -0.4279]]])}]
         """
-        # Noneを除外
+        print("shape of each instance's input_ids and labels, and images(if any):", [(x['input_ids'].shape, x['labels'].shape, x.get('image', None).shape if 'image' in x else None) for x in instances])
+        # データローダーが None を返すことがあるので、Noneのサンプルを除外。
         instances = [x for x in instances if x is not None]
+        # input_idsとlabelsのそれぞれについてリストを作成。タプルをつくる。
         input_ids, labels = tuple([instance[key] for instance in instances]
                                   for key in ("input_ids", "labels"))
+        # input_idsはtokenizerのpad_token_id(0)でパディング
+        print("self.tokenizer.pad_token_id\n", self.tokenizer.pad_token_id)
         input_ids = torch.nn.utils.rnn.pad_sequence(
             input_ids,
             batch_first=True,
             padding_value=self.tokenizer.pad_token_id)
+        # labelsはIGNORE_INDEX(-100)でパディング
+        print("IGNORE_INDEX\n", IGNORE_INDEX)
         labels = torch.nn.utils.rnn.pad_sequence(labels,
                                                  batch_first=True,
                                                  padding_value=IGNORE_INDEX)
         input_ids = input_ids[:, :self.tokenizer.model_max_length]
+        print("input_ids.shape (after pad_sequence and truncate)\n", input_ids.shape)
+        print("input_ids (after pad_sequence and truncate)\n", input_ids)
         labels = labels[:, :self.tokenizer.model_max_length]
+        print("labels.shape (after pad_sequence and truncate)\n", labels.shape)
+        print("labels (after pad_sequence and truncate)\n", labels)
+        # .ne() は "not equal" → pad_token_id(=0) じゃない部分を 1、pad 部分を 0 にする。モデルが pad 部分を読まないように制御するマスクです。
         batch = dict(
             input_ids=input_ids,
             labels=labels,
@@ -1060,7 +1073,10 @@ class DataCollatorForSupervisedDataset(object):
                 batch['images'] = torch.stack(images)
             else:
                 batch['images'] = images
-
+            print("batch['images'].shape\n", batch['images'].shape)
+        
+        print("batch (return)\n", batch)
+        print("shape of each batch's input_ids and labels, and images(if any):", [(batch['input_ids'].shape, batch['labels'].shape, batch.get('images', None).shape if 'images' in batch else None)])
         return batch
 
 

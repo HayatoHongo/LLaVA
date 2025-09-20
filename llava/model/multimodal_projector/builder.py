@@ -67,7 +67,7 @@ class SimpleResBlock(nn.Module):
 
 
 def build_vision_projector(config, delay_load=False, **kwargs):
-
+    # self.mm_projector = build_vision_projector(self.config)
     print("current file path", "llava/llava/model/multimodal_projector/builder.py")
     print("def build_vision_projector(config, delay_load=False, **kwargs)")
     print("config\n", config)
@@ -146,6 +146,7 @@ def build_vision_projector(config, delay_load=False, **kwargs):
 
     print("【COND】projector_type\n", projector_type)
     if projector_type == 'identity':
+        # 【SKIP】
         print("【ENTER】if projector_type == 'identity':")
         result = IdentityMap()
         print("result (return)\n", result)
