@@ -352,8 +352,11 @@ class LLaVATrainer(Trainer):
             print("print(risk): print(optimizer_cls) disabled for safety")
             print("print(risk): print(optimizer_kwargs) disabled for safety")
 
+            print("ALL_LAYERNORM_LAYERS\n", ALL_LAYERNORM_LAYERS)
             decay_parameters = get_parameter_names(opt_model, ALL_LAYERNORM_LAYERS)
+            print("decay_parameters (before removing bias)\n", decay_parameters)
             decay_parameters = [name for name in decay_parameters if "bias" not in name]
+            print("decay_parameters\n", decay_parameters)
             print(f"[COND] mm_projector_lr={self.args.mm_projector_lr}") # None
             if self.args.mm_projector_lr is not None:
                 #【SKIP】
@@ -407,6 +410,8 @@ class LLaVATrainer(Trainer):
                 ]
 
             optimizer_cls, optimizer_kwargs = Trainer.get_optimizer_cls_and_kwargs(self.args)
+            print("optimizer_cls\n", optimizer_cls)
+            print("optimizer_kwargs\n", optimizer_kwargs)
 
             print(f"[COND] sharded_ddp={self.sharded_ddp}, SHARDED_DDP_SIMPLE={ShardedDDPOption.SIMPLE}") # sharded_ddp=None, SHARDED_DDP_SIMPLE=simple
             if self.sharded_ddp == ShardedDDPOption.SIMPLE:

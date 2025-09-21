@@ -1,29 +1,29 @@
-[2025-09-21 06:12:21,433] [INFO] [real_accelerator.py:110:get_accelerator] Setting ds_accelerator to cuda (auto detect)
-[2025-09-21 06:12:23,481] [WARNING] [runner.py:196:fetch_hostfile] Unable to find hostfile, will proceed with training with local resources only.
-[2025-09-21 06:12:23,481] [INFO] [runner.py:555:main] cmd = /root/miniconda3/envs/llava/bin/python3.10 -u -m deepspeed.launcher.launch --world_info=eyJsb2NhbGhvc3QiOiBbMF19 --master_addr=127.0.0.1 --master_port=29500 --enable_each_rank_log=None llava/train/train_mem.py --deepspeed ./scripts/zero2.json --model_name_or_path TinyLlama/TinyLlama-1.1B-Chat-v1.0 --version plain --data_path /content/LLaVA/blip_laion_cc_sbu_1.json --image_folder /content/LLaVA/images --vision_tower openai/clip-vit-large-patch14-336 --mm_projector_type mlp2x_gelu --tune_mm_mlp_adapter True --mm_vision_select_layer -2 --mm_use_im_start_end False --mm_use_im_patch_token False --bf16 True --output_dir ./checkpoints/llava-TinyLlama-1.1B-Chat-v1.0 --num_train_epochs 1 --per_device_train_batch_size 1 --per_device_eval_batch_size 1 --gradient_accumulation_steps 1 --evaluation_strategy no --save_strategy steps --save_steps 1 --save_total_limit 1 --learning_rate 1e-3 --weight_decay 0. --warmup_ratio 0.03 --lr_scheduler_type cosine --logging_steps 1 --tf32 False --model_max_length 2048 --gradient_checkpointing True --dataloader_num_workers 2 --lazy_preprocess True --report_to none
-[2025-09-21 06:12:24,899] [INFO] [real_accelerator.py:110:get_accelerator] Setting ds_accelerator to cuda (auto detect)
-[2025-09-21 06:12:26,907] [INFO] [launch.py:138:main] 0 NV_LIBNCCL_DEV_PACKAGE=libnccl-dev=2.22.3-1+cuda12.5
-[2025-09-21 06:12:26,907] [INFO] [launch.py:138:main] 0 NV_LIBNCCL_DEV_PACKAGE_VERSION=2.22.3-1
-[2025-09-21 06:12:26,907] [INFO] [launch.py:138:main] 0 NCCL_VERSION=2.22.3-1
-[2025-09-21 06:12:26,907] [INFO] [launch.py:138:main] 0 NV_LIBNCCL_DEV_PACKAGE_NAME=libnccl-dev
-[2025-09-21 06:12:26,907] [INFO] [launch.py:138:main] 0 NV_LIBNCCL_PACKAGE=libnccl2=2.22.3-1+cuda12.5
-[2025-09-21 06:12:26,907] [INFO] [launch.py:138:main] 0 NV_LIBNCCL_PACKAGE_NAME=libnccl2
-[2025-09-21 06:12:26,907] [INFO] [launch.py:138:main] 0 NV_LIBNCCL_PACKAGE_VERSION=2.22.3-1
-[2025-09-21 06:12:26,907] [INFO] [launch.py:145:main] WORLD INFO DICT: {'localhost': [0]}
-[2025-09-21 06:12:26,907] [INFO] [launch.py:151:main] nnodes=1, num_local_procs=1, node_rank=0
-[2025-09-21 06:12:26,907] [INFO] [launch.py:162:main] global_rank_mapping=defaultdict(<class 'list'>, {'localhost': [0]})
-[2025-09-21 06:12:26,907] [INFO] [launch.py:163:main] dist_world_size=1
-[2025-09-21 06:12:26,907] [INFO] [launch.py:165:main] Setting CUDA_VISIBLE_DEVICES=0
-[2025-09-21 06:12:29,792] [INFO] [real_accelerator.py:110:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-09-12 08:50:49,796] [INFO] [real_accelerator.py:110:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-09-12 08:50:51,823] [WARNING] [runner.py:196:fetch_hostfile] Unable to find hostfile, will proceed with training with local resources only.
+[2025-09-12 08:50:51,823] [INFO] [runner.py:555:main] cmd = /root/miniconda3/envs/llava/bin/python3.10 -u -m deepspeed.launcher.launch --world_info=eyJsb2NhbGhvc3QiOiBbMF19 --master_addr=127.0.0.1 --master_port=29500 --enable_each_rank_log=None llava/train/train_mem.py --deepspeed ./scripts/zero2.json --model_name_or_path lmsys/vicuna-7b-v1.5 --version plain --data_path /content/LLaVA/blip_laion_cc_sbu_1.json --image_folder /content/LLaVA/images --vision_tower openai/clip-vit-large-patch14-336 --mm_projector_type mlp2x_gelu --tune_mm_mlp_adapter True --mm_vision_select_layer -2 --mm_use_im_start_end False --mm_use_im_patch_token False --bf16 True --output_dir ./checkpoints/llava-v1.5-7b-pretrain --num_train_epochs 1 --per_device_train_batch_size 1 --per_device_eval_batch_size 1 --gradient_accumulation_steps 1 --evaluation_strategy no --save_strategy steps --save_steps 1 --save_total_limit 1 --learning_rate 1e-3 --weight_decay 0. --warmup_ratio 0.03 --lr_scheduler_type cosine --logging_steps 1 --tf32 True --model_max_length 2048 --gradient_checkpointing True --dataloader_num_workers 2 --lazy_preprocess True --report_to none
+[2025-09-12 08:50:53,217] [INFO] [real_accelerator.py:110:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-09-12 08:50:55,220] [INFO] [launch.py:138:main] 0 NV_LIBNCCL_DEV_PACKAGE=libnccl-dev=2.22.3-1+cuda12.5
+[2025-09-12 08:50:55,220] [INFO] [launch.py:138:main] 0 NV_LIBNCCL_DEV_PACKAGE_VERSION=2.22.3-1
+[2025-09-12 08:50:55,220] [INFO] [launch.py:138:main] 0 NCCL_VERSION=2.22.3-1
+[2025-09-12 08:50:55,220] [INFO] [launch.py:138:main] 0 NV_LIBNCCL_DEV_PACKAGE_NAME=libnccl-dev
+[2025-09-12 08:50:55,220] [INFO] [launch.py:138:main] 0 NV_LIBNCCL_PACKAGE=libnccl2=2.22.3-1+cuda12.5
+[2025-09-12 08:50:55,220] [INFO] [launch.py:138:main] 0 NV_LIBNCCL_PACKAGE_NAME=libnccl2
+[2025-09-12 08:50:55,220] [INFO] [launch.py:138:main] 0 NV_LIBNCCL_PACKAGE_VERSION=2.22.3-1
+[2025-09-12 08:50:55,220] [INFO] [launch.py:145:main] WORLD INFO DICT: {'localhost': [0]}
+[2025-09-12 08:50:55,220] [INFO] [launch.py:151:main] nnodes=1, num_local_procs=1, node_rank=0
+[2025-09-12 08:50:55,220] [INFO] [launch.py:162:main] global_rank_mapping=defaultdict(<class 'list'>, {'localhost': [0]})
+[2025-09-12 08:50:55,220] [INFO] [launch.py:163:main] dist_world_size=1
+[2025-09-12 08:50:55,220] [INFO] [launch.py:165:main] Setting CUDA_VISIBLE_DEVICES=0
+[2025-09-12 08:50:58,082] [INFO] [real_accelerator.py:110:get_accelerator] Setting ds_accelerator to cuda (auto detect)
 current file path llava/train/train.py
 def train()
 original parser
  HfArgumentParser(prog='train_mem.py', usage=None, description=None, formatter_class=<class 'argparse.ArgumentDefaultsHelpFormatter'>, conflict_handler='error', add_help=True)
-[2025-09-21 06:12:30,481] [WARNING] [comm.py:152:init_deepspeed_backend] NCCL backend in DeepSpeed not yet implemented
-[2025-09-21 06:12:30,481] [INFO] [comm.py:594:init_distributed] cdb=None
-[2025-09-21 06:12:30,481] [INFO] [comm.py:625:init_distributed] Initializing TorchBackend in DeepSpeed with backend nccl
+[2025-09-12 08:50:58,768] [WARNING] [comm.py:152:init_deepspeed_backend] NCCL backend in DeepSpeed not yet implemented
+[2025-09-12 08:50:58,768] [INFO] [comm.py:594:init_distributed] cdb=None
+[2025-09-12 08:50:58,768] [INFO] [comm.py:625:init_distributed] Initializing TorchBackend in DeepSpeed with backend nccl
 model_args
- ModelArguments(model_name_or_path='TinyLlama/TinyLlama-1.1B-Chat-v1.0', version='plain', freeze_backbone=False, tune_mm_mlp_adapter=True, vision_tower='openai/clip-vit-large-patch14-336', mm_vision_select_layer=-2, pretrain_mm_mlp_adapter=None, mm_projector_type='mlp2x_gelu', mm_use_im_start_end=False, mm_use_im_patch_token=False, mm_patch_merge_type='flat', mm_vision_select_feature='patch')
+ ModelArguments(model_name_or_path='lmsys/vicuna-7b-v1.5', version='plain', freeze_backbone=False, tune_mm_mlp_adapter=True, vision_tower='openai/clip-vit-large-patch14-336', mm_vision_select_layer=-2, pretrain_mm_mlp_adapter=None, mm_projector_type='mlp2x_gelu', mm_use_im_start_end=False, mm_use_im_patch_token=False, mm_patch_merge_type='flat', mm_vision_select_feature='patch')
 data_args
  DataArguments(data_path='/content/LLaVA/blip_laion_cc_sbu_1.json', lazy_preprocess=True, is_multimodal=False, image_folder='/content/LLaVA/images', image_aspect_ratio='square')
 training_args
@@ -90,7 +90,7 @@ local_rank=0,
 log_level=passive,
 log_level_replica=warning,
 log_on_each_node=True,
-logging_dir=./checkpoints/llava-TinyLlama-1.1B-Chat-v1.0/runs/Sep21_06-12-30_da684785f21a,
+logging_dir=./checkpoints/llava-v1.5-7b-pretrain/runs/Sep12_08-50-58_6938f967efda,
 logging_first_step=False,
 logging_nan_inf_filter=True,
 logging_steps=1.0,
@@ -113,7 +113,7 @@ no_cuda=False,
 num_train_epochs=1.0,
 optim=adamw_torch,
 optim_args=None,
-output_dir=./checkpoints/llava-TinyLlama-1.1B-Chat-v1.0,
+output_dir=./checkpoints/llava-v1.5-7b-pretrain,
 overwrite_output_dir=False,
 past_index=-1,
 per_device_eval_batch_size=1,
@@ -128,7 +128,7 @@ ray_scope=last,
 remove_unused_columns=False,
 report_to=[],
 resume_from_checkpoint=None,
-run_name=./checkpoints/llava-TinyLlama-1.1B-Chat-v1.0,
+run_name=./checkpoints/llava-v1.5-7b-pretrain,
 save_on_each_node=False,
 save_safetensors=False,
 save_steps=1.0,
@@ -137,7 +137,7 @@ save_total_limit=1,
 seed=42,
 sharded_ddp=[],
 skip_memory_metrics=True,
-tf32=False,
+tf32=True,
 torch_compile=False,
 torch_compile_backend=None,
 torch_compile_mode=None,
@@ -173,29 +173,27 @@ self
  <class 'llava.model.language_model.llava_llama.LlavaLlamaForCausalLM'>
 config
  LlavaConfig {
-  "_name_or_path": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+  "_name_or_path": "lmsys/vicuna-7b-v1.5",
   "architectures": [
     "LlamaForCausalLM"
   ],
-  "attention_bias": false,
   "bos_token_id": 1,
   "eos_token_id": 2,
   "hidden_act": "silu",
-  "hidden_size": 2048,
+  "hidden_size": 4096,
   "initializer_range": 0.02,
-  "intermediate_size": 5632,
-  "max_position_embeddings": 2048,
+  "intermediate_size": 11008,
+  "max_position_embeddings": 4096,
   "model_type": "llava_llama",
   "num_attention_heads": 32,
-  "num_hidden_layers": 22,
-  "num_key_value_heads": 4,
+  "num_hidden_layers": 32,
+  "num_key_value_heads": 32,
   "pad_token_id": 0,
   "pretraining_tp": 1,
   "rms_norm_eps": 1e-05,
   "rope_scaling": null,
-  "rope_theta": 10000.0,
   "tie_word_embeddings": false,
-  "torch_dtype": "bfloat16",
+  "torch_dtype": "float16",
   "transformers_version": "4.31.0",
   "use_cache": true,
   "vocab_size": 32000
@@ -207,29 +205,27 @@ self
  <class 'llava.model.language_model.llava_llama.LlavaLlamaModel'>
 config
  LlavaConfig {
-  "_name_or_path": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+  "_name_or_path": "lmsys/vicuna-7b-v1.5",
   "architectures": [
     "LlamaForCausalLM"
   ],
-  "attention_bias": false,
   "bos_token_id": 1,
   "eos_token_id": 2,
   "hidden_act": "silu",
-  "hidden_size": 2048,
+  "hidden_size": 4096,
   "initializer_range": 0.02,
-  "intermediate_size": 5632,
-  "max_position_embeddings": 2048,
+  "intermediate_size": 11008,
+  "max_position_embeddings": 4096,
   "model_type": "llava_llama",
   "num_attention_heads": 32,
-  "num_hidden_layers": 22,
-  "num_key_value_heads": 4,
+  "num_hidden_layers": 32,
+  "num_key_value_heads": 32,
   "pad_token_id": 0,
   "pretraining_tp": 1,
   "rms_norm_eps": 1e-05,
   "rope_scaling": null,
-  "rope_theta": 10000.0,
   "tie_word_embeddings": false,
-  "torch_dtype": "bfloat16",
+  "torch_dtype": "float16",
   "transformers_version": "4.31.0",
   "use_cache": true,
   "vocab_size": 32000
@@ -239,29 +235,27 @@ current file path llava/model/llava_arch.py
 LlavaMetaModel.__init__(self, config)
 config
  LlavaConfig {
-  "_name_or_path": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+  "_name_or_path": "lmsys/vicuna-7b-v1.5",
   "architectures": [
     "LlamaForCausalLM"
   ],
-  "attention_bias": false,
   "bos_token_id": 1,
   "eos_token_id": 2,
   "hidden_act": "silu",
-  "hidden_size": 2048,
+  "hidden_size": 4096,
   "initializer_range": 0.02,
-  "intermediate_size": 5632,
-  "max_position_embeddings": 2048,
+  "intermediate_size": 11008,
+  "max_position_embeddings": 4096,
   "model_type": "llava_llama",
   "num_attention_heads": 32,
-  "num_hidden_layers": 22,
-  "num_key_value_heads": 4,
+  "num_hidden_layers": 32,
+  "num_key_value_heads": 32,
   "pad_token_id": 0,
   "pretraining_tp": 1,
   "rms_norm_eps": 1e-05,
   "rope_scaling": null,
-  "rope_theta": 10000.0,
   "tie_word_embeddings": false,
-  "torch_dtype": "bfloat16",
+  "torch_dtype": "float16",
   "transformers_version": "4.31.0",
   "use_cache": true,
   "vocab_size": 32000
@@ -270,20 +264,20 @@ config
 [COND] mm_vision_tower=False
 self.model
  LlavaLlamaModel(
-  (embed_tokens): Embedding(32000, 2048, padding_idx=0)
+  (embed_tokens): Embedding(32000, 4096, padding_idx=0)
   (layers): ModuleList(
-    (0-21): 22 x LlamaDecoderLayer(
+    (0-31): 32 x LlamaDecoderLayer(
       (self_attn): LlamaAttention(
-        (q_proj): Linear(in_features=2048, out_features=2048, bias=False)
-        (k_proj): Linear(in_features=2048, out_features=256, bias=False)
-        (v_proj): Linear(in_features=2048, out_features=256, bias=False)
-        (o_proj): Linear(in_features=2048, out_features=2048, bias=False)
+        (q_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (k_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (v_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (o_proj): Linear(in_features=4096, out_features=4096, bias=False)
         (rotary_emb): LlamaRotaryEmbedding()
       )
       (mlp): LlamaMLP(
-        (gate_proj): Linear(in_features=2048, out_features=5632, bias=False)
-        (up_proj): Linear(in_features=2048, out_features=5632, bias=False)
-        (down_proj): Linear(in_features=5632, out_features=2048, bias=False)
+        (gate_proj): Linear(in_features=4096, out_features=11008, bias=False)n
+        (up_proj): Linear(in_features=4096, out_features=11008, bias=False)
+        (down_proj): Linear(in_features=11008, out_features=4096, bias=False)
         (act_fn): SiLUActivation()
       )
       (input_layernorm): LlamaRMSNorm()
@@ -297,26 +291,29 @@ self.pretraining_tp
 self.vocab_size
  32000
 self.lm_head
- Linear(in_features=2048, out_features=32000, bias=False)
-Some weights of LlavaLlamaForCausalLM were not initialized from the model checkpoint at TinyLlama/TinyLlama-1.1B-Chat-v1.0 and are newly initialized: ['model.layers.0.self_attn.rotary_emb.inv_freq', 'model.layers.6.self_attn.rotary_emb.inv_freq', 'model.layers.8.self_attn.rotary_emb.inv_freq', 'model.layers.9.self_attn.rotary_emb.inv_freq', 'model.layers.20.self_attn.rotary_emb.inv_freq', 'model.layers.10.self_attn.rotary_emb.inv_freq', 'model.layers.16.self_attn.rotary_emb.inv_freq', 'model.layers.11.self_attn.rotary_emb.inv_freq', 'model.layers.2.self_attn.rotary_emb.inv_freq', 'model.layers.1.self_attn.rotary_emb.inv_freq', 'model.layers.7.self_attn.rotary_emb.inv_freq', 'model.layers.12.self_attn.rotary_emb.inv_freq', 'model.layers.19.self_attn.rotary_emb.inv_freq', 'model.layers.4.self_attn.rotary_emb.inv_freq', 'model.layers.18.self_attn.rotary_emb.inv_freq', 'model.layers.21.self_attn.rotary_emb.inv_freq', 'model.layers.15.self_attn.rotary_emb.inv_freq', 'model.layers.17.self_attn.rotary_emb.inv_freq', 'model.layers.5.self_attn.rotary_emb.inv_freq', 'model.layers.3.self_attn.rotary_emb.inv_freq', 'model.layers.13.self_attn.rotary_emb.inv_freq', 'model.layers.14.self_attn.rotary_emb.inv_freq']
-You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+ Linear(in_features=4096, out_features=32000, bias=False)
+
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards:  50%|█████     | 1/2 [00:06<00:06,  6.72s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:09<00:00,  4.19s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:09<00:00,  4.57s/it]
 model defined as LlavaLlamaForCausalLM 
  LlavaLlamaForCausalLM(
   (model): LlavaLlamaModel(
-    (embed_tokens): Embedding(32000, 2048, padding_idx=0)
+    (embed_tokens): Embedding(32000, 4096, padding_idx=0)
     (layers): ModuleList(
-      (0-21): 22 x LlamaDecoderLayer(
+      (0-31): 32 x LlamaDecoderLayer(
         (self_attn): LlamaAttention(
-          (q_proj): Linear(in_features=2048, out_features=2048, bias=False)
-          (k_proj): Linear(in_features=2048, out_features=256, bias=False)
-          (v_proj): Linear(in_features=2048, out_features=256, bias=False)
-          (o_proj): Linear(in_features=2048, out_features=2048, bias=False)
+          (q_proj): Linear(in_features=4096, out_features=4096, bias=False)
+          (k_proj): Linear(in_features=4096, out_features=4096, bias=False)
+          (v_proj): Linear(in_features=4096, out_features=4096, bias=False)
+          (o_proj): Linear(in_features=4096, out_features=4096, bias=False)
           (rotary_emb): LlamaRotaryEmbedding()
         )
         (mlp): LlamaMLP(
-          (gate_proj): Linear(in_features=2048, out_features=5632, bias=False)
-          (up_proj): Linear(in_features=2048, out_features=5632, bias=False)
-          (down_proj): Linear(in_features=5632, out_features=2048, bias=False)
+          (gate_proj): Linear(in_features=4096, out_features=11008, bias=False)
+          (up_proj): Linear(in_features=4096, out_features=11008, bias=False)
+          (down_proj): Linear(in_features=11008, out_features=4096, bias=False)
           (act_fn): SiLUActivation()
         )
         (input_layernorm): LlamaRMSNorm()
@@ -325,7 +322,7 @@ model defined as LlavaLlamaForCausalLM
     )
     (norm): LlamaRMSNorm()
   )
-  (lm_head): Linear(in_features=2048, out_features=32000, bias=False)
+  (lm_head): Linear(in_features=4096, out_features=32000, bias=False)
 )
 【EXIT】else of if 'mpt' in model_args.model_name_or_path:
 【EXIT】if model_args.vision_tower is not None:
@@ -344,7 +341,7 @@ model.config.use_cache
 [COND] not_mpt_in_model_name_or_path={'mpt' not in model_args.model_name_or_path}
 【ENTER】else of if 'mpt' in model_args.model_name_or_path:
 tokenizer defined by AutoTokenizer.from_pretrained 
- LlamaTokenizer(name_or_path='TinyLlama/TinyLlama-1.1B-Chat-v1.0', vocab_size=32000, model_max_length=2048, is_fast=False, padding_side='right', truncation_side='right', special_tokens={'bos_token': AddedToken("<s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'eos_token': AddedToken("</s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'unk_token': AddedToken("<unk>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'pad_token': AddedToken("</s>", rstrip=False, lstrip=False, single_word=False, normalized=False)}, clean_up_tokenization_spaces=False)
+ LlamaTokenizer(name_or_path='lmsys/vicuna-7b-v1.5', vocab_size=32000, model_max_length=2048, is_fast=False, padding_side='right', truncation_side='right', special_tokens={'bos_token': AddedToken("<s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'eos_token': AddedToken("</s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'unk_token': AddedToken("<unk>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'pad_token': '<unk>'}, clean_up_tokenization_spaces=False)
 【EXIT】else of if 'mpt' in model_args.model_name_or_path:
 [COND] version=plain
 【ENTER】else of if model_args.version == 'v0' and elif 'v0.5':
@@ -361,20 +358,20 @@ self
  <class 'llava.model.language_model.llava_llama.LlavaLlamaForCausalLM'>
 self.model (return)
  LlavaLlamaModel(
-  (embed_tokens): Embedding(32000, 2048, padding_idx=0)
+  (embed_tokens): Embedding(32000, 4096, padding_idx=0)
   (layers): ModuleList(
-    (0-21): 22 x LlamaDecoderLayer(
+    (0-31): 32 x LlamaDecoderLayer(
       (self_attn): LlamaAttention(
-        (q_proj): Linear(in_features=2048, out_features=2048, bias=False)
-        (k_proj): Linear(in_features=2048, out_features=256, bias=False)
-        (v_proj): Linear(in_features=2048, out_features=256, bias=False)
-        (o_proj): Linear(in_features=2048, out_features=2048, bias=False)
+        (q_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (k_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (v_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (o_proj): Linear(in_features=4096, out_features=4096, bias=False)
         (rotary_emb): LlamaRotaryEmbedding()
       )
       (mlp): LlamaMLP(
-        (gate_proj): Linear(in_features=2048, out_features=5632, bias=False)
-        (up_proj): Linear(in_features=2048, out_features=5632, bias=False)
-        (down_proj): Linear(in_features=5632, out_features=2048, bias=False)
+        (gate_proj): Linear(in_features=4096, out_features=11008, bias=False)
+        (up_proj): Linear(in_features=4096, out_features=11008, bias=False)
+        (down_proj): Linear(in_features=11008, out_features=4096, bias=False)
         (act_fn): SiLUActivation()
       )
       (input_layernorm): LlamaRMSNorm()
@@ -386,7 +383,7 @@ self.model (return)
 current file path llava/model/llava_arch.py
 def initialize_vision_modules(self, model_args, fsdp=None)
 model_args
- ModelArguments(model_name_or_path='TinyLlama/TinyLlama-1.1B-Chat-v1.0', version='plain', freeze_backbone=False, tune_mm_mlp_adapter=True, vision_tower='openai/clip-vit-large-patch14-336', mm_vision_select_layer=-2, pretrain_mm_mlp_adapter=None, mm_projector_type='mlp2x_gelu', mm_use_im_start_end=False, mm_use_im_patch_token=False, mm_patch_merge_type='flat', mm_vision_select_feature='patch')
+ ModelArguments(model_name_or_path='lmsys/vicuna-7b-v1.5', version='plain', freeze_backbone=False, tune_mm_mlp_adapter=True, vision_tower='openai/clip-vit-large-patch14-336', mm_vision_select_layer=-2, pretrain_mm_mlp_adapter=None, mm_projector_type='mlp2x_gelu', mm_use_im_start_end=False, mm_use_im_patch_token=False, mm_patch_merge_type='flat', mm_vision_select_feature='patch')
 fsdp
  []
 vision_tower from model_args
@@ -434,7 +431,7 @@ vision_tower (return)
 current file path llava/llava/model/multimodal_encoder/builder.py
 def build_vision_tower(vision_tower_cfg, **kwargs)
 vision_tower_cfg
- ModelArguments(model_name_or_path='TinyLlama/TinyLlama-1.1B-Chat-v1.0', version='plain', freeze_backbone=False, tune_mm_mlp_adapter=True, vision_tower='openai/clip-vit-large-patch14-336', mm_vision_select_layer=-2, pretrain_mm_mlp_adapter=None, mm_projector_type='mlp2x_gelu', mm_use_im_start_end=False, mm_use_im_patch_token=False, mm_patch_merge_type='flat', mm_vision_select_feature='patch')
+ ModelArguments(model_name_or_path='lmsys/vicuna-7b-v1.5', version='plain', freeze_backbone=False, tune_mm_mlp_adapter=True, vision_tower='openai/clip-vit-large-patch14-336', mm_vision_select_layer=-2, pretrain_mm_mlp_adapter=None, mm_projector_type='mlp2x_gelu', mm_use_im_start_end=False, mm_use_im_patch_token=False, mm_patch_merge_type='flat', mm_vision_select_feature='patch')
 kwargs
  {}
 vision_tower from vision_tower_cfg
@@ -450,7 +447,7 @@ self
 vision_tower
  openai/clip-vit-large-patch14-336
 args
- ModelArguments(model_name_or_path='TinyLlama/TinyLlama-1.1B-Chat-v1.0', version='plain', freeze_backbone=False, tune_mm_mlp_adapter=True, vision_tower='openai/clip-vit-large-patch14-336', mm_vision_select_layer=-2, pretrain_mm_mlp_adapter=None, mm_projector_type='mlp2x_gelu', mm_use_im_start_end=False, mm_use_im_patch_token=False, mm_patch_merge_type='flat', mm_vision_select_feature='patch')
+ ModelArguments(model_name_or_path='lmsys/vicuna-7b-v1.5', version='plain', freeze_backbone=False, tune_mm_mlp_adapter=True, vision_tower='openai/clip-vit-large-patch14-336', mm_vision_select_layer=-2, pretrain_mm_mlp_adapter=None, mm_projector_type='mlp2x_gelu', mm_use_im_start_end=False, mm_use_im_patch_token=False, mm_patch_merge_type='flat', mm_vision_select_feature='patch')
 delay_load
  False
 self.is_loaded
@@ -690,18 +687,17 @@ current file path llava/llava/model/multimodal_projector/builder.py
 def build_vision_projector(config, delay_load=False, **kwargs)
 config
  LlavaConfig {
-  "_name_or_path": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+  "_name_or_path": "lmsys/vicuna-7b-v1.5",
   "architectures": [
     "LlamaForCausalLM"
   ],
-  "attention_bias": false,
   "bos_token_id": 1,
   "eos_token_id": 2,
   "hidden_act": "silu",
-  "hidden_size": 2048,
+  "hidden_size": 4096,
   "initializer_range": 0.02,
-  "intermediate_size": 5632,
-  "max_position_embeddings": 2048,
+  "intermediate_size": 11008,
+  "max_position_embeddings": 4096,
   "mm_hidden_size": 1024,
   "mm_patch_merge_type": "flat",
   "mm_projector_type": "mlp2x_gelu",
@@ -710,15 +706,14 @@ config
   "mm_vision_tower": "openai/clip-vit-large-patch14-336",
   "model_type": "llava_llama",
   "num_attention_heads": 32,
-  "num_hidden_layers": 22,
-  "num_key_value_heads": 4,
+  "num_hidden_layers": 32,
+  "num_key_value_heads": 32,
   "pad_token_id": 0,
   "pretraining_tp": 1,
   "rms_norm_eps": 1e-05,
   "rope_scaling": null,
-  "rope_theta": 10000.0,
   "tie_word_embeddings": false,
-  "torch_dtype": "bfloat16",
+  "torch_dtype": "float16",
   "transformers_version": "4.31.0",
   "use_cache": false,
   "use_mm_proj": true,
@@ -739,21 +734,21 @@ projector_type from config
 mlp_depth from mlp_gelu_match.group(1)
  2
 modules after first Linear
- [Linear(in_features=1024, out_features=2048, bias=True)]
+ [Linear(in_features=1024, out_features=4096, bias=True)]
 modules before Sequential
- [Linear(in_features=1024, out_features=2048, bias=True), GELU(approximate='none'), Linear(in_features=2048, out_features=2048, bias=True)]
+ [Linear(in_features=1024, out_features=4096, bias=True), GELU(approximate='none'), Linear(in_features=4096, out_features=4096, bias=True)]
 result (return)
  Sequential(
-  (0): Linear(in_features=1024, out_features=2048, bias=True)
+  (0): Linear(in_features=1024, out_features=4096, bias=True)
   (1): GELU(approximate='none')
-  (2): Linear(in_features=2048, out_features=2048, bias=True)
+  (2): Linear(in_features=4096, out_features=4096, bias=True)
 )
 【EXIT】if mlp_gelu_match:
 self.mm_projector after build_vision_projector
  Sequential(
-  (0): Linear(in_features=1024, out_features=2048, bias=True)
+  (0): Linear(in_features=1024, out_features=4096, bias=True)
   (1): GELU(approximate='none')
-  (2): Linear(in_features=2048, out_features=2048, bias=True)
+  (2): Linear(in_features=4096, out_features=4096, bias=True)
 )
 mm_patch_merge_type
  flat
@@ -768,20 +763,20 @@ self
  <class 'llava.model.language_model.llava_llama.LlavaLlamaForCausalLM'>
 self.model (return)
  LlavaLlamaModel(
-  (embed_tokens): Embedding(32000, 2048, padding_idx=0)
+  (embed_tokens): Embedding(32000, 4096, padding_idx=0)
   (layers): ModuleList(
-    (0-21): 22 x LlamaDecoderLayer(
+    (0-31): 32 x LlamaDecoderLayer(
       (self_attn): LlamaAttention(
-        (q_proj): Linear(in_features=2048, out_features=2048, bias=False)
-        (k_proj): Linear(in_features=2048, out_features=256, bias=False)
-        (v_proj): Linear(in_features=2048, out_features=256, bias=False)
-        (o_proj): Linear(in_features=2048, out_features=2048, bias=False)
+        (q_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (k_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (v_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (o_proj): Linear(in_features=4096, out_features=4096, bias=False)
         (rotary_emb): LlamaRotaryEmbedding()
       )
       (mlp): LlamaMLP(
-        (gate_proj): Linear(in_features=2048, out_features=5632, bias=False)
-        (up_proj): Linear(in_features=2048, out_features=5632, bias=False)
-        (down_proj): Linear(in_features=5632, out_features=2048, bias=False)
+        (gate_proj): Linear(in_features=4096, out_features=11008, bias=False)
+        (up_proj): Linear(in_features=4096, out_features=11008, bias=False)
+        (down_proj): Linear(in_features=11008, out_features=4096, bias=False)
         (act_fn): SiLUActivation()
       )
       (input_layernorm): LlamaRMSNorm()
@@ -821,9 +816,9 @@ self.model (return)
     )
   )
   (mm_projector): Sequential(
-    (0): Linear(in_features=1024, out_features=2048, bias=True)
+    (0): Linear(in_features=1024, out_features=4096, bias=True)
     (1): GELU(approximate='none')
-    (2): Linear(in_features=2048, out_features=2048, bias=True)
+    (2): Linear(in_features=4096, out_features=4096, bias=True)
   )
 )
 current file path llava/model/llava_arch.py
@@ -935,20 +930,20 @@ self
  <class 'llava.model.language_model.llava_llama.LlavaLlamaForCausalLM'>
 self.model (return)
  LlavaLlamaModel(
-  (embed_tokens): Embedding(32000, 2048, padding_idx=0)
+  (embed_tokens): Embedding(32000, 4096, padding_idx=0)
   (layers): ModuleList(
-    (0-21): 22 x LlamaDecoderLayer(
+    (0-31): 32 x LlamaDecoderLayer(
       (self_attn): LlamaAttention(
-        (q_proj): Linear(in_features=2048, out_features=2048, bias=False)
-        (k_proj): Linear(in_features=2048, out_features=256, bias=False)
-        (v_proj): Linear(in_features=2048, out_features=256, bias=False)
-        (o_proj): Linear(in_features=2048, out_features=2048, bias=False)
+        (q_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (k_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (v_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (o_proj): Linear(in_features=4096, out_features=4096, bias=False)
         (rotary_emb): LlamaRotaryEmbedding()
       )
       (mlp): LlamaMLP(
-        (gate_proj): Linear(in_features=2048, out_features=5632, bias=False)
-        (up_proj): Linear(in_features=2048, out_features=5632, bias=False)
-        (down_proj): Linear(in_features=5632, out_features=2048, bias=False)
+        (gate_proj): Linear(in_features=4096, out_features=11008, bias=False)
+        (up_proj): Linear(in_features=4096, out_features=11008, bias=False)
+        (down_proj): Linear(in_features=11008, out_features=4096, bias=False)
         (act_fn): SiLUActivation()
       )
       (input_layernorm): LlamaRMSNorm()
@@ -988,9 +983,9 @@ self.model (return)
     )
   )
   (mm_projector): Sequential(
-    (0): Linear(in_features=1024, out_features=2048, bias=True)
+    (0): Linear(in_features=1024, out_features=4096, bias=True)
     (1): GELU(approximate='none')
-    (2): Linear(in_features=2048, out_features=2048, bias=True)
+    (2): Linear(in_features=4096, out_features=4096, bias=True)
   )
 )
 current file path llava/llava/model/language_model/llava_llama.py
@@ -999,20 +994,20 @@ self
  <class 'llava.model.language_model.llava_llama.LlavaLlamaForCausalLM'>
 self.model (return)
  LlavaLlamaModel(
-  (embed_tokens): Embedding(32000, 2048, padding_idx=0)
+  (embed_tokens): Embedding(32000, 4096, padding_idx=0)
   (layers): ModuleList(
-    (0-21): 22 x LlamaDecoderLayer(
+    (0-31): 32 x LlamaDecoderLayer(
       (self_attn): LlamaAttention(
-        (q_proj): Linear(in_features=2048, out_features=2048, bias=False)
-        (k_proj): Linear(in_features=2048, out_features=256, bias=False)
-        (v_proj): Linear(in_features=2048, out_features=256, bias=False)
-        (o_proj): Linear(in_features=2048, out_features=2048, bias=False)
+        (q_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (k_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (v_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (o_proj): Linear(in_features=4096, out_features=4096, bias=False)
         (rotary_emb): LlamaRotaryEmbedding()
       )
       (mlp): LlamaMLP(
-        (gate_proj): Linear(in_features=2048, out_features=5632, bias=False)
-        (up_proj): Linear(in_features=2048, out_features=5632, bias=False)
-        (down_proj): Linear(in_features=5632, out_features=2048, bias=False)
+        (gate_proj): Linear(in_features=4096, out_features=11008, bias=False)
+        (up_proj): Linear(in_features=4096, out_features=11008, bias=False)
+        (down_proj): Linear(in_features=11008, out_features=4096, bias=False)
         (act_fn): SiLUActivation()
       )
       (input_layernorm): LlamaRMSNorm()
@@ -1052,32 +1047,32 @@ self.model (return)
     )
   )
   (mm_projector): Sequential(
-    (0): Linear(in_features=1024, out_features=2048, bias=True)
+    (0): Linear(in_features=1024, out_features=4096, bias=True)
     (1): GELU(approximate='none')
-    (2): Linear(in_features=2048, out_features=2048, bias=True)
+    (2): Linear(in_features=4096, out_features=4096, bias=True)
   )
 )
-model.get_model().mm_projector.parameters() <generator object Module.parameters at 0x7c44bb877450>
+model.get_model().mm_projector.parameters() <generator object Module.parameters at 0x7ed637a75af0>
 current file path llava/llava/model/language_model/llava_llama.py
 def LlavaLlamaForCausalLM.get_model(self)
 self
  <class 'llava.model.language_model.llava_llama.LlavaLlamaForCausalLM'>
 self.model (return)
  LlavaLlamaModel(
-  (embed_tokens): Embedding(32000, 2048, padding_idx=0)
+  (embed_tokens): Embedding(32000, 4096, padding_idx=0)
   (layers): ModuleList(
-    (0-21): 22 x LlamaDecoderLayer(
+    (0-31): 32 x LlamaDecoderLayer(
       (self_attn): LlamaAttention(
-        (q_proj): Linear(in_features=2048, out_features=2048, bias=False)
-        (k_proj): Linear(in_features=2048, out_features=256, bias=False)
-        (v_proj): Linear(in_features=2048, out_features=256, bias=False)
-        (o_proj): Linear(in_features=2048, out_features=2048, bias=False)
+        (q_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (k_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (v_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (o_proj): Linear(in_features=4096, out_features=4096, bias=False)
         (rotary_emb): LlamaRotaryEmbedding()
       )
       (mlp): LlamaMLP(
-        (gate_proj): Linear(in_features=2048, out_features=5632, bias=False)
-        (up_proj): Linear(in_features=2048, out_features=5632, bias=False)
-        (down_proj): Linear(in_features=5632, out_features=2048, bias=False)
+        (gate_proj): Linear(in_features=4096, out_features=11008, bias=False)
+        (up_proj): Linear(in_features=4096, out_features=11008, bias=False)
+        (down_proj): Linear(in_features=11008, out_features=4096, bias=False)
         (act_fn): SiLUActivation()
       )
       (input_layernorm): LlamaRMSNorm()
@@ -1117,32 +1112,32 @@ self.model (return)
     )
   )
   (mm_projector): Sequential(
-    (0): Linear(in_features=1024, out_features=2048, bias=True)
+    (0): Linear(in_features=1024, out_features=4096, bias=True)
     (1): GELU(approximate='none')
-    (2): Linear(in_features=2048, out_features=2048, bias=True)
+    (2): Linear(in_features=4096, out_features=4096, bias=True)
   )
 )
-model.get_model().mm_projector.parameters() <generator object Module.parameters at 0x7c44bb877450>
+model.get_model().mm_projector.parameters() <generator object Module.parameters at 0x7ed637a75af0>
 current file path llava/llava/model/language_model/llava_llama.py
 def LlavaLlamaForCausalLM.get_model(self)
 self
  <class 'llava.model.language_model.llava_llama.LlavaLlamaForCausalLM'>
 self.model (return)
  LlavaLlamaModel(
-  (embed_tokens): Embedding(32000, 2048, padding_idx=0)
+  (embed_tokens): Embedding(32000, 4096, padding_idx=0)
   (layers): ModuleList(
-    (0-21): 22 x LlamaDecoderLayer(
+    (0-31): 32 x LlamaDecoderLayer(
       (self_attn): LlamaAttention(
-        (q_proj): Linear(in_features=2048, out_features=2048, bias=False)
-        (k_proj): Linear(in_features=2048, out_features=256, bias=False)
-        (v_proj): Linear(in_features=2048, out_features=256, bias=False)
-        (o_proj): Linear(in_features=2048, out_features=2048, bias=False)
+        (q_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (k_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (v_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (o_proj): Linear(in_features=4096, out_features=4096, bias=False)
         (rotary_emb): LlamaRotaryEmbedding()
       )
       (mlp): LlamaMLP(
-        (gate_proj): Linear(in_features=2048, out_features=5632, bias=False)
-        (up_proj): Linear(in_features=2048, out_features=5632, bias=False)
-        (down_proj): Linear(in_features=5632, out_features=2048, bias=False)
+        (gate_proj): Linear(in_features=4096, out_features=11008, bias=False)
+        (up_proj): Linear(in_features=4096, out_features=11008, bias=False)
+        (down_proj): Linear(in_features=11008, out_features=4096, bias=False)
         (act_fn): SiLUActivation()
       )
       (input_layernorm): LlamaRMSNorm()
@@ -1182,32 +1177,32 @@ self.model (return)
     )
   )
   (mm_projector): Sequential(
-    (0): Linear(in_features=1024, out_features=2048, bias=True)
+    (0): Linear(in_features=1024, out_features=4096, bias=True)
     (1): GELU(approximate='none')
-    (2): Linear(in_features=2048, out_features=2048, bias=True)
+    (2): Linear(in_features=4096, out_features=4096, bias=True)
   )
 )
-model.get_model().mm_projector.parameters() <generator object Module.parameters at 0x7c44bb877450>
+model.get_model().mm_projector.parameters() <generator object Module.parameters at 0x7ed637a75af0>
 current file path llava/llava/model/language_model/llava_llama.py
 def LlavaLlamaForCausalLM.get_model(self)
 self
  <class 'llava.model.language_model.llava_llama.LlavaLlamaForCausalLM'>
 self.model (return)
  LlavaLlamaModel(
-  (embed_tokens): Embedding(32000, 2048, padding_idx=0)
+  (embed_tokens): Embedding(32000, 4096, padding_idx=0)
   (layers): ModuleList(
-    (0-21): 22 x LlamaDecoderLayer(
+    (0-31): 32 x LlamaDecoderLayer(
       (self_attn): LlamaAttention(
-        (q_proj): Linear(in_features=2048, out_features=2048, bias=False)
-        (k_proj): Linear(in_features=2048, out_features=256, bias=False)
-        (v_proj): Linear(in_features=2048, out_features=256, bias=False)
-        (o_proj): Linear(in_features=2048, out_features=2048, bias=False)
+        (q_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (k_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (v_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (o_proj): Linear(in_features=4096, out_features=4096, bias=False)
         (rotary_emb): LlamaRotaryEmbedding()
       )
       (mlp): LlamaMLP(
-        (gate_proj): Linear(in_features=2048, out_features=5632, bias=False)
-        (up_proj): Linear(in_features=2048, out_features=5632, bias=False)
-        (down_proj): Linear(in_features=5632, out_features=2048, bias=False)
+        (gate_proj): Linear(in_features=4096, out_features=11008, bias=False)
+        (up_proj): Linear(in_features=4096, out_features=11008, bias=False)
+        (down_proj): Linear(in_features=11008, out_features=4096, bias=False)
         (act_fn): SiLUActivation()
       )
       (input_layernorm): LlamaRMSNorm()
@@ -1247,12 +1242,12 @@ self.model (return)
     )
   )
   (mm_projector): Sequential(
-    (0): Linear(in_features=1024, out_features=2048, bias=True)
+    (0): Linear(in_features=1024, out_features=4096, bias=True)
     (1): GELU(approximate='none')
-    (2): Linear(in_features=2048, out_features=2048, bias=True)
+    (2): Linear(in_features=4096, out_features=4096, bias=True)
   )
 )
-model.get_model().mm_projector.parameters() <generator object Module.parameters at 0x7c44bb877450>
+model.get_model().mm_projector.parameters() <generator object Module.parameters at 0x7ed637a75af0>
 【EXIT】if model_args.tune_mm_mlp_adapter:
 [COND] freeze_mm_mlp_adapter=False
 [COND] bits=16
@@ -1263,9 +1258,9 @@ model_args.mm_use_im_patch_token False
 current file path llava/model/llava_arch.py
 def initialize_vision_tokenizer(self, model_args, tokenizer)
 model_args
- ModelArguments(model_name_or_path='TinyLlama/TinyLlama-1.1B-Chat-v1.0', version='plain', freeze_backbone=False, tune_mm_mlp_adapter=True, vision_tower='openai/clip-vit-large-patch14-336', mm_vision_select_layer=-2, pretrain_mm_mlp_adapter=None, mm_projector_type='mlp2x_gelu', mm_use_im_start_end=False, mm_use_im_patch_token=False, mm_patch_merge_type='flat', mm_vision_select_feature='patch')
+ ModelArguments(model_name_or_path='lmsys/vicuna-7b-v1.5', version='plain', freeze_backbone=False, tune_mm_mlp_adapter=True, vision_tower='openai/clip-vit-large-patch14-336', mm_vision_select_layer=-2, pretrain_mm_mlp_adapter=None, mm_projector_type='mlp2x_gelu', mm_use_im_start_end=False, mm_use_im_patch_token=False, mm_patch_merge_type='flat', mm_vision_select_feature='patch')
 tokenizer
- LlamaTokenizer(name_or_path='TinyLlama/TinyLlama-1.1B-Chat-v1.0', vocab_size=32000, model_max_length=2048, is_fast=False, padding_side='right', truncation_side='right', special_tokens={'bos_token': AddedToken("<s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'eos_token': AddedToken("</s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'unk_token': AddedToken("<unk>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'pad_token': '<unk>'}, clean_up_tokenization_spaces=False)
+ LlamaTokenizer(name_or_path='lmsys/vicuna-7b-v1.5', vocab_size=32000, model_max_length=2048, is_fast=False, padding_side='right', truncation_side='right', special_tokens={'bos_token': AddedToken("<s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'eos_token': AddedToken("</s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'unk_token': AddedToken("<unk>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'pad_token': '<unk>'}, clean_up_tokenization_spaces=False)
 [COND] mm_use_im_patch_token=False
 【EXIT】if model_args.vision_tower is not None:
 [COND] bits=16
@@ -1276,6 +1271,8 @@ tokenizer
 data_args
  DataArguments(data_path='/content/LLaVA/blip_laion_cc_sbu_1.json', lazy_preprocess=True, is_multimodal=True, image_folder='/content/LLaVA/images', image_aspect_ratio='square')
 current file path llava/train/train.py
+def make_supervised_data_module(tokenizer: transformers.PreTrainedTokenizer, data_args) -> Dict
+current file path llava/train/train.py
 def LazySupervisedDataset.__init__(self, data_path, tokenizer, data_args)
 data_path
  /content/LLaVA/blip_laion_cc_sbu_1.json
@@ -1283,41 +1280,36 @@ tokenizer
  <class 'transformers.models.llama.tokenization_llama.LlamaTokenizer'>
 data_args
  DataArguments(data_path='/content/LLaVA/blip_laion_cc_sbu_1.json', lazy_preprocess=True, is_multimodal=True, image_folder='/content/LLaVA/images', image_aspect_ratio='square')
-list_data_dict [{'id': '000406392', 'image': 'GCC_train_000406392.jpg', 'conversations': [{'from': 'human', 'value': 'Give a brief description of the image.\n<image>'}, {'from': 'gpt', 'value': 'the divine queen in her elaborate masks canvas print featuring the face and hands of a woman with red hair'}]}]
 current file path llava/train/train.py
 def rank0_print(*args)
 args
  ('Formatting inputs...Skip in lazy mode',)
 Formatting inputs...Skip in lazy mode
-self.tokenizer
- LlamaTokenizer(name_or_path='TinyLlama/TinyLlama-1.1B-Chat-v1.0', vocab_size=32000, model_max_length=2048, is_fast=False, padding_side='right', truncation_side='right', special_tokens={'bos_token': AddedToken("<s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'eos_token': AddedToken("</s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'unk_token': AddedToken("<unk>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'pad_token': '<unk>'}, clean_up_tokenization_spaces=False)
-self.list_data_dict
- [{'id': '000406392', 'image': 'GCC_train_000406392.jpg', 'conversations': [{'from': 'human', 'value': 'Give a brief description of the image.\n<image>'}, {'from': 'gpt', 'value': 'the divine queen in her elaborate masks canvas print featuring the face and hands of a woman with red hair'}]}]
-self.data_args
- DataArguments(data_path='/content/LLaVA/blip_laion_cc_sbu_1.json', lazy_preprocess=True, is_multimodal=True, image_folder='/content/LLaVA/images', image_aspect_ratio='square')
 train_dataset
- <llava.train.train.LazySupervisedDataset object at 0x7c44bb81ee00>
+ <llava.train.train.LazySupervisedDataset object at 0x7ed6341f4880>
 current file path llava/train/train.py
 def LazySupervisedDataset.__len__(self)
 len(train_dataset)
  1
 data_collator
- DataCollatorForSupervisedDataset(tokenizer=LlamaTokenizer(name_or_path='TinyLlama/TinyLlama-1.1B-Chat-v1.0', vocab_size=32000, model_max_length=2048, is_fast=False, padding_side='right', truncation_side='right', special_tokens={'bos_token': AddedToken("<s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'eos_token': AddedToken("</s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'unk_token': AddedToken("<unk>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'pad_token': '<unk>'}, clean_up_tokenization_spaces=False))
+ DataCollatorForSupervisedDataset(tokenizer=LlamaTokenizer(name_or_path='lmsys/vicuna-7b-v1.5', vocab_size=32000, model_max_length=2048, is_fast=False, padding_side='right', truncation_side='right', special_tokens={'bos_token': AddedToken("<s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'eos_token': AddedToken("</s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'unk_token': AddedToken("<unk>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'pad_token': '<unk>'}, clean_up_tokenization_spaces=False))
 def make_supervised_data_module: result (return)
- {'train_dataset': <llava.train.train.LazySupervisedDataset object at 0x7c44bb81ee00>, 'eval_dataset': None, 'data_collator': DataCollatorForSupervisedDataset(tokenizer=LlamaTokenizer(name_or_path='TinyLlama/TinyLlama-1.1B-Chat-v1.0', vocab_size=32000, model_max_length=2048, is_fast=False, padding_side='right', truncation_side='right', special_tokens={'bos_token': AddedToken("<s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'eos_token': AddedToken("</s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'unk_token': AddedToken("<unk>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'pad_token': '<unk>'}, clean_up_tokenization_spaces=False))}
+ {'train_dataset': <llava.train.train.LazySupervisedDataset object at 0x7ed6341f4880>, 'eval_dataset': None, 'data_collator': DataCollatorForSupervisedDataset(tokenizer=LlamaTokenizer(name_or_path='lmsys/vicuna-7b-v1.5', vocab_size=32000, model_max_length=2048, is_fast=False, padding_side='right', truncation_side='right', special_tokens={'bos_token': AddedToken("<s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'eos_token': AddedToken("</s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'unk_token': AddedToken("<unk>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'pad_token': '<unk>'}, clean_up_tokenization_spaces=False))}
 data_module
- {'train_dataset': <llava.train.train.LazySupervisedDataset object at 0x7c44bb81ee00>, 'eval_dataset': None, 'data_collator': DataCollatorForSupervisedDataset(tokenizer=LlamaTokenizer(name_or_path='TinyLlama/TinyLlama-1.1B-Chat-v1.0', vocab_size=32000, model_max_length=2048, is_fast=False, padding_side='right', truncation_side='right', special_tokens={'bos_token': AddedToken("<s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'eos_token': AddedToken("</s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'unk_token': AddedToken("<unk>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'pad_token': '<unk>'}, clean_up_tokenization_spaces=False))}
+ {'train_dataset': <llava.train.train.LazySupervisedDataset object at 0x7ed6341f4880>, 'eval_dataset': None, 'data_collator': DataCollatorForSupervisedDataset(tokenizer=LlamaTokenizer(name_or_path='lmsys/vicuna-7b-v1.5', vocab_size=32000, model_max_length=2048, is_fast=False, padding_side='right', truncation_side='right', special_tokens={'bos_token': AddedToken("<s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'eos_token': AddedToken("</s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'unk_token': AddedToken("<unk>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'pad_token': '<unk>'}, clean_up_tokenization_spaces=False))}
 current file path llava/train/train.py
 def LazySupervisedDataset.__len__(self)
 trainer
- <llava.train.llava_trainer.LLaVATrainer object at 0x7c44bba06c80>
+ <llava.train.llava_trainer.LLaVATrainer object at 0x7ed6341f4490>
 【COND】list(pathlib.Path(training_args.output_dir).glob('checkpoint-*'))
- []
-【ENTER】else of if list(pathlib.Path(training_args.output_dir).glob(checkpoint-*)):
+### 再開
+ [PosixPath('checkpoints/llava-v1.5-7b-pretrain/checkpoint-250'), PosixPath('checkpoints/llava-v1.5-7b-pretrain/checkpoint-1')]
+【ENTER】if list(pathlib.Path(training_args.output_dir).glob(checkpoint-*)):
+# なんとここから 2759行目まで trainer.train(resume_from_checkpoint=False) の処理！
 current file path llava/train/llava_trainer.py
 def _get_train_sampler(self)
 self
- <llava.train.llava_trainer.LLaVATrainer object at 0x7c44bba06c80>
+ <llava.train.llava_trainer.LLaVATrainer object at 0x7ed6341f4490>
 current file path llava/train/train.py
 def LazySupervisedDataset.__len__(self)
 [COND] train_dataset_is_None=False, has_length=True
@@ -1332,7 +1324,7 @@ def LazySupervisedDataset.__len__(self)
 current file path llava/train/train.py
 def LazySupervisedDataset.__len__(self)
 result, super()._get_train_sampler()
- <torch.utils.data.sampler.RandomSampler object at 0x7c44b90cca30>
+ <torch.utils.data.sampler.RandomSampler object at 0x7ed63e925e70>
 【EXIT】else (not group_by_modality_length):
 current file path llava/train/train.py
 def LazySupervisedDataset.__len__(self)
@@ -1345,26 +1337,26 @@ def LazySupervisedDataset.__len__(self)
 current file path llava/train/llava_trainer.py
 def create_optimizer(self)
 self
- <llava.train.llava_trainer.LLaVATrainer object at 0x7c44bba06c80>
+ <llava.train.llava_trainer.LLaVATrainer object at 0x7ed6341f4490>
 [COND] sagemaker_mp_enabled=False
 [COND] sharded_ddp=None, SHARDED_DDP_SIMPLE=simple
 opt_model
  LlavaLlamaForCausalLM(
   (model): LlavaLlamaModel(
-    (embed_tokens): Embedding(32000, 2048, padding_idx=0)
+    (embed_tokens): Embedding(32000, 4096, padding_idx=0)
     (layers): ModuleList(
-      (0-21): 22 x LlamaDecoderLayer(
+      (0-31): 32 x LlamaDecoderLayer(
         (self_attn): LlamaAttention(
-          (q_proj): Linear(in_features=2048, out_features=2048, bias=False)
-          (k_proj): Linear(in_features=2048, out_features=256, bias=False)
-          (v_proj): Linear(in_features=2048, out_features=256, bias=False)
-          (o_proj): Linear(in_features=2048, out_features=2048, bias=False)
+          (q_proj): Linear(in_features=4096, out_features=4096, bias=False)
+          (k_proj): Linear(in_features=4096, out_features=4096, bias=False)
+          (v_proj): Linear(in_features=4096, out_features=4096, bias=False)
+          (o_proj): Linear(in_features=4096, out_features=4096, bias=False)
           (rotary_emb): LlamaRotaryEmbedding()
         )
         (mlp): LlamaMLP(
-          (gate_proj): Linear(in_features=2048, out_features=5632, bias=False)
-          (up_proj): Linear(in_features=2048, out_features=5632, bias=False)
-          (down_proj): Linear(in_features=5632, out_features=2048, bias=False)
+          (gate_proj): Linear(in_features=4096, out_features=11008, bias=False)
+          (up_proj): Linear(in_features=4096, out_features=11008, bias=False)
+          (down_proj): Linear(in_features=11008, out_features=4096, bias=False)
           (act_fn): SiLUActivation()
         )
         (input_layernorm): LlamaRMSNorm()
@@ -1404,12 +1396,12 @@ opt_model
       )
     )
     (mm_projector): Sequential(
-      (0): Linear(in_features=1024, out_features=2048, bias=True)
+      (0): Linear(in_features=1024, out_features=4096, bias=True)
       (1): GELU(approximate='none')
-      (2): Linear(in_features=2048, out_features=2048, bias=True)
+      (2): Linear(in_features=4096, out_features=4096, bias=True)
     )
   )
-  (lm_head): Linear(in_features=2048, out_features=32000, bias=False)
+  (lm_head): Linear(in_features=4096, out_features=32000, bias=False)
 )
 [COND] optimizer_is_None=True
 【ENTER】if self.optimizer is None:
@@ -1453,26 +1445,26 @@ Parameter Group 1
 current file path llava/train/llava_trainer.py
 def create_optimizer(self)
 self
- <llava.train.llava_trainer.LLaVATrainer object at 0x7c44bba06c80>
+ <llava.train.llava_trainer.LLaVATrainer object at 0x7ed6341f4490>
 [COND] sagemaker_mp_enabled=False
 [COND] sharded_ddp=None, SHARDED_DDP_SIMPLE=simple
 opt_model
  LlavaLlamaForCausalLM(
   (model): LlavaLlamaModel(
-    (embed_tokens): Embedding(32000, 2048, padding_idx=0)
+    (embed_tokens): Embedding(32000, 4096, padding_idx=0)
     (layers): ModuleList(
-      (0-21): 22 x LlamaDecoderLayer(
+      (0-31): 32 x LlamaDecoderLayer(
         (self_attn): LlamaAttention(
-          (q_proj): Linear(in_features=2048, out_features=2048, bias=False)
-          (k_proj): Linear(in_features=2048, out_features=256, bias=False)
-          (v_proj): Linear(in_features=2048, out_features=256, bias=False)
-          (o_proj): Linear(in_features=2048, out_features=2048, bias=False)
+          (q_proj): Linear(in_features=4096, out_features=4096, bias=False)
+          (k_proj): Linear(in_features=4096, out_features=4096, bias=False)
+          (v_proj): Linear(in_features=4096, out_features=4096, bias=False)
+          (o_proj): Linear(in_features=4096, out_features=4096, bias=False)
           (rotary_emb): LlamaRotaryEmbedding()
         )
         (mlp): LlamaMLP(
-          (gate_proj): Linear(in_features=2048, out_features=5632, bias=False)
-          (up_proj): Linear(in_features=2048, out_features=5632, bias=False)
-          (down_proj): Linear(in_features=5632, out_features=2048, bias=False)
+          (gate_proj): Linear(in_features=4096, out_features=11008, bias=False)
+          (up_proj): Linear(in_features=4096, out_features=11008, bias=False)
+          (down_proj): Linear(in_features=11008, out_features=4096, bias=False)
           (act_fn): SiLUActivation()
         )
         (input_layernorm): LlamaRMSNorm()
@@ -1512,12 +1504,12 @@ opt_model
       )
     )
     (mm_projector): Sequential(
-      (0): Linear(in_features=1024, out_features=2048, bias=True)
+      (0): Linear(in_features=1024, out_features=4096, bias=True)
       (1): GELU(approximate='none')
-      (2): Linear(in_features=2048, out_features=2048, bias=True)
+      (2): Linear(in_features=4096, out_features=4096, bias=True)
     )
   )
-  (lm_head): Linear(in_features=2048, out_features=32000, bias=False)
+  (lm_head): Linear(in_features=4096, out_features=32000, bias=False)
 )
 [COND] optimizer_is_None=False
 self.optimizer
@@ -1548,7 +1540,7 @@ Parameter Group 1
     maximize: False
     weight_decay: 0.0
 )
-Rank: 0 partition count [1, 1] and sizes[(6291456, False), (4096, False)] 
+Rank: 0 partition count [1, 1] and sizes[(20971520, False), (8192, False)] 
 
   0%|          | 0/1 [00:00<?, ?it/s]current file path llava/train/train.py
 def LazySupervisedDataset.__len__(self)
@@ -1564,114 +1556,12 @@ current file path llava/train/train.py
 def LazySupervisedDataset.__getitem__(self, i)
 i
  0
-sources
- {'id': '000406392', 'image': 'GCC_train_000406392.jpg', 'conversations': [{'from': 'human', 'value': 'Give a brief description of the image.\n<image>'}, {'from': 'gpt', 'value': 'the divine queen in her elaborate masks canvas print featuring the face and hands of a woman with red hair'}]}
-【COND】 isinstance(i, int): True
-【ENTER】if isinstance(i, int):
-sources (after)
- [{'id': '000406392', 'image': 'GCC_train_000406392.jpg', 'conversations': [{'from': 'human', 'value': 'Give a brief description of the image.\n<image>'}, {'from': 'gpt', 'value': 'the divine queen in her elaborate masks canvas print featuring the face and hands of a woman with red hair'}]}]
-【EXIT】if isinstance(i, int):
-【COND】 'image' in sources[0]: True
-【ENTER】if 'image' in sources[0]:
-image_file
- GCC_train_000406392.jpg
-image_folder
- /content/LLaVA/images
-processor
- CLIPImageProcessor {
-  "crop_size": {
-    "height": 336,
-    "width": 336
-  },
-  "do_center_crop": true,
-  "do_convert_rgb": true,
-  "do_normalize": true,
-  "do_rescale": true,
-  "do_resize": true,
-  "feature_extractor_type": "CLIPFeatureExtractor",
-  "image_mean": [
-    0.48145466,
-    0.4578275,
-    0.40821073
-  ],
-  "image_processor_type": "CLIPImageProcessor",
-  "image_std": [
-    0.26862954,
-    0.26130258,
-    0.27577711
-  ],
-  "resample": 3,
-  "rescale_factor": 0.00392156862745098,
-  "size": {
-    "shortest_edge": 336
-  }
-}
-
-image_path
- /content/LLaVA/images/GCC_train_000406392.jpg
-Trying to open image...
-Image opened successfully.
-【COND】 self.data_args.image_aspect_ratio square
-【ENTER】else (self.data_args.image_aspect_ratio != 'pad')
-image (before)
- <PIL.Image.Image image mode=RGB size=224x224 at 0x7C447C2C6C50>
-image (after processor.preprocess)
- tensor([[[ 0.0325,  0.0325,  0.0325,  ..., -0.7120, -0.3616, -0.1280],
-         [ 0.0325,  0.0325,  0.0325,  ..., -0.3908, -0.1718, -0.0259],
-         [ 0.0325,  0.0325,  0.0325,  ..., -0.0113,  0.0471,  0.0909],
-         ...,
-         [-1.0331, -1.0331, -1.0331,  ..., -1.0623, -1.0623, -1.0623],
-         [-1.0477, -1.0331, -1.0331,  ..., -1.0623, -1.0623, -1.0623],
-         [-1.0477, -1.0331, -1.0331,  ..., -1.0623, -1.0623, -1.0623]],
-
-        [[ 0.3190,  0.3190,  0.3190,  ..., -0.3864, -0.0112,  0.2139],
-         [ 0.3190,  0.3190,  0.3190,  ..., -0.0712,  0.1539,  0.3190],
-         [ 0.3190,  0.3190,  0.3190,  ...,  0.2890,  0.3640,  0.4390],
-         ...,
-         [-1.0167, -1.0167, -1.0167,  ..., -1.0017, -1.0017, -1.0017],
-         [-1.0317, -1.0167, -1.0167,  ..., -1.0017, -1.0017, -1.0017],
-         [-1.0317, -1.0167, -1.0167,  ..., -1.0017, -1.0017, -1.0017]],
-
-        [[ 0.9656,  0.9656,  0.9656,  ...,  0.0982,  0.4537,  0.6670],
-         [ 0.9656,  0.9656,  0.9656,  ...,  0.3968,  0.6101,  0.7523],
-         [ 0.9656,  0.9656,  0.9656,  ...,  0.7523,  0.8092,  0.8377],
-         ...,
-         [-0.3711, -0.3853, -0.3995,  ..., -0.4279, -0.4279, -0.4279],
-         [-0.3711, -0.3711, -0.3853,  ..., -0.4279, -0.4279, -0.4279],
-         [-0.3853, -0.3711, -0.3711,  ..., -0.4279, -0.4279, -0.4279]]])
-sources (before preprocess_multimodal)
- [{'id': '000406392', 'image': 'GCC_train_000406392.jpg', 'conversations': [{'from': 'human', 'value': 'Give a brief description of the image.\n<image>'}, {'from': 'gpt', 'value': 'the divine queen in her elaborate masks canvas print featuring the face and hands of a woman with red hair'}]}]
 current file path llava/train/train.py
 def preprocess_multimodal(sources, data_args)
 sources
  [[{'from': 'human', 'value': 'Give a brief description of the image.\n<image>'}, {'from': 'gpt', 'value': 'the divine queen in her elaborate masks canvas print featuring the face and hands of a woman with red hair'}]]
 data_args
  DataArguments(data_path='/content/LLaVA/blip_laion_cc_sbu_1.json', lazy_preprocess=True, is_multimodal=True, image_folder='/content/LLaVA/images', image_aspect_ratio='square')
-is_multimodal
- True
-source current loop
- [{'from': 'human', 'value': 'Give a brief description of the image.\n<image>'}, {'from': 'gpt', 'value': 'the divine queen in her elaborate masks canvas print featuring the face and hands of a woman with red hair'}]
-sentence current loop
- {'from': 'human', 'value': 'Give a brief description of the image.\n<image>'}
-【COND】 if DEFAULT_IMAGE_TOKEN in sentence['value']: True
-sentence['value']
- Give a brief description of the image.
-<image>
-DEFAULT_IMAGE_TOKEN
- <image>
-【ENTER】if DEFAULT_IMAGE_TOKEN in sentence['value']:
-sentence current loop
- {'from': 'gpt', 'value': 'the divine queen in her elaborate masks canvas print featuring the face and hands of a woman with red hair'}
-【COND】 if DEFAULT_IMAGE_TOKEN in sentence['value']: False
-sentence['value']
- the divine queen in her elaborate masks canvas print featuring the face and hands of a woman with red hair
-DEFAULT_IMAGE_TOKEN
- <image>
-sources (final return)
- [[{'from': 'human', 'value': '<image>\nGive a brief description of the image.'}, {'from': 'gpt', 'value': 'the divine queen in her elaborate masks canvas print featuring the face and hands of a woman with red hair'}]]
-sources (after preprocess_multimodal)
- [[{'from': 'human', 'value': '<image>\nGive a brief description of the image.'}, {'from': 'gpt', 'value': 'the divine queen in her elaborate masks canvas print featuring the face and hands of a woman with red hair'}]]
-Calling preprocess...
 current file path llava/train/train.py
 def preprocess(sources, tokenizer, has_image=False)
 sources
@@ -1686,67 +1576,33 @@ sources
  [[{'from': 'human', 'value': '<image>\nGive a brief description of the image.'}, {'from': 'gpt', 'value': 'the divine queen in her elaborate masks canvas print featuring the face and hands of a woman with red hair'}]]
 tokenizer
  <class 'transformers.models.llama.tokenization_llama.LlamaTokenizer'>
-conversations initial
- []
-source current loop
- [{'from': 'human', 'value': '<image>\nGive a brief description of the image.'}, {'from': 'gpt', 'value': 'the divine queen in her elaborate masks canvas print featuring the face and hands of a woman with red hair'}]
-conversation current loop
- <image>the divine queen in her elaborate masks canvas print featuring the face and hands of a woman with red hair
-
-conversations (final)
- ['<image>the divine queen in her elaborate masks canvas print featuring the face and hands of a woman with red hair\n']
 current file path llava/mm_utils.py
 def tokenizer_image_token(prompt, tokenizer, image_token_index=IMAGE_TOKEN_INDEX, return_tensors=None)
 prompt
  <image>the divine queen in her elaborate masks canvas print featuring the face and hands of a woman with red hair
 
 tokenizer
- LlamaTokenizer(name_or_path='TinyLlama/TinyLlama-1.1B-Chat-v1.0', vocab_size=32000, model_max_length=2048, is_fast=False, padding_side='right', truncation_side='right', special_tokens={'bos_token': AddedToken("<s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'eos_token': AddedToken("</s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'unk_token': AddedToken("<unk>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'pad_token': '<unk>'}, clean_up_tokenization_spaces=False)
+ LlamaTokenizer(name_or_path='lmsys/vicuna-7b-v1.5', vocab_size=32000, model_max_length=2048, is_fast=False, padding_side='right', truncation_side='right', special_tokens={'bos_token': AddedToken("<s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'eos_token': AddedToken("</s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'unk_token': AddedToken("<unk>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'pad_token': '<unk>'}, clean_up_tokenization_spaces=False)
 image_token_index
  -200
 return_tensors
  pt
-input_ids
- [tensor([    1,  -200,   278, 25616, 26624,   297,   902, 19430, 11105, 29879,
-        10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114,
-          411,  2654, 11315,    13])]
 input_ids[0].shape
  torch.Size([24])
-targets
- [tensor([    1,  -200,   278, 25616, 26624,   297,   902, 19430, 11105, 29879,
-        10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114,
-          411,  2654, 11315,    13])]
 targets[0].shape
  torch.Size([24])
-sources
- [[{'from': 'human', 'value': '<image>'}, {'from': 'gpt', 'value': 'the divine queen in her elaborate masks canvas print featuring the face and hands of a woman with red hair'}]]
 current file path llava/mm_utils.py
 def tokenizer_image_token(prompt, tokenizer, image_token_index=IMAGE_TOKEN_INDEX, return_tensors=None)
 prompt
  <image>
 tokenizer
- LlamaTokenizer(name_or_path='TinyLlama/TinyLlama-1.1B-Chat-v1.0', vocab_size=32000, model_max_length=2048, is_fast=False, padding_side='right', truncation_side='right', special_tokens={'bos_token': AddedToken("<s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'eos_token': AddedToken("</s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'unk_token': AddedToken("<unk>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'pad_token': '<unk>'}, clean_up_tokenization_spaces=False)
+ LlamaTokenizer(name_or_path='lmsys/vicuna-7b-v1.5', vocab_size=32000, model_max_length=2048, is_fast=False, padding_side='right', truncation_side='right', special_tokens={'bos_token': AddedToken("<s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'eos_token': AddedToken("</s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'unk_token': AddedToken("<unk>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'pad_token': '<unk>'}, clean_up_tokenization_spaces=False)
 image_token_index
  -200
 return_tensors
  None
 input_ids (return)
  [1, -200]
-input_ids (return)
- [tensor([    1,  -200,   278, 25616, 26624,   297,   902, 19430, 11105, 29879,
-        10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114,
-          411,  2654, 11315,    13])]
-targets (return)
- [tensor([ -100,  -100,   278, 25616, 26624,   297,   902, 19430, 11105, 29879,
-        10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114,
-          411,  2654, 11315,    13])]
-data_dict (after preprocess)
- {'input_ids': [tensor([    1,  -200,   278, 25616, 26624,   297,   902, 19430, 11105, 29879,
-        10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114,
-          411,  2654, 11315,    13])], 'labels': [tensor([ -100,  -100,   278, 25616, 26624,   297,   902, 19430, 11105, 29879,
-        10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114,
-          411,  2654, 11315,    13])]}
-【COND】 isinstance(i, int): True
 current file path llava/train/train.py
 def DataCollatorForSupervisedDataset.__call__(self, instances)
 instances
@@ -1777,55 +1633,6 @@ instances
          [-0.3711, -0.3853, -0.3995,  ..., -0.4279, -0.4279, -0.4279],
          [-0.3711, -0.3711, -0.3853,  ..., -0.4279, -0.4279, -0.4279],
          [-0.3853, -0.3711, -0.3711,  ..., -0.4279, -0.4279, -0.4279]]])}]
-shape of each instance's input_ids and labels, and images(if any): [(torch.Size([24]), torch.Size([24]), torch.Size([3, 336, 336]))]
-self.tokenizer.pad_token_id
- 0
-IGNORE_INDEX
- -100
-input_ids.shape (after pad_sequence and truncate)
- torch.Size([1, 24])
-input_ids (after pad_sequence and truncate)
- tensor([[    1,  -200,   278, 25616, 26624,   297,   902, 19430, 11105, 29879,
-         10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114,
-           411,  2654, 11315,    13]])
-labels.shape (after pad_sequence and truncate)
- torch.Size([1, 24])
-labels (after pad_sequence and truncate)
- tensor([[ -100,  -100,   278, 25616, 26624,   297,   902, 19430, 11105, 29879,
-         10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114,
-           411,  2654, 11315,    13]])
-batch['images'].shape
- torch.Size([1, 3, 336, 336])
-batch (return)
- {'input_ids': tensor([[    1,  -200,   278, 25616, 26624,   297,   902, 19430, 11105, 29879,
-         10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114,
-           411,  2654, 11315,    13]]), 'labels': tensor([[ -100,  -100,   278, 25616, 26624,   297,   902, 19430, 11105, 29879,
-         10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114,
-           411,  2654, 11315,    13]]), 'attention_mask': tensor([[True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True]]), 'images': tensor([[[[ 0.0325,  0.0325,  0.0325,  ..., -0.7120, -0.3616, -0.1280],
-          [ 0.0325,  0.0325,  0.0325,  ..., -0.3908, -0.1718, -0.0259],
-          [ 0.0325,  0.0325,  0.0325,  ..., -0.0113,  0.0471,  0.0909],
-          ...,
-          [-1.0331, -1.0331, -1.0331,  ..., -1.0623, -1.0623, -1.0623],
-          [-1.0477, -1.0331, -1.0331,  ..., -1.0623, -1.0623, -1.0623],
-          [-1.0477, -1.0331, -1.0331,  ..., -1.0623, -1.0623, -1.0623]],
-
-         [[ 0.3190,  0.3190,  0.3190,  ..., -0.3864, -0.0112,  0.2139],
-          [ 0.3190,  0.3190,  0.3190,  ..., -0.0712,  0.1539,  0.3190],
-          [ 0.3190,  0.3190,  0.3190,  ...,  0.2890,  0.3640,  0.4390],
-          ...,
-          [-1.0167, -1.0167, -1.0167,  ..., -1.0017, -1.0017, -1.0017],
-          [-1.0317, -1.0167, -1.0167,  ..., -1.0017, -1.0017, -1.0017],
-          [-1.0317, -1.0167, -1.0167,  ..., -1.0017, -1.0017, -1.0017]],
-
-         [[ 0.9656,  0.9656,  0.9656,  ...,  0.0982,  0.4537,  0.6670],
-          [ 0.9656,  0.9656,  0.9656,  ...,  0.3968,  0.6101,  0.7523],
-          [ 0.9656,  0.9656,  0.9656,  ...,  0.7523,  0.8092,  0.8377],
-          ...,
-          [-0.3711, -0.3853, -0.3995,  ..., -0.4279, -0.4279, -0.4279],
-          [-0.3711, -0.3711, -0.3853,  ..., -0.4279, -0.4279, -0.4279],
-          [-0.3853, -0.3711, -0.3711,  ..., -0.4279, -0.4279, -0.4279]]]])}
-shape of each batch's input_ids and labels, and images(if any): [(torch.Size([1, 24]), torch.Size([1, 24]), torch.Size([1, 3, 336, 336]))]
 current file path llava/llava/model/language_model/llava_llama.py
 def LlavaLlamaForCausalLM.forward(self, input_ids, attention_mask, position_ids, past_key_values, inputs_embeds, labels, use_cache, output_attentions, output_hidden_states, images, image_sizes, return_dict)
 input_ids
@@ -1940,20 +1747,20 @@ self
  <class 'llava.model.language_model.llava_llama.LlavaLlamaForCausalLM'>
 self.model (return)
  LlavaLlamaModel(
-  (embed_tokens): Embedding(32000, 2048, padding_idx=0)
+  (embed_tokens): Embedding(32000, 4096, padding_idx=0)
   (layers): ModuleList(
-    (0-21): 22 x LlamaDecoderLayer(
+    (0-31): 32 x LlamaDecoderLayer(
       (self_attn): LlamaAttention(
-        (q_proj): Linear(in_features=2048, out_features=2048, bias=False)
-        (k_proj): Linear(in_features=2048, out_features=256, bias=False)
-        (v_proj): Linear(in_features=2048, out_features=256, bias=False)
-        (o_proj): Linear(in_features=2048, out_features=2048, bias=False)
+        (q_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (k_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (v_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (o_proj): Linear(in_features=4096, out_features=4096, bias=False)
         (rotary_emb): LlamaRotaryEmbedding()
       )
       (mlp): LlamaMLP(
-        (gate_proj): Linear(in_features=2048, out_features=5632, bias=False)
-        (up_proj): Linear(in_features=2048, out_features=5632, bias=False)
-        (down_proj): Linear(in_features=5632, out_features=2048, bias=False)
+        (gate_proj): Linear(in_features=4096, out_features=11008, bias=False)
+        (up_proj): Linear(in_features=4096, out_features=11008, bias=False)
+        (down_proj): Linear(in_features=11008, out_features=4096, bias=False)
         (act_fn): SiLUActivation()
       )
       (input_layernorm): LlamaRMSNorm()
@@ -1993,9 +1800,9 @@ self.model (return)
     )
   )
   (mm_projector): Sequential(
-    (0): Linear(in_features=1024, out_features=2048, bias=True)
+    (0): Linear(in_features=1024, out_features=4096, bias=True)
     (1): GELU(approximate='none')
-    (2): Linear(in_features=2048, out_features=2048, bias=True)
+    (2): Linear(in_features=4096, out_features=4096, bias=True)
   )
 )
 current file path llava/model/llava_arch.py
@@ -2099,44 +1906,6 @@ LlavaMetaForCausalLM(ABC).get_vision_tower(self) result (return)
     )
   )
 )
-vision_tower
- CLIPVisionTower(
-  (vision_tower): CLIPVisionModel(
-    (vision_model): CLIPVisionTransformer(
-      (embeddings): CLIPVisionEmbeddings(
-        (patch_embedding): Conv2d(3, 1024, kernel_size=(14, 14), stride=(14, 14), bias=False)
-        (position_embedding): Embedding(577, 1024)
-      )
-      (pre_layrnorm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
-      (encoder): CLIPEncoder(
-        (layers): ModuleList(
-          (0-23): 24 x CLIPEncoderLayer(
-            (self_attn): CLIPAttention(
-              (k_proj): Linear(in_features=1024, out_features=1024, bias=True)
-              (v_proj): Linear(in_features=1024, out_features=1024, bias=True)
-              (q_proj): Linear(in_features=1024, out_features=1024, bias=True)
-              (out_proj): Linear(in_features=1024, out_features=1024, bias=True)
-            )
-            (layer_norm1): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
-            (mlp): CLIPMLP(
-              (activation_fn): QuickGELUActivation()
-              (fc1): Linear(in_features=1024, out_features=4096, bias=True)
-              (fc2): Linear(in_features=4096, out_features=1024, bias=True)
-            )
-            (layer_norm2): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
-          )
-        )
-      )
-      (post_layernorm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
-    )
-  )
-)
-[COND] vision_tower_is_None=False images_is_None=False input_ids_shape_1_eq_1=False
-【COND】type(images)
- <class 'torch.Tensor'>
-【COND】images.ndim
- 4
-【ENTER】else of if type(images) is list or images.ndim == 5:
 current file path llava/model/llava_arch.py
 def LlavaMetaForCausalLM(ABC).encode_images(self, images)
 images
@@ -2170,20 +1939,20 @@ self
  <class 'llava.model.language_model.llava_llama.LlavaLlamaForCausalLM'>
 self.model (return)
  LlavaLlamaModel(
-  (embed_tokens): Embedding(32000, 2048, padding_idx=0)
+  (embed_tokens): Embedding(32000, 4096, padding_idx=0)
   (layers): ModuleList(
-    (0-21): 22 x LlamaDecoderLayer(
+    (0-31): 32 x LlamaDecoderLayer(
       (self_attn): LlamaAttention(
-        (q_proj): Linear(in_features=2048, out_features=2048, bias=False)
-        (k_proj): Linear(in_features=2048, out_features=256, bias=False)
-        (v_proj): Linear(in_features=2048, out_features=256, bias=False)
-        (o_proj): Linear(in_features=2048, out_features=2048, bias=False)
+        (q_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (k_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (v_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (o_proj): Linear(in_features=4096, out_features=4096, bias=False)
         (rotary_emb): LlamaRotaryEmbedding()
       )
       (mlp): LlamaMLP(
-        (gate_proj): Linear(in_features=2048, out_features=5632, bias=False)
-        (up_proj): Linear(in_features=2048, out_features=5632, bias=False)
-        (down_proj): Linear(in_features=5632, out_features=2048, bias=False)
+        (gate_proj): Linear(in_features=4096, out_features=11008, bias=False)
+        (up_proj): Linear(in_features=4096, out_features=11008, bias=False)
+        (down_proj): Linear(in_features=11008, out_features=4096, bias=False)
         (act_fn): SiLUActivation()
       )
       (input_layernorm): LlamaRMSNorm()
@@ -2223,9 +1992,9 @@ self.model (return)
     )
   )
   (mm_projector): Sequential(
-    (0): Linear(in_features=1024, out_features=2048, bias=True)
+    (0): Linear(in_features=1024, out_features=4096, bias=True)
     (1): GELU(approximate='none')
-    (2): Linear(in_features=2048, out_features=2048, bias=True)
+    (2): Linear(in_features=4096, out_features=4096, bias=True)
   )
 )
 current file path llava/model/llava_arch.py
@@ -2625,20 +2394,20 @@ self
  <class 'llava.model.language_model.llava_llama.LlavaLlamaForCausalLM'>
 self.model (return)
  LlavaLlamaModel(
-  (embed_tokens): Embedding(32000, 2048, padding_idx=0)
+  (embed_tokens): Embedding(32000, 4096, padding_idx=0)
   (layers): ModuleList(
-    (0-21): 22 x LlamaDecoderLayer(
+    (0-31): 32 x LlamaDecoderLayer(
       (self_attn): LlamaAttention(
-        (q_proj): Linear(in_features=2048, out_features=2048, bias=False)
-        (k_proj): Linear(in_features=2048, out_features=256, bias=False)
-        (v_proj): Linear(in_features=2048, out_features=256, bias=False)
-        (o_proj): Linear(in_features=2048, out_features=2048, bias=False)
+        (q_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (k_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (v_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (o_proj): Linear(in_features=4096, out_features=4096, bias=False)
         (rotary_emb): LlamaRotaryEmbedding()
       )
       (mlp): LlamaMLP(
-        (gate_proj): Linear(in_features=2048, out_features=5632, bias=False)
-        (up_proj): Linear(in_features=2048, out_features=5632, bias=False)
-        (down_proj): Linear(in_features=5632, out_features=2048, bias=False)
+        (gate_proj): Linear(in_features=4096, out_features=11008, bias=False)
+        (up_proj): Linear(in_features=4096, out_features=11008, bias=False)
+        (down_proj): Linear(in_features=11008, out_features=4096, bias=False)
         (act_fn): SiLUActivation()
       )
       (input_layernorm): LlamaRMSNorm()
@@ -2678,62 +2447,40 @@ self.model (return)
     )
   )
   (mm_projector): Sequential(
-    (0): Linear(in_features=1024, out_features=2048, bias=True)
+    (0): Linear(in_features=1024, out_features=4096, bias=True)
     (1): GELU(approximate='none')
-    (2): Linear(in_features=2048, out_features=2048, bias=True)
+    (2): Linear(in_features=4096, out_features=4096, bias=True)
   )
 )
 image_features (return)
- tensor([[[-1.1084e-01,  5.7373e-03, -4.0527e-02,  ..., -1.5332e-01,
-           7.2266e-02, -7.5684e-02],
-         [-1.2500e-01, -3.1738e-02, -1.9727e-01,  ...,  1.4893e-02,
-           6.5430e-02, -6.3477e-02],
-         [-2.0508e-01, -5.9814e-02, -1.8848e-01,  ..., -5.6641e-02,
-          -6.6406e-02, -9.4238e-02],
+ tensor([[[-0.1021,  0.0383, -0.0674,  ..., -0.1118, -0.0444, -0.0223],
+         [-0.1348,  0.0366, -0.1045,  ...,  0.0403,  0.0635, -0.0654],
+         [-0.1299, -0.0815, -0.3594,  ...,  0.2119,  0.1533, -0.0269],
          ...,
-         [ 4.0527e-02,  2.3438e-01, -1.5723e-01,  ...,  1.2988e-01,
-           5.8105e-02,  7.8125e-02],
-         [-1.0729e-05,  2.5000e-01, -1.3477e-01,  ...,  9.8633e-02,
-          -3.1281e-03,  2.1118e-02],
-         [ 8.6060e-03,  2.4023e-01,  1.9653e-02,  ...,  2.4805e-01,
-           5.4443e-02,  1.5430e-01]]], device='cuda:0', dtype=torch.bfloat16,
-       grad_fn=<ViewBackward0>)
-image_features after encode_images
- tensor([[[-1.1084e-01,  5.7373e-03, -4.0527e-02,  ..., -1.5332e-01,
-           7.2266e-02, -7.5684e-02],
-         [-1.2500e-01, -3.1738e-02, -1.9727e-01,  ...,  1.4893e-02,
-           6.5430e-02, -6.3477e-02],
-         [-2.0508e-01, -5.9814e-02, -1.8848e-01,  ..., -5.6641e-02,
-          -6.6406e-02, -9.4238e-02],
-         ...,
-         [ 4.0527e-02,  2.3438e-01, -1.5723e-01,  ...,  1.2988e-01,
-           5.8105e-02,  7.8125e-02],
-         [-1.0729e-05,  2.5000e-01, -1.3477e-01,  ...,  9.8633e-02,
-          -3.1281e-03,  2.1118e-02],
-         [ 8.6060e-03,  2.4023e-01,  1.9653e-02,  ...,  2.4805e-01,
-           5.4443e-02,  1.5430e-01]]], device='cuda:0', dtype=torch.bfloat16,
-       grad_fn=<ViewBackward0>)
-【EXIT】else of if type(images) is list or images.ndim == 5:
+         [ 0.0115, -0.0767, -0.0732,  ...,  0.4551, -0.0674,  0.0060],
+         [-0.0214, -0.0635,  0.0972,  ...,  0.4102, -0.1279, -0.0070],
+         [ 0.0024, -0.1406,  0.0972,  ...,  0.3594, -0.0815, -0.1582]]],
+       device='cuda:0', dtype=torch.bfloat16, grad_fn=<ViewBackward0>)
 current file path llava/llava/model/language_model/llava_llama.py
 def LlavaLlamaForCausalLM.get_model(self)
 self
  <class 'llava.model.language_model.llava_llama.LlavaLlamaForCausalLM'>
 self.model (return)
  LlavaLlamaModel(
-  (embed_tokens): Embedding(32000, 2048, padding_idx=0)
+  (embed_tokens): Embedding(32000, 4096, padding_idx=0)
   (layers): ModuleList(
-    (0-21): 22 x LlamaDecoderLayer(
+    (0-31): 32 x LlamaDecoderLayer(
       (self_attn): LlamaAttention(
-        (q_proj): Linear(in_features=2048, out_features=2048, bias=False)
-        (k_proj): Linear(in_features=2048, out_features=256, bias=False)
-        (v_proj): Linear(in_features=2048, out_features=256, bias=False)
-        (o_proj): Linear(in_features=2048, out_features=2048, bias=False)
+        (q_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (k_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (v_proj): Linear(in_features=4096, out_features=4096, bias=False)
+        (o_proj): Linear(in_features=4096, out_features=4096, bias=False)
         (rotary_emb): LlamaRotaryEmbedding()
       )
       (mlp): LlamaMLP(
-        (gate_proj): Linear(in_features=2048, out_features=5632, bias=False)
-        (up_proj): Linear(in_features=2048, out_features=5632, bias=False)
-        (down_proj): Linear(in_features=5632, out_features=2048, bias=False)
+        (gate_proj): Linear(in_features=4096, out_features=11008, bias=False)
+        (up_proj): Linear(in_features=4096, out_features=11008, bias=False)
+        (down_proj): Linear(in_features=11008, out_features=4096, bias=False)
         (act_fn): SiLUActivation()
       )
       (input_layernorm): LlamaRMSNorm()
@@ -2773,176 +2520,50 @@ self.model (return)
     )
   )
   (mm_projector): Sequential(
-    (0): Linear(in_features=1024, out_features=2048, bias=True)
+    (0): Linear(in_features=1024, out_features=4096, bias=True)
     (1): GELU(approximate='none')
-    (2): Linear(in_features=2048, out_features=2048, bias=True)
+    (2): Linear(in_features=4096, out_features=4096, bias=True)
   )
 )
-position_ids (return)
- None
-attention_mask (return)
- tensor([[True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True, True,
-         True, True, True, True, True, True, True, True, True, True, True]],
-       device='cuda:0')
-past_key_values (return)
- None
-new_input_embeds (return)
- tensor([[[-0.0011,  0.0019, -0.0017,  ...,  0.0002, -0.0007, -0.0005],
-         [-0.1108,  0.0057, -0.0405,  ..., -0.1533,  0.0723, -0.0757],
-         [-0.1250, -0.0317, -0.1973,  ...,  0.0149,  0.0654, -0.0635],
-         ...,
-         [ 0.0212, -0.0227, -0.0142,  ..., -0.0028, -0.0084, -0.0095],
-         [ 0.0037, -0.0036,  0.0090,  ..., -0.0137, -0.0025, -0.0081],
-         [-0.0006, -0.0011, -0.0118,  ...,  0.0002, -0.0007,  0.0028]]],
-       device='cuda:0', dtype=torch.bfloat16, grad_fn=<StackBackward0>)
-new_labels (return)
- tensor([[ -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,  -100,
-          -100,  -100,  -100,  -100,  -100,  -100,  -100,   278, 25616, 26624,
-           297,   902, 19430, 11105, 29879, 10508,  1596, 23425,   278,  3700,
-           322,  6567,   310,   263,  6114,   411,  2654, 11315,    13]],
-       device='cuda:0')
 【EXIT】if inputs_embeds is None:
-Return of def LlavaLlamaForCausalLM.forward(self, input_ids, attention_mask, position_ids, past_key_values, inputs_embeds, labels, use_cache, output_attentions, output_hidden_states, images, image_sizes, return_dict)
+Return of 
+def LlavaLlamaForCausalLM.forward(self, input_ids, attention_mask, position_ids, past_key_values, inputs_embeds, labels, use_cache, output_attentions, output_hidden_states, images, image_sizes, return_dict)
 result (return)
- CausalLMOutputWithPast(loss=tensor(10.0605, device='cuda:0', grad_fn=<NllLossBackward0>), logits=tensor([[[-4.8438,  0.7969,  4.4062,  ..., -5.2500, -2.4688, -4.2812],
-         [-7.5000, -7.5000,  2.2031,  ..., -3.0156, -7.1875, -4.9688],
-         [-5.2188, -5.1562,  2.3906,  ..., -2.9844, -4.3125, -1.1641],
+ CausalLMOutputWithPast(loss=tensor(7.3094, device='cuda:0', grad_fn=<NllLossBackward0>), logits=tensor([[[  0.8242,   0.1855,  -0.7031,  ...,   1.6719,   2.6719,   1.1875],
+         [ -9.0000,  -2.1562,   8.9375,  ...,  -6.4375,  -6.9688,  -5.9375],
+         [-12.4375,  -7.8750,   3.5625,  ..., -10.2500, -10.3750, -11.1875],
          ...,
-         [-3.7500, -4.0000,  2.5156,  ..., -2.7188, -5.1562,  0.6055],
-         [-4.6562, -5.0625,  2.7812,  ..., -3.1719, -5.1250, -1.3906],
-         [-2.7656, -2.8594,  1.6406,  ..., -1.5859, -1.3359,  0.6523]]],
+         [ -6.7812,  -3.1406,   4.2188,  ...,  -4.6562,  -3.5312,  -4.8750],
+         [ -7.5312,  -4.7188,   4.1562,  ...,  -4.6250,  -4.5625,  -5.5000],
+         [ -4.3438,  -0.9023,   2.0625,  ...,  -3.5312,  -4.0625,  -2.5469]]],
        device='cuda:0', grad_fn=<ToCopyBackward0>), past_key_values=None, hidden_states=None, attentions=None)
 
-100%|██████████| 1/1 [00:01<00:00,  1.43s/it]
+100%|██████████| 1/1 [00:01<00:00,  1.60s/it]
                                              
-{'loss': 10.0605, 'learning_rate': 0.001, 'epoch': 1.0}
+{'loss': 7.3094, 'learning_rate': 0.001, 'epoch': 1.0}
 
-100%|██████████| 1/1 [00:01<00:00,  1.43s/it]current file path llava/train/llava_trainer.py
+100%|██████████| 1/1 [00:01<00:00,  1.60s/it]current file path llava/train/llava_trainer.py
 def _save_checkpoint(self, model, trial, metrics=None)
 self
- <llava.train.llava_trainer.LLaVATrainer object at 0x7c44bba06c80>
+ <llava.train.llava_trainer.LLaVATrainer object at 0x7ed6341f4490>
 model
  DeepSpeedEngine(
   (module): LlavaLlamaForCausalLM(
     (model): LlavaLlamaModel(
-      (embed_tokens): Embedding(32000, 2048, padding_idx=0)
+      (embed_tokens): Embedding(32000, 4096, padding_idx=0)
       (layers): ModuleList(
-        (0-21): 22 x LlamaDecoderLayer(
+        (0-31): 32 x LlamaDecoderLayer(
           (self_attn): LlamaAttention(
-            (q_proj): Linear(in_features=2048, out_features=2048, bias=False)
-            (k_proj): Linear(in_features=2048, out_features=256, bias=False)
-            (v_proj): Linear(in_features=2048, out_features=256, bias=False)
-            (o_proj): Linear(in_features=2048, out_features=2048, bias=False)
+            (q_proj): Linear(in_features=4096, out_features=4096, bias=False)
+            (k_proj): Linear(in_features=4096, out_features=4096, bias=False)
+            (v_proj): Linear(in_features=4096, out_features=4096, bias=False)
+            (o_proj): Linear(in_features=4096, out_features=4096, bias=False)
             (rotary_emb): LlamaRotaryEmbedding()
           )
           (mlp): LlamaMLP(
-            (gate_proj): Linear(in_features=2048, out_features=5632, bias=False)
-            (up_proj): Linear(in_features=2048, out_features=5632, bias=False)
-            (down_proj): Linear(in_features=5632, out_features=2048, bias=False)
+            (gate_proj): Linear(in_features=4096, out_features=11008, bias=False)
+            (up_proj): Linear(in_features=4096, out_features=11008, bias=False)
+            (down_proj): Linear(in_features=11008, out_features=4096, bias=False)
             (act_fn): SiLUActivation()
           )
           (input_layernorm): LlamaRMSNorm()
@@ -2982,12 +2603,12 @@ model
         )
       )
       (mm_projector): Sequential(
-        (0): Linear(in_features=1024, out_features=2048, bias=True)
+        (0): Linear(in_features=1024, out_features=4096, bias=True)
         (1): GELU(approximate='none')
-        (2): Linear(in_features=2048, out_features=2048, bias=True)
+        (2): Linear(in_features=4096, out_features=4096, bias=True)
       )
     )
-    (lm_head): Linear(in_features=2048, out_features=32000, bias=False)
+    (lm_head): Linear(in_features=4096, out_features=32000, bias=False)
   )
 )
 trial
@@ -3000,20 +2621,20 @@ metrics
 current file path llava/train/llava_trainer.py
 def get_mm_adapter_state_maybe_zero_3(named_params, keys_to_match)
 named_params
- <generator object Module.named_parameters at 0x7c44bb877760>
+ <generator object Module.named_parameters at 0x7ed637a75000>
 keys_to_match
  ['mm_projector', 'vision_resampler']
 current file path llava/train/llava_trainer.py
 def maybe_zero_3(param, ignore_status=False, name=None)
 param
  Parameter containing:
-tensor([[-0.0245,  0.0149, -0.0267,  ...,  0.0025,  0.0172, -0.0254],
-        [ 0.0054, -0.0048, -0.0167,  ...,  0.0167, -0.0090,  0.0215],
-        [-0.0187, -0.0101,  0.0215,  ...,  0.0242,  0.0112,  0.0264],
+tensor([[-0.0299, -0.0014,  0.0156,  ...,  0.0070,  0.0259, -0.0071],
+        [-0.0011, -0.0205,  0.0048,  ..., -0.0051,  0.0042,  0.0079],
+        [ 0.0115, -0.0201,  0.0222,  ..., -0.0037, -0.0095, -0.0099],
         ...,
-        [-0.0203,  0.0154, -0.0236,  ..., -0.0159,  0.0122,  0.0247],
-        [-0.0266, -0.0245,  0.0240,  ...,  0.0152,  0.0154,  0.0258],
-        [-0.0293,  0.0157,  0.0077,  ..., -0.0305, -0.0069, -0.0305]],
+        [ 0.0006, -0.0216,  0.0028,  ..., -0.0090,  0.0134,  0.0194],
+        [-0.0238,  0.0164, -0.0289,  ...,  0.0141,  0.0113,  0.0054],
+        [ 0.0259,  0.0069, -0.0188,  ...,  0.0201, -0.0157,  0.0148]],
        device='cuda:0', dtype=torch.bfloat16, requires_grad=True)
 ignore_status
  True
@@ -3023,19 +2644,19 @@ name
 【ENTER】else (not hasattr(param, 'ds_id')):
 【EXIT】else (not hasattr(param, 'ds_id')):
 param (to return)
- tensor([[-0.0245,  0.0149, -0.0267,  ...,  0.0025,  0.0172, -0.0254],
-        [ 0.0054, -0.0048, -0.0167,  ...,  0.0167, -0.0090,  0.0215],
-        [-0.0187, -0.0101,  0.0215,  ...,  0.0242,  0.0112,  0.0264],
+ tensor([[-0.0299, -0.0014,  0.0156,  ...,  0.0070,  0.0259, -0.0071],
+        [-0.0011, -0.0205,  0.0048,  ..., -0.0051,  0.0042,  0.0079],
+        [ 0.0115, -0.0201,  0.0222,  ..., -0.0037, -0.0095, -0.0099],
         ...,
-        [-0.0203,  0.0154, -0.0236,  ..., -0.0159,  0.0122,  0.0247],
-        [-0.0266, -0.0245,  0.0240,  ...,  0.0152,  0.0154,  0.0258],
-        [-0.0293,  0.0157,  0.0077,  ..., -0.0305, -0.0069, -0.0305]],
+        [ 0.0006, -0.0216,  0.0028,  ..., -0.0090,  0.0134,  0.0194],
+        [-0.0238,  0.0164, -0.0289,  ...,  0.0141,  0.0113,  0.0054],
+        [ 0.0259,  0.0069, -0.0188,  ...,  0.0201, -0.0157,  0.0148]],
        dtype=torch.bfloat16)
 current file path llava/train/llava_trainer.py
 def maybe_zero_3(param, ignore_status=False, name=None)
 param
  Parameter containing:
-tensor([-0.0237, -0.0017,  0.0142,  ...,  0.0074,  0.0228, -0.0287],
+tensor([-0.0119,  0.0082,  0.0117,  ...,  0.0188, -0.0243,  0.0286],
        device='cuda:0', dtype=torch.bfloat16, requires_grad=True)
 ignore_status
  True
@@ -3045,25 +2666,25 @@ name
 【ENTER】else (not hasattr(param, 'ds_id')):
 【EXIT】else (not hasattr(param, 'ds_id')):
 param (to return)
- tensor([-0.0237, -0.0017,  0.0142,  ...,  0.0074,  0.0228, -0.0287],
+ tensor([-0.0119,  0.0082,  0.0117,  ...,  0.0188, -0.0243,  0.0286],
        dtype=torch.bfloat16)
 current file path llava/train/llava_trainer.py
 def maybe_zero_3(param, ignore_status=False, name=None)
 param
  Parameter containing:
-tensor([[ 1.2207e-02,  1.3611e-02, -1.2451e-02,  ..., -1.0498e-02,
-          1.7090e-02, -1.4954e-02],
-        [ 2.9297e-03, -1.5991e-02, -1.9287e-02,  ..., -2.8229e-03,
-          2.1362e-02, -4.3640e-03],
-        [-9.9487e-03, -5.9509e-03,  1.5991e-02,  ..., -8.4839e-03,
-          5.9128e-04, -5.2490e-03],
+tensor([[-1.3123e-02, -1.5442e-02, -1.3733e-02,  ..., -9.8419e-04,
+          1.7700e-03, -1.4709e-02],
+        [-2.3346e-03, -1.3855e-02,  9.5215e-03,  ...,  7.8125e-03,
+          4.2419e-03, -8.4229e-03],
+        [-1.1841e-02,  1.4709e-02,  1.3794e-02,  ...,  8.4839e-03,
+         -1.1597e-02, -6.6833e-03],
         ...,
-        [-1.3489e-02, -1.7456e-02,  1.8463e-03,  ..., -8.9264e-04,
-         -6.3419e-05, -1.2512e-02],
-        [-2.0630e-02,  1.6479e-02,  1.6846e-02,  ..., -1.8311e-02,
-          5.3101e-03,  9.2773e-03],
-        [ 1.5869e-03, -1.9531e-03,  1.0925e-02,  ...,  2.1973e-02,
-          2.2095e-02, -5.8594e-03]], device='cuda:0', dtype=torch.bfloat16,
+        [-1.4282e-02,  1.9073e-03,  5.0049e-03,  ...,  1.3672e-02,
+         -4.3945e-03,  1.3000e-02],
+        [-8.7280e-03,  1.4893e-02, -7.4768e-03,  ...,  5.2185e-03,
+         -5.2452e-05,  1.0910e-03],
+        [-8.9722e-03,  3.6011e-03, -1.4587e-02,  ..., -1.0803e-02,
+         -5.3711e-03,  9.6436e-03]], device='cuda:0', dtype=torch.bfloat16,
        requires_grad=True)
 ignore_status
  True
@@ -3073,24 +2694,24 @@ name
 【ENTER】else (not hasattr(param, 'ds_id')):
 【EXIT】else (not hasattr(param, 'ds_id')):
 param (to return)
- tensor([[ 1.2207e-02,  1.3611e-02, -1.2451e-02,  ..., -1.0498e-02,
-          1.7090e-02, -1.4954e-02],
-        [ 2.9297e-03, -1.5991e-02, -1.9287e-02,  ..., -2.8229e-03,
-          2.1362e-02, -4.3640e-03],
-        [-9.9487e-03, -5.9509e-03,  1.5991e-02,  ..., -8.4839e-03,
-          5.9128e-04, -5.2490e-03],
+ tensor([[-1.3123e-02, -1.5442e-02, -1.3733e-02,  ..., -9.8419e-04,
+          1.7700e-03, -1.4709e-02],
+        [-2.3346e-03, -1.3855e-02,  9.5215e-03,  ...,  7.8125e-03,
+          4.2419e-03, -8.4229e-03],
+        [-1.1841e-02,  1.4709e-02,  1.3794e-02,  ...,  8.4839e-03,
+         -1.1597e-02, -6.6833e-03],
         ...,
-        [-1.3489e-02, -1.7456e-02,  1.8463e-03,  ..., -8.9264e-04,
-         -6.3419e-05, -1.2512e-02],
-        [-2.0630e-02,  1.6479e-02,  1.6846e-02,  ..., -1.8311e-02,
-          5.3101e-03,  9.2773e-03],
-        [ 1.5869e-03, -1.9531e-03,  1.0925e-02,  ...,  2.1973e-02,
-          2.2095e-02, -5.8594e-03]], dtype=torch.bfloat16)
+        [-1.4282e-02,  1.9073e-03,  5.0049e-03,  ...,  1.3672e-02,
+         -4.3945e-03,  1.3000e-02],
+        [-8.7280e-03,  1.4893e-02, -7.4768e-03,  ...,  5.2185e-03,
+         -5.2452e-05,  1.0910e-03],
+        [-8.9722e-03,  3.6011e-03, -1.4587e-02,  ..., -1.0803e-02,
+         -5.3711e-03,  9.6436e-03]], dtype=torch.bfloat16)
 current file path llava/train/llava_trainer.py
 def maybe_zero_3(param, ignore_status=False, name=None)
 param
  Parameter containing:
-tensor([ 0.0210, -0.0110,  0.0016,  ...,  0.0109, -0.0157,  0.0203],
+tensor([ 0.0039, -0.0108, -0.0074,  ...,  0.0064, -0.0076, -0.0034],
        device='cuda:0', dtype=torch.bfloat16, requires_grad=True)
 ignore_status
  True
@@ -3100,30 +2721,30 @@ name
 【ENTER】else (not hasattr(param, 'ds_id')):
 【EXIT】else (not hasattr(param, 'ds_id')):
 param (to return)
- tensor([ 0.0210, -0.0110,  0.0016,  ...,  0.0109, -0.0157,  0.0203],
+ tensor([ 0.0039, -0.0108, -0.0074,  ...,  0.0064, -0.0076, -0.0034],
        dtype=torch.bfloat16)
 to_return
- {'model.mm_projector.0.weight': tensor([[-0.0245,  0.0149, -0.0267,  ...,  0.0025,  0.0172, -0.0254],
-        [ 0.0054, -0.0048, -0.0167,  ...,  0.0167, -0.0090,  0.0215],
-        [-0.0187, -0.0101,  0.0215,  ...,  0.0242,  0.0112,  0.0264],
+ {'model.mm_projector.0.weight': tensor([[-0.0299, -0.0014,  0.0156,  ...,  0.0070,  0.0259, -0.0071],
+        [-0.0011, -0.0205,  0.0048,  ..., -0.0051,  0.0042,  0.0079],
+        [ 0.0115, -0.0201,  0.0222,  ..., -0.0037, -0.0095, -0.0099],
         ...,
-        [-0.0203,  0.0154, -0.0236,  ..., -0.0159,  0.0122,  0.0247],
-        [-0.0266, -0.0245,  0.0240,  ...,  0.0152,  0.0154,  0.0258],
-        [-0.0293,  0.0157,  0.0077,  ..., -0.0305, -0.0069, -0.0305]],
-       dtype=torch.bfloat16), 'model.mm_projector.0.bias': tensor([-0.0237, -0.0017,  0.0142,  ...,  0.0074,  0.0228, -0.0287],
-       dtype=torch.bfloat16), 'model.mm_projector.2.weight': tensor([[ 1.2207e-02,  1.3611e-02, -1.2451e-02,  ..., -1.0498e-02,
-          1.7090e-02, -1.4954e-02],
-        [ 2.9297e-03, -1.5991e-02, -1.9287e-02,  ..., -2.8229e-03,
-          2.1362e-02, -4.3640e-03],
-        [-9.9487e-03, -5.9509e-03,  1.5991e-02,  ..., -8.4839e-03,
-          5.9128e-04, -5.2490e-03],
+        [ 0.0006, -0.0216,  0.0028,  ..., -0.0090,  0.0134,  0.0194],
+        [-0.0238,  0.0164, -0.0289,  ...,  0.0141,  0.0113,  0.0054],
+        [ 0.0259,  0.0069, -0.0188,  ...,  0.0201, -0.0157,  0.0148]],
+       dtype=torch.bfloat16), 'model.mm_projector.0.bias': tensor([-0.0119,  0.0082,  0.0117,  ...,  0.0188, -0.0243,  0.0286],
+       dtype=torch.bfloat16), 'model.mm_projector.2.weight': tensor([[-1.3123e-02, -1.5442e-02, -1.3733e-02,  ..., -9.8419e-04,
+          1.7700e-03, -1.4709e-02],
+        [-2.3346e-03, -1.3855e-02,  9.5215e-03,  ...,  7.8125e-03,
+          4.2419e-03, -8.4229e-03],
+        [-1.1841e-02,  1.4709e-02,  1.3794e-02,  ...,  8.4839e-03,
+         -1.1597e-02, -6.6833e-03],
         ...,
-        [-1.3489e-02, -1.7456e-02,  1.8463e-03,  ..., -8.9264e-04,
-         -6.3419e-05, -1.2512e-02],
-        [-2.0630e-02,  1.6479e-02,  1.6846e-02,  ..., -1.8311e-02,
-          5.3101e-03,  9.2773e-03],
-        [ 1.5869e-03, -1.9531e-03,  1.0925e-02,  ...,  2.1973e-02,
-          2.2095e-02, -5.8594e-03]], dtype=torch.bfloat16), 'model.mm_projector.2.bias': tensor([ 0.0210, -0.0110,  0.0016,  ...,  0.0109, -0.0157,  0.0203],
+        [-1.4282e-02,  1.9073e-03,  5.0049e-03,  ...,  1.3672e-02,
+         -4.3945e-03,  1.3000e-02],
+        [-8.7280e-03,  1.4893e-02, -7.4768e-03,  ...,  5.2185e-03,
+         -5.2452e-05,  1.0910e-03],
+        [-8.9722e-03,  3.6011e-03, -1.4587e-02,  ..., -1.0803e-02,
+         -5.3711e-03,  9.6436e-03]], dtype=torch.bfloat16), 'model.mm_projector.2.bias': tensor([ 0.0039, -0.0108, -0.0074,  ...,  0.0064, -0.0076, -0.0034],
        dtype=torch.bfloat16)}
 [COND] local_rank=0
 【ENTER】if self.args.local_rank == 0 or self.args.local_rank == -1:
@@ -3131,297 +2752,160 @@ to_return
 【EXIT】if getattr(self.args, 'tune_mm_mlp_adapter', False):
 
                                              
-{'train_runtime': 1.4684, 'train_samples_per_second': 0.681, 'train_steps_per_second': 0.681, 'train_loss': 10.060502052307129, 'epoch': 1.0}
+{'train_runtime': 1.7562, 'train_samples_per_second': 0.569, 'train_steps_per_second': 0.569, 'train_loss': 7.30941915512085, 'epoch': 1.0}
 
-100%|██████████| 1/1 [00:01<00:00,  1.43s/it]
-100%|██████████| 1/1 [00:01<00:00,  1.47s/it]
-【EXIT】else of if list(pathlib.Path(training_args.output_dir).glob(checkpoint-*)):
+100%|██████████| 1/1 [00:01<00:00,  1.60s/it]
+100%|██████████| 1/1 [00:01<00:00,  1.76s/it]
+【EXIT】if list(pathlib.Path(training_args.output_dir).glob(checkpoint-*)):
 model.config.use_cache = True True
 【COND】lora_enable=False
 【ENTER】else of if training_args.lora_enable:
-trainer <llava.train.llava_trainer.LLaVATrainer object at 0x7c44bba06c80>
+trainer <llava.train.llava_trainer.LLaVATrainer object at 0x7ed6341f4490>
 current file path llava/train/train.py
 def safe_save_model_for_hf_trainer(trainer: transformers.Trainer, output_dir: str)
 trainer
  <class 'llava.train.llava_trainer.LLaVATrainer'>
 output_dir
- ./checkpoints/llava-TinyLlama-1.1B-Chat-v1.0
-trainer.args
- TrainingArguments(
-_n_gpu=1,
-adafactor=False,
-adam_beta1=0.9,
-adam_beta2=0.999,
-adam_epsilon=1e-08,
-auto_find_batch_size=False,
-bf16=True,
-bf16_full_eval=False,
-bits=16,
-cache_dir=None,
-data_seed=None,
-dataloader_drop_last=False,
-dataloader_num_workers=2,
-dataloader_pin_memory=True,
-ddp_backend=None,
-ddp_broadcast_buffers=None,
-ddp_bucket_cap_mb=None,
-ddp_find_unused_parameters=None,
-ddp_timeout=1800,
-debug=[],
-deepspeed=./scripts/zero2.json,
-disable_tqdm=False,
-do_eval=False,
-do_predict=False,
-do_train=False,
-double_quant=True,
-eval_accumulation_steps=None,
-eval_delay=0,
-eval_steps=None,
-evaluation_strategy=no,
-fp16=False,
-fp16_backend=auto,
-fp16_full_eval=False,
-fp16_opt_level=O1,
-freeze_mm_mlp_adapter=False,
-fsdp=[],
-fsdp_config={'fsdp_min_num_params': 0, 'xla': False, 'xla_fsdp_grad_ckpt': False},
-fsdp_min_num_params=0,
-fsdp_transformer_layer_cls_to_wrap=None,
-full_determinism=False,
-gradient_accumulation_steps=1,
-gradient_checkpointing=True,
-greater_is_better=None,
-group_by_length=False,
-group_by_modality_length=False,
-half_precision_backend=auto,
-hub_model_id=None,
-hub_private_repo=False,
-hub_strategy=every_save,
-hub_token=<HUB_TOKEN>,
-ignore_data_skip=False,
-include_inputs_for_metrics=False,
-jit_mode_eval=False,
-label_names=None,
-label_smoothing_factor=0.0,
-learning_rate=0.001,
-length_column_name=length,
-load_best_model_at_end=False,
-local_rank=0,
-log_level=passive,
-log_level_replica=warning,
-log_on_each_node=True,
-logging_dir=./checkpoints/llava-TinyLlama-1.1B-Chat-v1.0/runs/Sep21_06-12-30_da684785f21a,
-logging_first_step=False,
-logging_nan_inf_filter=True,
-logging_steps=1.0,
-logging_strategy=steps,
-lora_alpha=16,
-lora_bias=none,
-lora_dropout=0.05,
-lora_enable=False,
-lora_r=64,
-lora_weight_path=,
-lr_scheduler_type=cosine,
-max_grad_norm=1.0,
-max_steps=-1,
-metric_for_best_model=None,
-mm_projector_lr=None,
-model_max_length=2048,
-mp_parameters=,
-mpt_attn_impl=triton,
-no_cuda=False,
-num_train_epochs=1.0,
-optim=adamw_torch,
-optim_args=None,
-output_dir=./checkpoints/llava-TinyLlama-1.1B-Chat-v1.0,
-overwrite_output_dir=False,
-past_index=-1,
-per_device_eval_batch_size=1,
-per_device_train_batch_size=1,
-prediction_loss_only=False,
-push_to_hub=False,
-push_to_hub_model_id=None,
-push_to_hub_organization=None,
-push_to_hub_token=<PUSH_TO_HUB_TOKEN>,
-quant_type=nf4,
-ray_scope=last,
-remove_unused_columns=False,
-report_to=[],
-resume_from_checkpoint=None,
-run_name=./checkpoints/llava-TinyLlama-1.1B-Chat-v1.0,
-save_on_each_node=False,
-save_safetensors=False,
-save_steps=1.0,
-save_strategy=steps,
-save_total_limit=1,
-seed=42,
-sharded_ddp=[],
-skip_memory_metrics=True,
-tf32=False,
-torch_compile=False,
-torch_compile_backend=None,
-torch_compile_mode=None,
-torchdynamo=None,
-tpu_metrics_debug=False,
-tpu_num_cores=None,
-use_ipex=False,
-use_legacy_prediction_loop=False,
-use_mps_device=False,
-warmup_ratio=0.03,
-warmup_steps=0,
-weight_decay=0.0,
-xpu_backend=None,
-)
-【COND】tune_mm_mlp_adapter= True
-【ENTER】if getattr(trainer.args, 'tune_mm_mlp_adapter', False):
+ ./checkpoints/llava-v1.5-7b-pretrain
 current file path llava/train/train.py
 def get_mm_adapter_state_maybe_zero_3(named_params, keys_to_match)
 named_params
- <generator object Module.named_parameters at 0x7c44bb875690>
+ <generator object Module.named_parameters at 0x7ed637a74ba0>
 keys_to_match
  ['mm_projector']
 current file path llava/train/train.py
 def maybe_zero_3(param, ignore_status=False, name=None)
 param
  Parameter containing:
-tensor([[-0.0245,  0.0149, -0.0267,  ...,  0.0025,  0.0172, -0.0254],
-        [ 0.0054, -0.0048, -0.0167,  ...,  0.0167, -0.0090,  0.0215],
-        [-0.0187, -0.0101,  0.0215,  ...,  0.0242,  0.0112,  0.0264],
+tensor([[-0.0299, -0.0014,  0.0156,  ...,  0.0070,  0.0259, -0.0071],
+        [-0.0011, -0.0205,  0.0048,  ..., -0.0051,  0.0042,  0.0079],
+        [ 0.0115, -0.0201,  0.0222,  ..., -0.0037, -0.0095, -0.0099],
         ...,
-        [-0.0203,  0.0154, -0.0236,  ..., -0.0159,  0.0122,  0.0247],
-        [-0.0266, -0.0245,  0.0240,  ...,  0.0152,  0.0154,  0.0258],
-        [-0.0293,  0.0157,  0.0077,  ..., -0.0305, -0.0069, -0.0305]],
+        [ 0.0006, -0.0216,  0.0028,  ..., -0.0090,  0.0134,  0.0194],
+        [-0.0238,  0.0164, -0.0289,  ...,  0.0141,  0.0113,  0.0054],
+        [ 0.0259,  0.0069, -0.0188,  ...,  0.0201, -0.0157,  0.0148]],
        device='cuda:0', dtype=torch.bfloat16, requires_grad=True)
 param.shape
- torch.Size([2048, 1024])
+ torch.Size([4096, 1024])
 ignore_status
  True
 name
  None
 param (return)
- tensor([[-0.0245,  0.0149, -0.0267,  ...,  0.0025,  0.0172, -0.0254],
-        [ 0.0054, -0.0048, -0.0167,  ...,  0.0167, -0.0090,  0.0215],
-        [-0.0187, -0.0101,  0.0215,  ...,  0.0242,  0.0112,  0.0264],
+ tensor([[-0.0299, -0.0014,  0.0156,  ...,  0.0070,  0.0259, -0.0071],
+        [-0.0011, -0.0205,  0.0048,  ..., -0.0051,  0.0042,  0.0079],
+        [ 0.0115, -0.0201,  0.0222,  ..., -0.0037, -0.0095, -0.0099],
         ...,
-        [-0.0203,  0.0154, -0.0236,  ..., -0.0159,  0.0122,  0.0247],
-        [-0.0266, -0.0245,  0.0240,  ...,  0.0152,  0.0154,  0.0258],
-        [-0.0293,  0.0157,  0.0077,  ..., -0.0305, -0.0069, -0.0305]],
+        [ 0.0006, -0.0216,  0.0028,  ..., -0.0090,  0.0134,  0.0194],
+        [-0.0238,  0.0164, -0.0289,  ...,  0.0141,  0.0113,  0.0054],
+        [ 0.0259,  0.0069, -0.0188,  ...,  0.0201, -0.0157,  0.0148]],
        dtype=torch.bfloat16)
 param (return).shape
- torch.Size([2048, 1024])
+ torch.Size([4096, 1024])
 current file path llava/train/train.py
 def maybe_zero_3(param, ignore_status=False, name=None)
 param
  Parameter containing:
-tensor([-0.0237, -0.0017,  0.0142,  ...,  0.0074,  0.0228, -0.0287],
+tensor([-0.0119,  0.0082,  0.0117,  ...,  0.0188, -0.0243,  0.0286],
        device='cuda:0', dtype=torch.bfloat16, requires_grad=True)
 param.shape
- torch.Size([2048])
+ torch.Size([4096])
 ignore_status
  True
 name
  None
 param (return)
- tensor([-0.0237, -0.0017,  0.0142,  ...,  0.0074,  0.0228, -0.0287],
+ tensor([-0.0119,  0.0082,  0.0117,  ...,  0.0188, -0.0243,  0.0286],
        dtype=torch.bfloat16)
 param (return).shape
- torch.Size([2048])
+ torch.Size([4096])
 current file path llava/train/train.py
 def maybe_zero_3(param, ignore_status=False, name=None)
 param
  Parameter containing:
-tensor([[ 1.2207e-02,  1.3611e-02, -1.2451e-02,  ..., -1.0498e-02,
-          1.7090e-02, -1.4954e-02],
-        [ 2.9297e-03, -1.5991e-02, -1.9287e-02,  ..., -2.8229e-03,
-          2.1362e-02, -4.3640e-03],
-        [-9.9487e-03, -5.9509e-03,  1.5991e-02,  ..., -8.4839e-03,
-          5.9128e-04, -5.2490e-03],
+tensor([[-1.3123e-02, -1.5442e-02, -1.3733e-02,  ..., -9.8419e-04,
+          1.7700e-03, -1.4709e-02],
+        [-2.3346e-03, -1.3855e-02,  9.5215e-03,  ...,  7.8125e-03,
+          4.2419e-03, -8.4229e-03],
+        [-1.1841e-02,  1.4709e-02,  1.3794e-02,  ...,  8.4839e-03,
+         -1.1597e-02, -6.6833e-03],
         ...,
-        [-1.3489e-02, -1.7456e-02,  1.8463e-03,  ..., -8.9264e-04,
-         -6.3419e-05, -1.2512e-02],
-        [-2.0630e-02,  1.6479e-02,  1.6846e-02,  ..., -1.8311e-02,
-          5.3101e-03,  9.2773e-03],
-        [ 1.5869e-03, -1.9531e-03,  1.0925e-02,  ...,  2.1973e-02,
-          2.2095e-02, -5.8594e-03]], device='cuda:0', dtype=torch.bfloat16,
+        [-1.4282e-02,  1.9073e-03,  5.0049e-03,  ...,  1.3672e-02,
+         -4.3945e-03,  1.3000e-02],
+        [-8.7280e-03,  1.4893e-02, -7.4768e-03,  ...,  5.2185e-03,
+         -5.2452e-05,  1.0910e-03],
+        [-8.9722e-03,  3.6011e-03, -1.4587e-02,  ..., -1.0803e-02,
+         -5.3711e-03,  9.6436e-03]], device='cuda:0', dtype=torch.bfloat16,
        requires_grad=True)
 param.shape
- torch.Size([2048, 2048])
+ torch.Size([4096, 4096])
 ignore_status
  True
 name
  None
 param (return)
- tensor([[ 1.2207e-02,  1.3611e-02, -1.2451e-02,  ..., -1.0498e-02,
-          1.7090e-02, -1.4954e-02],
-        [ 2.9297e-03, -1.5991e-02, -1.9287e-02,  ..., -2.8229e-03,
-          2.1362e-02, -4.3640e-03],
-        [-9.9487e-03, -5.9509e-03,  1.5991e-02,  ..., -8.4839e-03,
-          5.9128e-04, -5.2490e-03],
+ tensor([[-1.3123e-02, -1.5442e-02, -1.3733e-02,  ..., -9.8419e-04,
+          1.7700e-03, -1.4709e-02],
+        [-2.3346e-03, -1.3855e-02,  9.5215e-03,  ...,  7.8125e-03,
+          4.2419e-03, -8.4229e-03],
+        [-1.1841e-02,  1.4709e-02,  1.3794e-02,  ...,  8.4839e-03,
+         -1.1597e-02, -6.6833e-03],
         ...,
-        [-1.3489e-02, -1.7456e-02,  1.8463e-03,  ..., -8.9264e-04,
-         -6.3419e-05, -1.2512e-02],
-        [-2.0630e-02,  1.6479e-02,  1.6846e-02,  ..., -1.8311e-02,
-          5.3101e-03,  9.2773e-03],
-        [ 1.5869e-03, -1.9531e-03,  1.0925e-02,  ...,  2.1973e-02,
-          2.2095e-02, -5.8594e-03]], dtype=torch.bfloat16)
+        [-1.4282e-02,  1.9073e-03,  5.0049e-03,  ...,  1.3672e-02,
+         -4.3945e-03,  1.3000e-02],
+        [-8.7280e-03,  1.4893e-02, -7.4768e-03,  ...,  5.2185e-03,
+         -5.2452e-05,  1.0910e-03],
+        [-8.9722e-03,  3.6011e-03, -1.4587e-02,  ..., -1.0803e-02,
+         -5.3711e-03,  9.6436e-03]], dtype=torch.bfloat16)
 param (return).shape
- torch.Size([2048, 2048])
+ torch.Size([4096, 4096])
 current file path llava/train/train.py
 def maybe_zero_3(param, ignore_status=False, name=None)
 param
  Parameter containing:
-tensor([ 0.0210, -0.0110,  0.0016,  ...,  0.0109, -0.0157,  0.0203],
+tensor([ 0.0039, -0.0108, -0.0074,  ...,  0.0064, -0.0076, -0.0034],
        device='cuda:0', dtype=torch.bfloat16, requires_grad=True)
 param.shape
- torch.Size([2048])
+ torch.Size([4096])
 ignore_status
  True
 name
  None
 param (return)
- tensor([ 0.0210, -0.0110,  0.0016,  ...,  0.0109, -0.0157,  0.0203],
+ tensor([ 0.0039, -0.0108, -0.0074,  ...,  0.0064, -0.0076, -0.0034],
        dtype=torch.bfloat16)
 param (return).shape
- torch.Size([2048])
+ torch.Size([4096])
 to_return (return)
- {'model.mm_projector.0.weight': tensor([[-0.0245,  0.0149, -0.0267,  ...,  0.0025,  0.0172, -0.0254],
-        [ 0.0054, -0.0048, -0.0167,  ...,  0.0167, -0.0090,  0.0215],
-        [-0.0187, -0.0101,  0.0215,  ...,  0.0242,  0.0112,  0.0264],
+ {'model.mm_projector.0.weight': tensor([[-0.0299, -0.0014,  0.0156,  ...,  0.0070,  0.0259, -0.0071],
+        [-0.0011, -0.0205,  0.0048,  ..., -0.0051,  0.0042,  0.0079],
+        [ 0.0115, -0.0201,  0.0222,  ..., -0.0037, -0.0095, -0.0099],
         ...,
-        [-0.0203,  0.0154, -0.0236,  ..., -0.0159,  0.0122,  0.0247],
-        [-0.0266, -0.0245,  0.0240,  ...,  0.0152,  0.0154,  0.0258],
-        [-0.0293,  0.0157,  0.0077,  ..., -0.0305, -0.0069, -0.0305]],
-       dtype=torch.bfloat16), 'model.mm_projector.0.bias': tensor([-0.0237, -0.0017,  0.0142,  ...,  0.0074,  0.0228, -0.0287],
-       dtype=torch.bfloat16), 'model.mm_projector.2.weight': tensor([[ 1.2207e-02,  1.3611e-02, -1.2451e-02,  ..., -1.0498e-02,
-          1.7090e-02, -1.4954e-02],
-        [ 2.9297e-03, -1.5991e-02, -1.9287e-02,  ..., -2.8229e-03,
-          2.1362e-02, -4.3640e-03],
-        [-9.9487e-03, -5.9509e-03,  1.5991e-02,  ..., -8.4839e-03,
-          5.9128e-04, -5.2490e-03],
+        [ 0.0006, -0.0216,  0.0028,  ..., -0.0090,  0.0134,  0.0194],
+        [-0.0238,  0.0164, -0.0289,  ...,  0.0141,  0.0113,  0.0054],
+        [ 0.0259,  0.0069, -0.0188,  ...,  0.0201, -0.0157,  0.0148]],
+       dtype=torch.bfloat16), 'model.mm_projector.0.bias': tensor([-0.0119,  0.0082,  0.0117,  ...,  0.0188, -0.0243,  0.0286],
+       dtype=torch.bfloat16), 'model.mm_projector.2.weight': tensor([[-1.3123e-02, -1.5442e-02, -1.3733e-02,  ..., -9.8419e-04,
+          1.7700e-03, -1.4709e-02],
+        [-2.3346e-03, -1.3855e-02,  9.5215e-03,  ...,  7.8125e-03,
+          4.2419e-03, -8.4229e-03],
+        [-1.1841e-02,  1.4709e-02,  1.3794e-02,  ...,  8.4839e-03,
+         -1.1597e-02, -6.6833e-03],
         ...,
-        [-1.3489e-02, -1.7456e-02,  1.8463e-03,  ..., -8.9264e-04,
-         -6.3419e-05, -1.2512e-02],
-        [-2.0630e-02,  1.6479e-02,  1.6846e-02,  ..., -1.8311e-02,
-          5.3101e-03,  9.2773e-03],
-        [ 1.5869e-03, -1.9531e-03,  1.0925e-02,  ...,  2.1973e-02,
-          2.2095e-02, -5.8594e-03]], dtype=torch.bfloat16), 'model.mm_projector.2.bias': tensor([ 0.0210, -0.0110,  0.0016,  ...,  0.0109, -0.0157,  0.0203],
+        [-1.4282e-02,  1.9073e-03,  5.0049e-03,  ...,  1.3672e-02,
+         -4.3945e-03,  1.3000e-02],
+        [-8.7280e-03,  1.4893e-02, -7.4768e-03,  ...,  5.2185e-03,
+         -5.2452e-05,  1.0910e-03],
+        [-8.9722e-03,  3.6011e-03, -1.4587e-02,  ..., -1.0803e-02,
+         -5.3711e-03,  9.6436e-03]], dtype=torch.bfloat16), 'model.mm_projector.2.bias': tensor([ 0.0039, -0.0108, -0.0074,  ...,  0.0064, -0.0076, -0.0034],
        dtype=torch.bfloat16)}
 to_return['model.mm_projector.0.weight'].shape
- torch.Size([2048, 1024])
+ torch.Size([4096, 1024])
 to_return['model.mm_projector.0.bias'].shape
- torch.Size([2048])
+ torch.Size([4096])
 to_return['model.mm_projector.2.weight'].shape
- torch.Size([2048, 2048])
+ torch.Size([4096, 4096])
 to_return['model.mm_projector.2.bias'].shape
- torch.Size([2048])
-current_folder
- llava-TinyLlama-1.1B-Chat-v1.0
-parent_folder
- ./checkpoints
-【COND】trainer.args.local_rank= 0
-【ENTER】if trainer.args.local_rank == 0 or trainer.args.local_rank == -1:
-Adapter weights saved to ./checkpoints/llava-TinyLlama-1.1B-Chat-v1.0/mm_projector.bin
-【EXIT】if trainer.args.local_rank == 0 or trainer.args.local_rank == -1:
-【EXIT】if getattr(trainer.args, 'tune_mm_mlp_adapter', False):
+ torch.Size([4096])
 【EXIT】else of if training_args.lora_enable:
-[2025-09-21 06:13:08,950] [INFO] [launch.py:347:main] Process 8272 exits successfully.
+[2025-09-12 08:52:17,305] [INFO] [launch.py:347:main] Process 19203 exits successfully.

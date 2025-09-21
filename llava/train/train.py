@@ -458,11 +458,12 @@ def preprocess_multimodal(
 
     for source in sources:
         print("source current loop\n", source)
+        # [{'from': 'human', 'value': 'Give a brief description of the image.\n<image>'}, {'from': 'gpt', 'value': 'the divine queen in her elaborate masks canvas print featuring the face and hands of a woman with red hair'}]
         for sentence in source:
             print("sentence current loop\n", sentence)
             print("【COND】 if DEFAULT_IMAGE_TOKEN in sentence['value']:", DEFAULT_IMAGE_TOKEN in sentence['value'])
             print("sentence['value']\n", sentence['value'])
-            print("DEFAULT_IMAGE_TOKEN\n", DEFAULT_IMAGE_TOKEN)
+            print("DEFAULT_IMAGE_TOKEN\n", DEFAULT_IMAGE_TOKEN) # <image>
             if DEFAULT_IMAGE_TOKEN in sentence['value']:
                 print("【ENTER】if DEFAULT_IMAGE_TOKEN in sentence['value']:")
                 sentence['value'] = sentence['value'].replace(DEFAULT_IMAGE_TOKEN, '').strip()
@@ -751,25 +752,25 @@ def preprocess_plain(
         conversation = source[0]['value'] + source[1]['value'] + conversation_lib.default_conversation.sep
         print("conversation current loop\n", conversation)
         conversations.append(conversation)
-    print("conversations (final)\n", conversations) 
+    print("conversations (final)\n", conversations) #  ['<image>the divine queen in her elaborate masks canvas print featuring the face and hands of a woman with red hair\n']
     # tokenize conversations
     input_ids = [tokenizer_image_token(prompt, tokenizer, return_tensors='pt') for prompt in conversations]
-    print("input_ids\n", input_ids)
+    print("input_ids\n", input_ids) # [tensor([    1,  -200,   278, 25616, 26624,   297,   902, 19430, 11105, 29879, 10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114, 411,  2654, 11315,    13])]
     for idx, tensor in enumerate(input_ids):
         if hasattr(tensor, 'shape'):
             print(f"input_ids[{idx}].shape\n", tensor.shape) # torch.Size([24])
     targets = copy.deepcopy(input_ids)
-    print("targets\n", targets)
+    print("targets\n", targets) # [tensor([    1,  -200,   278, 25616, 26624,   297,   902, 19430, 11105, 29879, 10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114, 411,  2654, 11315,    13])]
     for idx, tensor in enumerate(targets):
         if hasattr(tensor, 'shape'):
             print(f"targets[{idx}].shape\n", tensor.shape) # torch.Size([24])
-    print("sources\n", sources)
+    print("sources\n", sources) # [[{'from': 'human', 'value': '<image>'}, {'from': 'gpt', 'value': 'the divine queen in her elaborate masks canvas print featuring the face and hands of a woman with red hair'}]]
     for target, source in zip(targets, sources):
         tokenized_len = len(tokenizer_image_token(source[0]['value'], tokenizer)) # prompt <image>
         target[:tokenized_len] = IGNORE_INDEX
 
-    print("input_ids (return)\n", input_ids) # [1, -200]
-    print("targets (return)\n", targets)
+    print("input_ids (return)\n", input_ids) # [tensor([    1,  -200,   278, 25616, 26624,   297,   902, 19430, 11105, 29879, 10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114, 411,  2654, 11315,    13])]
+    print("targets (return)\n", targets) #  [tensor([ -100,  -100,   278, 25616, 26624,   297,   902, 19430, 11105, 29879, 10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114, 411,  2654, 11315,    13])]
     return dict(input_ids=input_ids, labels=targets)
 
 
@@ -781,9 +782,9 @@ def preprocess(
 
     print("current file path", "llava/train/train.py")
     print("def preprocess(sources, tokenizer, has_image=False)")
-    print("sources\n", sources)
-    print("tokenizer\n", type(tokenizer))
-    print("has_image\n", has_image)
+    print("sources\n", sources) # [[{'from': 'human', 'value': '<image>\nGive a brief description of the image.'}, {'from': 'gpt', 'value': 'the divine queen in her elaborate masks canvas print featuring the face and hands of a woman with red hair'}]]
+    print("tokenizer\n", type(tokenizer)) # <class 'transformers.models.llama.tokenization_llama.LlamaTokenizer'>
+    print("has_image\n", has_image) # True
     """
     Given a list of sources, each is a conversation list. This transform:
     1. Add signal '### ' at the beginning each sentence, with end signal '\n';
@@ -792,7 +793,7 @@ def preprocess(
     4. Make a deepcopy as the target. Mask human words with IGNORE_INDEX.
     """
     if conversation_lib.default_conversation.sep_style == conversation_lib.SeparatorStyle.PLAIN:
-        return preprocess_plain(sources, tokenizer)
+        return preprocess_plain(sources, tokenizer) # True
     if conversation_lib.default_conversation.sep_style == conversation_lib.SeparatorStyle.LLAMA_2:
         return preprocess_llama_2(sources, tokenizer, has_image=has_image)
     if conversation_lib.default_conversation.version.startswith("v1"):
@@ -890,6 +891,7 @@ class LazySupervisedDataset(Dataset):
             length_list.append(cur_len)
         return length_list
 
+    # Trainer > def _get_dataloader > dataloader = self.accelerator.prepare(DataLoader(dataset, **dataloader_params))
     def __getitem__(self, i) -> Dict[str, torch.Tensor]:
 
         print("current file path", "llava/train/train.py")
@@ -964,12 +966,14 @@ class LazySupervisedDataset(Dataset):
                 image = processor.preprocess(image, return_tensors='pt')['pixel_values'][0]
                 print("image (after processor.preprocess)\n", image)
             print("sources (before preprocess_multimodal)\n", sources)
+            # [{'id': '000406392', 'image': 'GCC_train_000406392.jpg', 'conversations': [{'from': 'human', 'value': 'Give a brief description of the image.\n<image>'}, {'from': 'gpt', 'value': 'the divine queen in her elaborate masks canvas print featuring the face and hands of a woman with red hair'}]}]
             sources = preprocess_multimodal(
                 copy.deepcopy([e["conversations"] for e in sources]),
                 self.data_args)
             print("sources (after preprocess_multimodal)\n", sources)
+            # [[{'from': 'human', 'value': '<image>\nGive a brief description of the image.'}, {'from': 'gpt', 'value': 'the divine queen in her elaborate masks canvas print featuring the face and hands of a woman with red hair'}]]
         else:
-            # 【ENTER】
+            #【SKIP】
             print("【ENTER】else ('image' not in sources[0])")
             sources = copy.deepcopy([e["conversations"] for e in sources])
             print("sources (after deepcopy)\n", sources)
@@ -980,20 +984,39 @@ class LazySupervisedDataset(Dataset):
             self.tokenizer,
             has_image=('image' in self.list_data_dict[i]))
         print("data_dict (after preprocess)\n", data_dict)
-        print("【COND】 isinstance(i, int):", isinstance(i, int))
+        """
+        {'input_ids': [tensor([    1,  -200,   278, 25616, 26624,   297,   902, 19430, 11105, 29879,
+                10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114,
+                411,  2654, 11315,    13])], 
+         'labels': [tensor([ -100,  -100,   278, 25616, 26624,   297,   902, 19430, 11105, 29879,
+                10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114,
+                411,  2654, 11315,    13])]}
+        """
+        print("【COND】 isinstance(i, int):", isinstance(i, int)) # True
         if isinstance(i, int):
+            print("【ENTER】if isinstance(i, int) is True")
             data_dict = dict(input_ids=data_dict["input_ids"][0],
                              labels=data_dict["labels"][0])
-
+            print("data_dict\n", data_dict)
+            print("【EXIT】if isinstance(i, int) is True")
+        
         # image exist in the data
+        print("【COND】'image' in self.list_data_dict[i]:", 'image' in self.list_data_dict[i])
         if 'image' in self.list_data_dict[i]:
+            print("【ENTER】if 'image' in self.list_data_dict[i] is True")
             data_dict['image'] = image
+            print("data_dict\n", data_dict)
+            print("【EXIT】if 'image' in self.list_data_dict[i] is True")
         elif self.data_args.is_multimodal:
+            print("【COND】self.data_args.is_multimodal:", self.data_args.is_multimodal)
             # image does not exist in the data, but the model is multimodal
+            print("【ENTER】elif self.data_args.is_multimodal")
             crop_size = self.data_args.image_processor.crop_size
             data_dict['image'] = torch.zeros(3, crop_size['height'], crop_size['width'])
+            print("data_dict\n", data_dict)
+            print("【EXIT】elif self.data_args.is_multimodal")
+        print("data_dict (return)\n", data_dict)
         return data_dict
-
 
 @dataclass
 class DataCollatorForSupervisedDataset(object):
@@ -1037,6 +1060,7 @@ class DataCollatorForSupervisedDataset(object):
          [-0.3711, -0.3711, -0.3853,  ..., -0.4279, -0.4279, -0.4279],
          [-0.3853, -0.3711, -0.3711,  ..., -0.4279, -0.4279, -0.4279]]])}]
         """
+        #  [(torch.Size([24]), torch.Size([24]), torch.Size([3, 336, 336]))]
         print("shape of each instance's input_ids and labels, and images(if any):", [(x['input_ids'].shape, x['labels'].shape, x.get('image', None).shape if 'image' in x else None) for x in instances])
         # データローダーが None を返すことがあるので、Noneのサンプルを除外。
         instances = [x for x in instances if x is not None]
