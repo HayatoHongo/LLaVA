@@ -13,7 +13,7 @@ def build_vision_tower(vision_tower_cfg, **kwargs):
     # ローカルに存在しない場合はFalse。存在する場合の例: /ubuntu/home/user/model/openai/clip-vit-large-patch14-336
     is_absolute_path_exists = os.path.exists(vision_tower)
     print("is_absolute_path_exists\n", is_absolute_path_exists) # False
-    print(f"[COND] is_absolute_path_exists={is_absolute_path_exists} vision_tower={vision_tower}") # is_absolute_path_exists=False vision_tower=openai/clip-vit-large-patch14-336
+    print(f"【COND】 is_absolute_path_exists={is_absolute_path_exists} vision_tower={vision_tower}") # is_absolute_path_exists=False vision_tower=openai/clip-vit-large-patch14-336
     if is_absolute_path_exists or vision_tower.startswith("openai") or vision_tower.startswith("laion") or "ShareGPT4V" in vision_tower:
         # 【ENTER】
         print("【ENTER】if is_absolute_path_exists or vision_tower.startswith('openai') or vision_tower.startswith('laion') or 'ShareGPT4V' in vision_tower:")

@@ -36,7 +36,7 @@ class LlavaMetaModel:
         # LlamaModelの__init_を呼び出す 
         super(LlavaMetaModel, self).__init__(config)
 
-        print(f"[COND] mm_vision_tower={hasattr(config, 'mm_vision_tower')}") # 1回目はFalse. lmsys/vicuna-7b-v1.5 の config.json に mm_vision_tower はない。
+        print(f"【COND】 mm_vision_tower={hasattr(config, 'mm_vision_tower')}") # 1回目はFalse. lmsys/vicuna-7b-v1.5 の config.json に mm_vision_tower はない。
         if hasattr(config, "mm_vision_tower"):
             print("【ENTER】if hasattr(config, 'mm_vision_tower'):")
             self.vision_tower = build_vision_tower(config, delay_load=True)
@@ -44,7 +44,7 @@ class LlavaMetaModel:
             self.mm_projector = build_vision_projector(config)
             print("self.mm_projector\n", self.mm_projector)
 
-            print(f"[COND] unpad_in_mm_patch_merge_type={'unpad' in getattr(config, 'mm_patch_merge_type', '')}") # False
+            print(f"【COND】 unpad_in_mm_patch_merge_type={'unpad' in getattr(config, 'mm_patch_merge_type', '')}") # False
             if 'unpad' in getattr(config, 'mm_patch_merge_type', ''):
                 # 【SKIP】
                 print("【ENTER】if 'unpad' in getattr(config, 'mm_patch_merge_type', ''):")
@@ -94,7 +94,7 @@ class LlavaMetaModel:
         )
         """
         print("type(vision_tower)\n", type(vision_tower))
-        print(f"[COND] type_vision_tower_is_list={type(vision_tower) is list}")  # False
+        print(f"【COND】 type_vision_tower_is_list={type(vision_tower) is list}")  # False
         if type(vision_tower) is list:
             # 【SKIP】
             print("【ENTER】if type(vision_tower) is list:")
@@ -156,8 +156,8 @@ class LlavaMetaModel:
         self.config.mm_vision_tower = vision_tower
         print("self.config.mm_vision_tower\n", self.config.mm_vision_tower) # None
 
-        print("[COND] self.get_vision_tower()\n", self.get_vision_tower()) # None
-        print(f"[COND] get_vision_tower_is_None={self.get_vision_tower() is None}")
+        print("【COND】 self.get_vision_tower()\n", self.get_vision_tower()) # None
+        print(f"【COND】 get_vision_tower_is_None={self.get_vision_tower() is None}")
         if self.get_vision_tower() is None:
             #【ENTER】self.vision_tower, self.get_vision_towerはNoneなのでこの分岐に入る。
             print("【ENTER】if self.get_vision_tower() is None:")
@@ -199,19 +199,19 @@ class LlavaMetaModel:
             )
             """
             # 分散学習(FSDP)を使うかどうか. 今回は [] 空のリストとなるので、Noneではないが、len(fsdp) == 0
-            print("[COND] fsdp\n", fsdp) # []
-            print(f"[COND] fsdp_is_not_None={fsdp is not None} len_fsdp={len(fsdp) if fsdp is not None else 'N/A'}") # fsdp_is_not_None=True len_fsdp=0
+            print("【COND】 fsdp\n", fsdp) # []
+            print(f"【COND】 fsdp_is_not_None={fsdp is not None} len_fsdp={len(fsdp) if fsdp is not None else 'N/A'}") # fsdp_is_not_None=True len_fsdp=0
             if fsdp is not None and len(fsdp) > 0:
                 # 【SKIP】
                 print("【ENTER】if fsdp is not None and len(fsdp) > 0:")
-                print("[COND] len(fsdp)\n", len(fsdp))
+                print("【COND】 len(fsdp)\n", len(fsdp))
                 print("[ENTER] if fsdp is not None and len(fsdp) > 0:")
                 self.vision_tower = [vision_tower]
                 print("self.vision_tower\n", self.vision_tower)
                 print("【EXIT】if fsdp is not None and len(fsdp) > 0:")
             else:
                 # 【ENTER】else of if fsdp is not None and len(fsdp) > 0:
-                print("[COND] else_fsdp_is_not_None_and_len_fsdp_gt_0=True")
+                print("【COND】 else_fsdp_is_not_None_and_len_fsdp_gt_0=True")
                 print("【ENTER】else of if fsdp is not None and len(fsdp) > 0:")
                 self.vision_tower = vision_tower
                 print("self.vision_tower\n", self.vision_tower)
@@ -253,17 +253,17 @@ class LlavaMetaModel:
             print("【EXIT】if self.get_vision_tower() is None:")
         else:
             # 【SKIP】
-            print("[COND] else_get_vision_tower_is_None=True")
+            print("【COND】 else_get_vision_tower_is_None=True")
             print("【ENTER】else of if self.get_vision_tower() is None:")
             print("vision_tower before load_model\n", self.get_vision_tower())
-            print(f"[COND] fsdp_is_not_None={fsdp is not None} len_fsdp={len(fsdp) if fsdp is not None else 'N/A'}")
+            print(f"【COND】 fsdp_is_not_None={fsdp is not None} len_fsdp={len(fsdp) if fsdp is not None else 'N/A'}")
             if fsdp is not None and len(fsdp) > 0:
                 print("【ENTER】if fsdp is not None and len(fsdp) > 0:")
                 vision_tower = self.vision_tower[0]
                 print("vision_tower\n", vision_tower)
                 print("【EXIT】if fsdp is not None and len(fsdp) > 0:")
             else:
-                print("[COND] else_fsdp_is_not_None_and_len_fsdp_gt_0=True")
+                print("【COND】 else_fsdp_is_not_None_and_len_fsdp_gt_0=True")
                 print("【ENTER】else of if fsdp is not None and len(fsdp) > 0:")
                 vision_tower = self.vision_tower
                 print("vision_tower\n", vision_tower)
@@ -286,14 +286,14 @@ class LlavaMetaModel:
         print("self.config.mm_patch_merge_type\n", self.config.mm_patch_merge_type) # flat
 
         # mm_projector_is_None=True
-        print(f"[COND] mm_projector_is_None={getattr(self, 'mm_projector', None) is None}")
+        print(f"【COND】 mm_projector_is_None={getattr(self, 'mm_projector', None) is None}")
         if getattr(self, 'mm_projector', None) is None:
             # 【ENTER】
             print("【ENTER】if getattr(self, 'mm_projector', None) is None:")
             self.mm_projector = build_vision_projector(self.config)
             print("self.mm_projector after build_vision_projector\n", self.mm_projector)
             print("mm_patch_merge_type\n", mm_patch_merge_type) # flat
-            print(f"[COND] unpad_in_mm_patch_merge_type={'unpad' in mm_patch_merge_type}")
+            print(f"【COND】 unpad_in_mm_patch_merge_type={'unpad' in mm_patch_merge_type}")
             if 'unpad' in mm_patch_merge_type:
                 # 【SKIP】
                 print("【ENTER】if 'unpad' in mm_patch_merge_type:")
@@ -306,11 +306,11 @@ class LlavaMetaModel:
         else:
             # 【SKIP】
             # In case it is frozen by LoRA
-            print("[COND] else_mm_projector_is_None=True")
+            print("【COND】 else_mm_projector_is_None=True")
             for p in self.mm_projector.parameters():
                 p.requires_grad = True
 
-        print(f"[COND] pretrain_mm_mlp_adapter_is_not_None={pretrain_mm_mlp_adapter is not None}") # False
+        print(f"【COND】 pretrain_mm_mlp_adapter_is_not_None={pretrain_mm_mlp_adapter is not None}") # False
         if pretrain_mm_mlp_adapter is not None:
             # 【SKIP】
             print("【ENTER】if pretrain_mm_mlp_adapter is not None:")
@@ -339,7 +339,7 @@ def unpad_image(tensor, original_size):
     original_aspect_ratio = original_width / original_height
     current_aspect_ratio = current_width / current_height
 
-    print(f"[COND] original_aspect_ratio_gt_current_aspect_ratio={original_aspect_ratio > current_aspect_ratio}")
+    print(f"【COND】 original_aspect_ratio_gt_current_aspect_ratio={original_aspect_ratio > current_aspect_ratio}")
     if original_aspect_ratio > current_aspect_ratio:
         print("【ENTER】if original_aspect_ratio > current_aspect_ratio:")
         scale_factor = current_width / original_width
@@ -532,7 +532,7 @@ class LlavaMetaForCausalLM(ABC):
         )
         )
         """
-        print(f"[COND] vision_tower_is_None={vision_tower is None} images_is_None={images is None} input_ids_shape_1_eq_1={input_ids.shape[1] == 1}")
+        print(f"【COND】 vision_tower_is_None={vision_tower is None} images_is_None={images is None} input_ids_shape_1_eq_1={input_ids.shape[1] == 1}")
         if vision_tower is None or images is None or input_ids.shape[1] == 1:
             # 【SKIP】
             return input_ids, position_ids, attention_mask, past_key_values, None, labels
@@ -731,7 +731,7 @@ class LlavaMetaForCausalLM(ABC):
         print("model_args\n", model_args) # ModelArguments(model_name_or_path='lmsys/vicuna-7b-v1.5', version='plain', freeze_backbone=False, tune_mm_mlp_adapter=True, vision_tower='openai/clip-vit-large-patch14-336', mm_vision_select_layer=-2, pretrain_mm_mlp_adapter=None, mm_projector_type='mlp2x_gelu', mm_use_im_start_end=False, mm_use_im_patch_token=False, mm_patch_merge_type='flat', mm_vision_select_feature='patch')
         print("tokenizer\n", tokenizer) # LlamaTokenizer(name_or_path='lmsys/vicuna-7b-v1.5', vocab_size=32000, model_max_length=2048, is_fast=False, padding_side='right', truncation_side='right', special_tokens={'bos_token': AddedToken("<s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'eos_token': AddedToken("</s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'unk_token': AddedToken("<unk>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'pad_token': '<unk>'}, clean_up_tokenization_spaces=False)
 
-        print(f"[COND] mm_use_im_patch_token={model_args.mm_use_im_patch_token}") # False
+        print(f"【COND】 mm_use_im_patch_token={model_args.mm_use_im_patch_token}") # False
         if model_args.mm_use_im_patch_token:
             # 【SKIP】
             print("【ENTER】if mm_use_im_patch_token:")

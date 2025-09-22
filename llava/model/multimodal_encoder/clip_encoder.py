@@ -25,7 +25,7 @@ class CLIPVisionTower(nn.Module):
         self.select_feature = getattr(args, 'mm_vision_select_feature', 'patch') 
         print("self.select_feature\n", self.select_feature) # patch
         
-        print(f"[COND] delay_load={delay_load}")
+        print(f"【COND】 delay_load={delay_load}")
         if not delay_load:
             print("【ENTER】if not delay_load:")
             self.load_model()
@@ -124,7 +124,7 @@ class CLIPVisionTower(nn.Module):
         print("image_features (after select_layer)\n", type(image_features))
         if hasattr(image_features, 'shape'):
             print("image_features.shape\n", image_features.shape) # torch.Size([1, 577, 1024])
-        print(f"[COND] select_feature={self.select_feature}") # patch
+        print(f"【COND】 select_feature={self.select_feature}") # patch
         if self.select_feature == 'patch':
             print("【ENTER】if self.select_feature == 'patch':")
             print("original image_features\n", image_features)
@@ -158,7 +158,7 @@ class CLIPVisionTower(nn.Module):
             print("【EXIT】elif self.select_feature == 'cls_patch':")
         else:
             # 【SKIP】
-            print(f"[COND] select_feature={self.select_feature}")
+            print(f"【COND】 select_feature={self.select_feature}")
             print("【ENTER】else (unexpected select_feature):")
             print("print(risk): print(self.select_feature) disabled for safety")
             raise ValueError(f'Unexpected select feature: {self.select_feature}')
@@ -179,7 +179,9 @@ class CLIPVisionTower(nn.Module):
             print("image_features.shape\n", image_features.shape) # torch.Size([1, 576, 1024])
         return image_features
 
-    @torch.no_grad()
+    # requires_grad_(False) は パラメータの勾配計算を止める。
+    # @torch.no_grad() は 全てのテンソルの勾配記録を止める（forward実行時のみ）。
+    @torch.no_grad() 
     def forward(self, images):
 
         print("current file path", "llava/llava/model/multimodal_encoder/clip_encoder.py")
@@ -214,7 +216,7 @@ class CLIPVisionTower(nn.Module):
         """
         if hasattr(images, 'shape'):
             print("images.shape\n", images.shape) # torch.Size([1, 3, 336, 336])
-        print(f"[COND] type_images_is_list={type(images) is list}") # False
+        print(f"【COND】 type_images_is_list={type(images) is list}") # False
         if type(images) is list:
             # 【SKIP】
             print("【ENTER】if type(images) is list:")
@@ -294,7 +296,7 @@ class CLIPVisionTower(nn.Module):
         print("def CLIPVisionTower.config(self)")
         print("self\n", type(self)) 
         print("self.is_loaded\n", self.is_loaded) # True
-        print(f"[COND] is_loaded={self.is_loaded}")
+        print(f"【COND】 is_loaded={self.is_loaded}")
         if self.is_loaded:
             # 【ENTER】
             print("【ENTER】if self.is_loaded:")

@@ -24,13 +24,13 @@ def maybe_zero_3(param, ignore_status=False, name=None):
     print("name\n", name)
     from deepspeed import zero
     from deepspeed.runtime.zero.partition_parameters import ZeroParamStatus
-    print(f"[COND] hasattr_ds_id={hasattr(param, 'ds_id')}")
+    print(f"【COND】 hasattr_ds_id={hasattr(param, 'ds_id')}")
     if hasattr(param, "ds_id"):
         print("【ENTER】if hasattr(param, 'ds_id'):")
-        print(f"[COND] ds_status={getattr(param, 'ds_status', None)}, ignore_status={ignore_status}")
+        print(f"【COND】 ds_status={getattr(param, 'ds_status', None)}, ignore_status={ignore_status}")
         if param.ds_status == ZeroParamStatus.NOT_AVAILABLE:
             print("【ENTER】if param.ds_status == ZeroParamStatus.NOT_AVAILABLE:")
-            print(f"[COND] ignore_status={ignore_status}")
+            print(f"【COND】 ignore_status={ignore_status}")
             if not ignore_status:
                 print("【ENTER】if not ignore_status:")
                 print(name, 'no ignore status')
@@ -71,7 +71,7 @@ def split_to_even_chunks(indices, lengths, num_chunks):
     """
 
 
-    print(f"[COND] len_indices={len(indices)}, num_chunks={num_chunks}")
+    print(f"【COND】 len_indices={len(indices)}, num_chunks={num_chunks}")
     if len(indices) % num_chunks != 0:
         print("【ENTER】if len(indices) % num_chunks != 0:")
         result = [indices[i::num_chunks] for i in range(num_chunks)]
@@ -103,7 +103,7 @@ def get_modality_length_grouped_indices(lengths, batch_size, world_size, generat
     print("generator\n", generator)
     # We need to use torch for the random part as a distributed sampler will set the random seed for torch.
     assert all(l != 0 for l in lengths), "Should not have zero length."
-    print(f"[COND] all_gt0={all(l > 0 for l in lengths)}, all_lt0={all(l < 0 for l in lengths)}")
+    print(f"【COND】 all_gt0={all(l > 0 for l in lengths)}, all_lt0={all(l < 0 for l in lengths)}")
     if all(l > 0 for l in lengths) or all(l < 0 for l in lengths):
         print("【ENTER】if all(l > 0 for l in lengths) or all(l < 0 for l in lengths):")
         # all samples are in the same modality
@@ -149,7 +149,7 @@ def get_length_grouped_indices(lengths, batch_size, world_size, generator=None, 
     megabatches = [sorted(megabatch, key=lambda i: lengths[i], reverse=True) for megabatch in megabatches]
     megabatches = [split_to_even_chunks(megabatch, lengths, world_size) for megabatch in megabatches]
 
-    print(f"[COND] merge={merge}")
+    print(f"【COND】 merge={merge}")
     if merge:
         print("【ENTER】if merge:")
         result = [i for megabatch in megabatches for batch in megabatch for i in batch]
@@ -217,7 +217,7 @@ class LLaVATrainer(Trainer):
         print("current file path", "llava/train/llava_trainer.py")
         print("def _get_train_sampler(self)")
         print("self\n", self) 
-        print(f"[COND] train_dataset_is_None={self.train_dataset is None}, has_length={has_length(self.train_dataset) if self.train_dataset is not None else 'N/A'}") # train_dataset_is_None=False, has_length=True
+        print(f"【COND】 train_dataset_is_None={self.train_dataset is None}, has_length={has_length(self.train_dataset) if self.train_dataset is not None else 'N/A'}") # train_dataset_is_None=False, has_length=True
         if self.train_dataset is None or not has_length(self.train_dataset):
             #【SKIP】
             print("【ENTER】if self.train_dataset is None or not has_length(self.train_dataset):")
@@ -225,7 +225,7 @@ class LLaVATrainer(Trainer):
             print("【EXIT】if self.train_dataset is None or not has_length(self.train_dataset):")
             return result
 
-        print(f"[COND] group_by_modality_length={self.args.group_by_modality_length}") # group_by_modality_length=False
+        print(f"【COND】 group_by_modality_length={self.args.group_by_modality_length}") # group_by_modality_length=False
         if self.args.group_by_modality_length:
             # 【SKIP】
             print("【ENTER】if self.args.group_by_modality_length:")
@@ -257,7 +257,7 @@ class LLaVATrainer(Trainer):
         We provide a reasonable default that works well. If you want to use something else, you can pass a tuple in the
         Trainer's init through `optimizers`, or subclass and override this method in a subclass.
         """
-        print(f"[COND] sagemaker_mp_enabled={is_sagemaker_mp_enabled()}") # False
+        print(f"【COND】 sagemaker_mp_enabled={is_sagemaker_mp_enabled()}") # False
         if is_sagemaker_mp_enabled():
             # 【SKIP】
             print("【ENTER】if is_sagemaker_mp_enabled():")
@@ -265,7 +265,7 @@ class LLaVATrainer(Trainer):
             print("【EXIT】if is_sagemaker_mp_enabled():")
             print("result for super().create_optimizer()\n", result)
             return result
-        print(f"[COND] sharded_ddp={self.sharded_ddp}, SHARDED_DDP_SIMPLE={ShardedDDPOption.SIMPLE}") # sharded_ddp=None, SHARDED_DDP_SIMPLE=simple
+        print(f"【COND】 sharded_ddp={self.sharded_ddp}, SHARDED_DDP_SIMPLE={ShardedDDPOption.SIMPLE}") # sharded_ddp=None, SHARDED_DDP_SIMPLE=simple
         if self.sharded_ddp == ShardedDDPOption.SIMPLE:
             # 【SKIP】
             print("【ENTER】if self.sharded_ddp == ShardedDDPOption.SIMPLE:")
@@ -340,7 +340,7 @@ class LLaVATrainer(Trainer):
         (lm_head): Linear(in_features=4096, out_features=32000, bias=False)
         )
         """
-        print(f"[COND] optimizer_is_None={self.optimizer is None}") # 1回目: True, 2回目: False
+        print(f"【COND】 optimizer_is_None={self.optimizer is None}") # 1回目: True, 2回目: False
         if self.optimizer is None:
             # 1回目【ENTER】, 2回目【SKIP】
             print("【ENTER】if self.optimizer is None:")
@@ -357,7 +357,7 @@ class LLaVATrainer(Trainer):
             print("decay_parameters (before removing bias)\n", decay_parameters)
             decay_parameters = [name for name in decay_parameters if "bias" not in name]
             print("decay_parameters\n", decay_parameters)
-            print(f"[COND] mm_projector_lr={self.args.mm_projector_lr}") # None
+            print(f"【COND】 mm_projector_lr={self.args.mm_projector_lr}") # None
             if self.args.mm_projector_lr is not None:
                 #【SKIP】
                 print("【ENTER】if self.args.mm_projector_lr is not None:")
@@ -413,7 +413,7 @@ class LLaVATrainer(Trainer):
             print("optimizer_cls\n", optimizer_cls)
             print("optimizer_kwargs\n", optimizer_kwargs)
 
-            print(f"[COND] sharded_ddp={self.sharded_ddp}, SHARDED_DDP_SIMPLE={ShardedDDPOption.SIMPLE}") # sharded_ddp=None, SHARDED_DDP_SIMPLE=simple
+            print(f"【COND】 sharded_ddp={self.sharded_ddp}, SHARDED_DDP_SIMPLE={ShardedDDPOption.SIMPLE}") # sharded_ddp=None, SHARDED_DDP_SIMPLE=simple
             if self.sharded_ddp == ShardedDDPOption.SIMPLE:
                 # 【SKIP】
                 print("【ENTER】if self.sharded_ddp == ShardedDDPOption.SIMPLE:")               
@@ -426,7 +426,7 @@ class LLaVATrainer(Trainer):
             else:
                 print("【ENTER】else (not sharded_ddp SIMPLE):")
                 self.optimizer = optimizer_cls(optimizer_grouped_parameters, **optimizer_kwargs)
-                print(f"[COND] optimizer_cls_name={optimizer_cls.__name__}") # AdamW
+                print(f"【COND】 optimizer_cls_name={optimizer_cls.__name__}") # AdamW
                 if optimizer_cls.__name__ == "Adam8bit":
                     # 【SKIP】
                     print("【ENTER】if optimizer_cls.__name__ == 'Adam8bit':")
@@ -550,7 +550,7 @@ class LLaVATrainer(Trainer):
         """
         print("trial\n", trial) # None
         print("metrics\n", metrics) # None
-        print(f"[COND] tune_mm_mlp_adapter={getattr(self.args, 'tune_mm_mlp_adapter', False)}") # True
+        print(f"【COND】 tune_mm_mlp_adapter={getattr(self.args, 'tune_mm_mlp_adapter', False)}") # True
         if getattr(self.args, 'tune_mm_mlp_adapter', False):
             # 【ENTER】
             print("【ENTER】if getattr(self.args, 'tune_mm_mlp_adapter', False):")
@@ -562,7 +562,7 @@ class LLaVATrainer(Trainer):
 
             # Only save Adapter
             keys_to_match = ['mm_projector', 'vision_resampler']
-            print(f"[COND] use_im_start_end={getattr(self.args, 'use_im_start_end', False)}") # False
+            print(f"【COND】 use_im_start_end={getattr(self.args, 'use_im_start_end', False)}") # False
             if getattr(self.args, "use_im_start_end", False):
                 # 【SKIP】
                 print("【ENTER】if getattr(self.args, 'use_im_start_end', False):")
@@ -570,7 +570,7 @@ class LLaVATrainer(Trainer):
 
             weight_to_save = get_mm_adapter_state_maybe_zero_3(self.model.named_parameters(), keys_to_match)
 
-            print(f"[COND] local_rank={self.args.local_rank}") # 0
+            print(f"【COND】 local_rank={self.args.local_rank}") # 0
             if self.args.local_rank == 0 or self.args.local_rank == -1:
                 # 【ENTER】
                 print("【ENTER】if self.args.local_rank == 0 or self.args.local_rank == -1:")
@@ -591,7 +591,7 @@ class LLaVATrainer(Trainer):
         print("self\n", self)
         print("output_dir\n", output_dir)
         print("state_dict\n", state_dict)
-        print(f"[COND] tune_mm_mlp_adapter={getattr(self.args, 'tune_mm_mlp_adapter', False)}")
+        print(f"【COND】 tune_mm_mlp_adapter={getattr(self.args, 'tune_mm_mlp_adapter', False)}")
         if getattr(self.args, 'tune_mm_mlp_adapter', False):
             print("【ENTER】if getattr(self.args, 'tune_mm_mlp_adapter', False):")
             pass

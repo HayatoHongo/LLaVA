@@ -143,7 +143,7 @@ def get_peft_state_maybe_zero_3(named_params, bias):
     print("def get_peft_state_maybe_zero_3(named_params, bias)")
     print("named_params\n", named_params)
     print("bias\n", bias)
-    print(f"[COND] bias={bias}")
+    print(f"【COND】 bias={bias}")
     if bias == "none":
         print("【ENTER】if bias == 'none':")
         to_return = {k: t for k, t in named_params if "lora_" in k}
@@ -1145,7 +1145,7 @@ def train():
     bnb_model_from_pretrained_args = {}
     print("bnb_model_from_pretrained_args\n", bnb_model_from_pretrained_args)
     # 【SKIP】bfloat16 なので 以下の if 文はスキップされる
-    print(f"[COND] bits={training_args.bits}")
+    print(f"【COND】 bits={training_args.bits}")
     if training_args.bits in [4, 8]:
         print("【ENTER】if training_args.bits in [4, 8]:")
         from transformers import BitsAndBytesConfig
@@ -1166,11 +1166,11 @@ def train():
         ))
         print("【EXIT】if training_args.bits in [4, 8]:")
 
-    print(f"[COND] vision_tower={model_args.vision_tower}")
+    print(f"【COND】 vision_tower={model_args.vision_tower}")
     # 【ENTER】 vision_tower=openai/clip-vit-large-patch14-336 なので、この分岐に入る
     if model_args.vision_tower is not None:
         print("【ENTER】if model_args.vision_tower is not None:")
-        print(f"[COND] mpt_in_model_name_or_path={'mpt' in model_args.model_name_or_path}")
+        print(f"【COND】 mpt_in_model_name_or_path={'mpt' in model_args.model_name_or_path}")
         #【SKIP】model_args.model_name_or_path に mptは含まれていないので、この分岐はskipされる
         if 'mpt' in model_args.model_name_or_path:
             print("【ENTER】if 'mpt' in model_args.model_name_or_path:")
@@ -1188,7 +1188,7 @@ def train():
             print("【EXIT】if 'mpt' in model_args.model_name_or_path:")
         #【ENTER】 model_args.model_name_or_path に mptは含まれていないので、この分岐に入る
         else:
-            print("[COND] not_mpt_in_model_name_or_path={'mpt' not in model_args.model_name_or_path}")
+            print("【COND】 not_mpt_in_model_name_or_path={'mpt' not in model_args.model_name_or_path}")
             print("【ENTER】else of if 'mpt' in model_args.model_name_or_path:")
             model = LlavaLlamaForCausalLM.from_pretrained(
                 model_args.model_name_or_path,
@@ -1200,7 +1200,7 @@ def train():
         print("【EXIT】if model_args.vision_tower is not None:")
     # 【SKIP】 vision_tower=clip-vit-large-patch14-336 なので、この分岐には入らない
     else:
-        print("[COND] vision_tower=None")
+        print("【COND】 vision_tower=None")
         print("【ENTER】else of if model_args.vision_tower is not None:")
         # modelのロード（ここがたいへん重要）
         # model_name_or_path は lmsys/vicuna-7b-v1.5; https://huggingface.co/lmsys/vicuna-7b-v1.5/blob/main/config.json
@@ -1214,7 +1214,7 @@ def train():
     model.config.use_cache = False
     print("model.config.use_cache\n", model.config.use_cache)
 
-    print(f"[COND] freeze_backbone={model_args.freeze_backbone}")
+    print(f"【COND】 freeze_backbone={model_args.freeze_backbone}")
     # 【SKIP】 freeze_backbone=False なので、この分岐はskipされる
     if model_args.freeze_backbone:
         print("【ENTER】if model_args.freeze_backbone:")
@@ -1222,7 +1222,7 @@ def train():
         print("【EXIT】if model_args.freeze_backbone:")
 
     # 【SKIP】 bfloat16 なので 以下の if 文はスキップされる
-    print(f"[COND] bits={training_args.bits}")
+    print(f"【COND】 bits={training_args.bits}")
     if training_args.bits in [4, 8]:
         print("【ENTER】if training_args.bits in [4, 8]:")
         from peft import prepare_model_for_kbit_training
@@ -1230,11 +1230,11 @@ def train():
         model = prepare_model_for_kbit_training(model, use_gradient_checkpointing=training_args.gradient_checkpointing)
         print("【EXIT】if training_args.bits in [4, 8]:")
 
-    print(f"[COND] gradient_checkpointing={training_args.gradient_checkpointing}")
+    print(f"【COND】 gradient_checkpointing={training_args.gradient_checkpointing}")
     # 【ENTER】 gradient_checkpointing=True なので、この分岐に入る
     if training_args.gradient_checkpointing:
         print("【ENTER】if training_args.gradient_checkpointing:")
-        print(f"[COND] has_enable_input_require_grads={hasattr(model, 'enable_input_require_grads')}")
+        print(f"【COND】 has_enable_input_require_grads={hasattr(model, 'enable_input_require_grads')}")
         # 【ENTER】 model に enable_input_require_grads メソッドがあるので、この分岐に入る
         if hasattr(model, "enable_input_require_grads"):
             print("【ENTER】if hasattr(model, 'enable_input_require_grads'):")
@@ -1249,7 +1249,7 @@ def train():
             print("【EXIT】else of if hasattr(model, 'enable_input_require_grads'):")
         print("【EXIT】if training_args.gradient_checkpointing:")
 
-    print(f"[COND] lora_enable={training_args.lora_enable}")
+    print(f"【COND】 lora_enable={training_args.lora_enable}")
     # 【SKIP】 lora_enable=False なので、この分岐はskipされる
     if training_args.lora_enable:
         print("【ENTER】if training_args.lora_enable:")
@@ -1263,14 +1263,14 @@ def train():
             task_type="CAUSAL_LM",
         )
         print("LoraConfig =\n", lora_config)
-        print(f"[COND] bits={training_args.bits}")
+        print(f"【COND】 bits={training_args.bits}")
         if training_args.bits == 16:
             print("【ENTER】if training_args.bits == 16:")
-            print(f"[COND] bf16={training_args.bf16}")
+            print(f"【COND】 bf16={training_args.bf16}")
             if training_args.bf16:
                 model.to(torch.bfloat16)
                 print("【EXIT】if training_args.bf16:")
-            print(f"[COND] fp16={training_args.fp16}")
+            print(f"【COND】 fp16={training_args.fp16}")
             if training_args.fp16:
                 print("【ENTER】if training_args.fp16:")
                 model.to(torch.float16)
@@ -1280,7 +1280,7 @@ def train():
         model = get_peft_model(model, lora_config)
         print("【EXIT】if training_args.lora_enable:")
 
-    print(f"[COND] mpt_in_model_name_or_path={'mpt' in model_args.model_name_or_path}")
+    print(f"【COND】 mpt_in_model_name_or_path={'mpt' in model_args.model_name_or_path}")
     # 【SKIP】model_args.model_name_or_path に mptは含まれていないので、この分岐はskipされる
     if 'mpt' in model_args.model_name_or_path:
         print("【ENTER】if 'mpt' in model_args.model_name_or_path:")
@@ -1293,7 +1293,7 @@ def train():
         print("【EXIT】if 'mpt' in model_args.model_name_or_path:")
     #【ENTER】 model_args.model_name_or_path に mptは含まれていないので、この分岐に入る
     else:
-        print("[COND] not_mpt_in_model_name_or_path={'mpt' not in model_args.model_name_or_path}")
+        print("【COND】 not_mpt_in_model_name_or_path={'mpt' not in model_args.model_name_or_path}")
         print("【ENTER】else of if 'mpt' in model_args.model_name_or_path:")
         tokenizer = transformers.AutoTokenizer.from_pretrained(
             model_args.model_name_or_path,
@@ -1305,11 +1305,11 @@ def train():
         print("tokenizer defined by AutoTokenizer.from_pretrained \n", tokenizer)
         print("【EXIT】else of if 'mpt' in model_args.model_name_or_path:")
 
-    print(f"[COND] version={model_args.version}")
+    print(f"【COND】 version={model_args.version}")
     # 【SKIP】 version=plain なので、この分岐はskipされる
     if model_args.version == "v0":
         print("【ENTER】if model_args.version == 'v0':")
-        print(f"[COND] pad_token_is_None={tokenizer.pad_token is None}")
+        print(f"【COND】 pad_token_is_None={tokenizer.pad_token is None}")
         if tokenizer.pad_token is None:
             print("【ENTER】if tokenizer.pad_token is None:")
             smart_tokenizer_and_embedding_resize(
@@ -1328,7 +1328,7 @@ def train():
     else:
         print("【ENTER】else of if model_args.version == 'v0' and elif 'v0.5':")
         tokenizer.pad_token = tokenizer.unk_token
-        print(f"[COND] version_in_conv_templates={model_args.version in conversation_lib.conv_templates}")
+        print(f"【COND】 version_in_conv_templates={model_args.version in conversation_lib.conv_templates}")
         # 【ENTER】 model_args.version=plain は conversation_lib.conv_templates に含まれている（"plain": conv_llava_plain）ので、この分岐に入る
         if model_args.version in conversation_lib.conv_templates:
             print("【ENTER】if model_args.version in conversation_lib.conv_templates:")
@@ -1342,7 +1342,7 @@ def train():
             print("【EXIT】else of if model_args.version in conversation_lib.conv_templates:")
         print("【EXIT】else of if model_args.version == 'v0' and elif 'v0.5':")
 
-    print(f"[COND] vision_tower={model_args.vision_tower}")
+    print(f"【COND】 vision_tower={model_args.vision_tower}")
     # 【ENTER】 vision_tower=openai/clip-vit-large-patch14-336 なので、この分岐に入る
     if model_args.vision_tower is not None:
         print("【ENTER】if model_args.vision_tower is not None:")
@@ -1362,7 +1362,7 @@ def train():
         model.config.tokenizer_model_max_length = tokenizer.model_max_length
 
         model.config.tune_mm_mlp_adapter = training_args.tune_mm_mlp_adapter = model_args.tune_mm_mlp_adapter
-        print(f"[COND] tune_mm_mlp_adapter={model_args.tune_mm_mlp_adapter}") # True
+        print(f"【COND】 tune_mm_mlp_adapter={model_args.tune_mm_mlp_adapter}") # True
         if model_args.tune_mm_mlp_adapter:
             # 【ENTER】 tune_mm_mlp_adapter=True なので、この分岐に入る
             print("【ENTER】if model_args.tune_mm_mlp_adapter:")
@@ -1377,7 +1377,7 @@ def train():
             print("【EXIT】if model_args.tune_mm_mlp_adapter:")
 
         model.config.freeze_mm_mlp_adapter = training_args.freeze_mm_mlp_adapter
-        print(f"[COND] freeze_mm_mlp_adapter={training_args.freeze_mm_mlp_adapter}") # False
+        print(f"【COND】 freeze_mm_mlp_adapter={training_args.freeze_mm_mlp_adapter}") # False
         if training_args.freeze_mm_mlp_adapter:
             # 【SKIP】 freeze_mm_mlp_adapter=False なので、この分岐はskipされる
             print("【ENTER】if training_args.freeze_mm_mlp_adapter:")
@@ -1385,7 +1385,7 @@ def train():
                 p.requires_grad = False
             print("【EXIT】if training_args.freeze_mm_mlp_adapter:")
 
-        print(f"[COND] bits={training_args.bits}") # 16
+        print(f"【COND】 bits={training_args.bits}") # 16
         if training_args.bits in [4, 8]:
             # 【SKIP】 bfloat16 なので 以下の if 文はスキップされる
             print("【ENTER】if training_args.bits in [4, 8]:")
@@ -1403,29 +1403,29 @@ def train():
         model.initialize_vision_tokenizer(model_args, tokenizer=tokenizer)
         print("【EXIT】if model_args.vision_tower is not None:")
 
-    print(f"[COND] bits={training_args.bits}") # 16
+    print(f"【COND】 bits={training_args.bits}") # 16
     if training_args.bits in [4, 8]:
         # 【SKIP】 bfloat16 なので 以下の if 文はスキップされる
         print("【ENTER】if training_args.bits in [4, 8]:")
         from peft.tuners.lora import LoraLayer
         for name, module in model.named_modules():
-            print(f"[COND] is_LoraLayer={isinstance(module, LoraLayer)} name={name}")
+            print(f"【COND】 is_LoraLayer={isinstance(module, LoraLayer)} name={name}")
             if isinstance(module, LoraLayer):
-                print(f"[COND] bf16={training_args.bf16}")
+                print(f"【COND】 bf16={training_args.bf16}")
                 if training_args.bf16:
                     print("【ENTER】if training_args.bf16:")
                     module = module.to(torch.bfloat16)
                     print("【EXIT】if training_args.bf16:")
-            print(f"[COND] 'norm'_in_name={'norm' in name}")
+            print(f"【COND】 'norm'_in_name={'norm' in name}")
             if 'norm' in name:
                 print("【ENTER】if 'norm' in name:")
                 module = module.to(torch.float32)
                 print("【EXIT】if 'norm' in name:")
-            print(f"[COND] 'lm_head'_or_'embed_tokens'_in_name={('lm_head' in name or 'embed_tokens' in name)}")
+            print(f"【COND】 'lm_head'_or_'embed_tokens'_in_name={('lm_head' in name or 'embed_tokens' in name)}")
             if 'lm_head' in name or 'embed_tokens' in name:
                 print("【ENTER】if 'lm_head' in name or 'embed_tokens' in name:")
                 if hasattr(module, 'weight'):
-                    print(f"[COND] bf16={training_args.bf16} weight_dtype_is_float32={module.weight.dtype == torch.float32}")
+                    print(f"【COND】 bf16={training_args.bf16} weight_dtype_is_float32={module.weight.dtype == torch.float32}")
                     if training_args.bf16 and module.weight.dtype == torch.float32:
                         print("【ENTER】if training_args.bf16 and module.weight.dtype == torch.float32:")
                         module = module.to(torch.bfloat16)
@@ -1472,7 +1472,7 @@ def train():
         )
         print("non_lora_state_dict:\n", non_lora_state_dict)
         print("【EXIT】if training_args.lora_enable:")
-        print(f"[COND] local_rank={training_args.local_rank} (0 or -1)")
+        print(f"【COND】 local_rank={training_args.local_rank} (0 or -1)")
         if training_args.local_rank == 0 or training_args.local_rank == -1:
             print("【ENTER】if training_args.local_rank == 0 or training_args.local_rank == -1:")
             print("training_args.output_dir", training_args.output_dir)
