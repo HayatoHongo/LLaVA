@@ -1,0 +1,22 @@
+from print_factory.print_factory import run_and_capture, embed_print_outputs
+
+logs, mapping = run_and_capture(
+    model.prepare_inputs_labels_for_multimodal,
+    input_ids,
+    position_ids,
+    attention_mask,
+    past_key_values,
+    labels,
+    images,
+    image_sizes
+)
+
+with open("print_factory/original_code.py") as f:
+    code = f.read()
+
+new_code = embed_print_outputs(code, mapping)
+
+with open("print_factory/after_code.py", "w") as f:
+    f.write(new_code)
+
+print("done")
