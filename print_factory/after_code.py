@@ -158,55 +158,7 @@ def prepare_inputs_labels_for_multimodal(
         print("attention_mask (after)\n", attention_mask)
         """
         tensor([[True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True, True,
-                 True, True, True, True, True, True, True, True, True, True, True]])
+                 True, True, True, True, True, True, True, True, True, True, True, True]])
         """
         print("【EXIT】else of if attention_mask is None:")
     if position_ids is None:
@@ -1080,7 +1032,7 @@ def prepare_inputs_labels_for_multimodal(
         # 【ENTER】
         print("【ENTER】else of if _attention_mask is None:")
         attention_mask = attention_mask.to(dtype=_attention_mask.dtype)
-        print("attention_mask (after)\n", attention_mask)
+        print("attention_mask (after)2\n", attention_mask)
         """
         tensor([[True, True, True, True, True, True, True, True, True, True, True, True,
                  True, True, True, True, True, True, True, True, True, True, True, True,
