@@ -588,9 +588,9 @@ class LLaVATrainer(Trainer):
 
         print("current file path", "llava/train/llava_trainer.py")
         print("def _save(self, output_dir: Optional[str] = None, state_dict=None)")
-        print("self\n", self)
-        print("output_dir\n", output_dir)
-        print("state_dict\n", state_dict)
+        print("self _save\n", self)
+        print("output_dir _save\n", output_dir)
+        print("state_dict _save\n", state_dict)
         print(f"【COND】 tune_mm_mlp_adapter={getattr(self.args, 'tune_mm_mlp_adapter', False)}")
         if getattr(self.args, 'tune_mm_mlp_adapter', False):
             print("【ENTER】if getattr(self.args, 'tune_mm_mlp_adapter', False):")

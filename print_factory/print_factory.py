@@ -8,36 +8,30 @@ def normalize_key(key: str) -> str:
 
 def traced_print_factory(original_print):
     store = {}
-
     def traced_print(*args, **kwargs):
         if args and isinstance(args[0], str) and len(args) > 1:
             key = normalize_key(args[0])
+            # stdout と同じ形式で value を文字列化
             buf = io.StringIO()
-            tmp_kwargs = dict(kwargs)
-            tmp_kwargs["file"] = buf
-            original_print(*args[1:], **tmp_kwargs)
+            print(*args[1:], **kwargs, file=buf)
             value = buf.getvalue().rstrip()
             store[key] = value
-        # 画面出力は常に行う
+        # 通常の print も実行
         original_print(*args, **kwargs)
-
     return traced_print, store
 
-
 def run_and_capture(func, *args, **kwargs):
-    buffer = io.StringIO()
     original_print = builtins.print
     traced_print, store = traced_print_factory(original_print)
 
-    with contextlib.redirect_stdout(buffer):
-        builtins.print = traced_print
-        try:
-            func(*args, **kwargs)
-        finally:
-            builtins.print = original_print
+    builtins.print = traced_print
+    try:
+        func(*args, **kwargs)
+    finally:
+        builtins.print = original_print
 
-    logs = buffer.getvalue()
-    return logs, store
+    return store
+
 
 def embed_print_outputs(code: str, mapping: dict[str, str]) -> str:
     """元のコードに print 出力を埋め込む"""
