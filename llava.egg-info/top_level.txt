@@ -2,4 +2,4 @@ checkpoints
 images
 json_split_2files
 llava
-wandb
+print_factory
