@@ -1,6 +1,28 @@
 AWS LambdaLabs GPU Cloudを使う場合、dockerをインストールしてsudo権限を追加した後、
 必ずセッションを再起動、すなわち接続を解除して再接続しないといけない。
 
+ubuntu@132-145-178-224:~/LLaVA$ git config --global user.email "hongo.hayato.6281k@gmail.com"
+ubuntu@132-145-178-224:~/LLaVA$ git config --global user.name "HayatoHongo"
+
+---
+ファイルシステムへのダウンロード
+# Git LFS をインストール
+sudo apt-get update
+sudo apt-get install git-lfs -y
+
+# Hugging Face データセットを clone
+cd /home/ubuntu/llava-virginia
+git lfs install
+git clone https://huggingface.co/datasets/liuhaotian/LLaVA-CC3M-Pretrain-595K
+
+# ディレクトリに移動
+cd LLaVA-CC3M-Pretrain-595K
+
+# images.zip を解凍して images フォルダに展開
+mkdir images
+unzip images.zip -d images
+---
+
 https://github.com/HayatoHongo/LLaVA/
 git clone https://github.com/HayatoHongo/LLaVA.git
 cd LLaVA/
