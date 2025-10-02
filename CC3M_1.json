@@ -1,0 +1,16 @@
+[
+  {
+    "id": "GCC_train_000406392",
+    "image": "GCC_train_000406392.jpg",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>\nShare a concise interpretation of the image provided."
+      },
+      {
+        "from": "gpt",
+        "value": "water pollution in the city"
+      }
+    ]
+  }
+]
