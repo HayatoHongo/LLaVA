@@ -8,7 +8,7 @@ from llava.constants import (
     DEFAULT_IM_END_TOKEN,
     IMAGE_PLACEHOLDER,
 )
-from llava.conversation import conv_templates, SeparatorStyle
+from llava.conversation_lib import conv_templates, SeparatorStyle
 from llava.model.builder import load_pretrained_model
 from llava.utils import disable_torch_init
 from llava.mm_utils import (

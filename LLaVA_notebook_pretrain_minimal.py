@@ -68,8 +68,8 @@ args_dict = {
     #"deepspeed": "./scripts/zero2.json",
     "model_name_or_path": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
     "version": "plain",
-    "data_path": "/workspaces/LLaVA/CC3M_1.json",
-    "image_folder": "/workspaces/LLaVA/images/",
+    "data_path": "/home/ubuntu/llava-virginia/LLaVA-CC3M-Pretrain-595K/chat.json",
+    "image_folder": "/home/ubuntu/llava-virginia/LLaVA-CC3M-Pretrain-595K/images",
     "vision_tower": "openai/clip-vit-large-patch14-336",
     "mm_projector_type": "mlp2x_gelu",
     "tune_mm_mlp_adapter": True,
@@ -81,12 +81,12 @@ args_dict = {
 
     # TrainingArguments 相当
     "num_train_epochs": 1,
-    "per_device_train_batch_size": 1,
+    "per_device_train_batch_size": 8,
     "per_device_eval_batch_size": 1,
     "gradient_accumulation_steps": 1,
     "evaluation_strategy": "no",
     "save_strategy": "steps",
-    "save_steps": 1,
+    "save_steps": 1000,
     "save_total_limit": 1,
     "learning_rate": 1e-3,
     "weight_decay": 0.0, # I don't know why 0.0
