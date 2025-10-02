@@ -1217,9 +1217,10 @@ import copy
 
 def preprocess_plain(
     sources: Sequence[str],
-    tokenizer: transformers.PreTrainedTokenizer,
+    tokenizer: transformers.PreTrainedTokenizer
 ) -> Dict:
 
+    default_conversation = conv_templates["plain"] # hard coding
     print("current file path", "llava/train/train.py")
     print("def preprocess_plain(sources, tokenizer)")
     print("sources\n", sources) # [[{'from': 'human', 'value': '<image>\nGive a brief description of the image.'}, {'from': 'gpt', 'value': 'the divine queen in her elaborate masks canvas print featuring the face and hands of a woman with red hair'}]]
@@ -1256,9 +1257,8 @@ def preprocess_plain(
     print("targets (return)\n", targets) #  [tensor([ -100,  -100,   278, 25616, 26624,   297,   902, 19430, 11105, 29879, 10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114, 411,  2654, 11315,    13])]
     return dict(input_ids=input_ids, labels=targets)
 
-
 def _add_speaker_and_signal(header, source, get_conversation=True):
-
+    default_conversation = conv_templates["plain"] # hard coding
     print("current file path", "llava/train/train.py")
     print("def _add_speaker_and_signal(header, source, get_conversation=True)")
     print("header _add_speaker_and_signal\n", header)
@@ -1341,7 +1341,8 @@ def preprocess(
     tokenizer: transformers.PreTrainedTokenizer,
     has_image: bool = False
 ) -> Dict:
-
+    
+    default_conversation = conv_templates["plain"] # hard coding
     print("current file path", "llava/train/train.py")
     print("def preprocess(sources, tokenizer, has_image=False)")
     print("sources\n", sources) # [[{'from': 'human', 'value': '<image>\nGive a brief description of the image.'}, {'from': 'gpt', 'value': 'the divine queen in her elaborate masks canvas print featuring the face and hands of a woman with red hair'}]]
@@ -1398,11 +1399,13 @@ def preprocess_multimodal(
     data_args: DataArguments
 ) -> Dict:
 
+    default_conversation = conv_templates["plain"] # hard coding    
     print("current file path", "llava/train/train.py")
     print("def preprocess_multimodal(sources, data_args)")
     print("sources\n", sources) # [[{'from': 'human', 'value': 'Give a brief description of the image.\n<image>'}, {'from': 'gpt', 'value': 'the divine queen in her elaborate masks canvas print featuring the face and hands of a woman with red hair'}]]
     print("data_args\n", data_args) # DataArguments(data_path='/content/LLaVA/blip_laion_cc_sbu_1.json', lazy_preprocess=True, is_multimodal=True, image_folder='/content/LLaVA/images', image_aspect_ratio='square')
-    is_multimodal = data_args.is_multimodal 
+    is_multimodal = data_args.is_multimodal
+
     print("is_multimodal\n", is_multimodal) # True
     if not is_multimodal:
         pass
@@ -1659,6 +1662,7 @@ def train():
         if model_args.version in conv_templates:
             print("【ENTER】if model_args.version in conversation_lib.conv_templates:")
             default_conversation = conv_templates[model_args.version]
+            print("data_args updated\n", data_args)
             print(f"conversation_lib.default_conversation set to {model_args.version}")
             print("【EXIT】if model_args.version in conversation_lib.conv_templates:")
         # 【SKIP】 model_args.version=plain は conversation_lib.conv_templates に含まれているので、この分岐はskipされる

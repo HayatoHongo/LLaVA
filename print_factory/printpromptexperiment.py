@@ -12,23 +12,23 @@ def _save_checkpoint(self, model, trial, metrics=None):
         # 【ENTER】
         print("【ENTER】if getattr(self.args, 'tune_mm_mlp_adapter', False):")
         from transformers.trainer_utils import PREFIX_CHECKPOINT_DIR
-            checkpoint_folder = f"{PREFIX_CHECKPOINT_DIR}-{self.state.global_step}"
-            print("checkpoint_folder = f\"{PREFIX_CHECKPOINT_DIR}-{self.state.global_step}\"", checkpoint_folder)
+        checkpoint_folder = f"{PREFIX_CHECKPOINT_DIR}-{self.state.global_step}"
+        print("checkpoint_folder = f\"{PREFIX_CHECKPOINT_DIR}-{self.state.global_step}\"", checkpoint_folder)
 
-            run_dir = self._get_output_dir(trial=trial)
-            print("run_dir = self._get_output_dir(trial=trial)", run_dir)
-            output_dir = os.path.join(run_dir, checkpoint_folder)
-            print("output_dir = os.path.join(run_dir, checkpoint_folder)", output_dir)
+        run_dir = self._get_output_dir(trial=trial)
+        print("run_dir = self._get_output_dir(trial=trial)", run_dir)
+        output_dir = os.path.join(run_dir, checkpoint_folder)
+        print("output_dir = os.path.join(run_dir, checkpoint_folder)", output_dir)
 
         # Only save Adapter
-            keys_to_match = ['mm_projector', 'vision_resampler']
-            print("keys_to_match = ['mm_projector', 'vision_resampler']", keys_to_match)
+        keys_to_match = ['mm_projector', 'vision_resampler']
+        print("keys_to_match = ['mm_projector', 'vision_resampler']", keys_to_match)
         print(f"【COND】 use_im_start_end={getattr(self.args, 'use_im_start_end', False)}") # False
         if getattr(self.args, "use_im_start_end", False):
             # 【SKIP】
             print("【ENTER】if getattr(self.args, 'use_im_start_end', False):")
-                keys_to_match.extend(['embed_tokens', 'embed_in'])
-                print("keys_to_match.extend(['embed_tokens', 'embed_in'])", keys_to_match)
+            keys_to_match.extend(['embed_tokens', 'embed_in'])
+            print("keys_to_match.extend(['embed_tokens', 'embed_in'])", keys_to_match)
 
             weight_to_save = get_mm_adapter_state_maybe_zero_3(self.model.named_parameters(), keys_to_match)
             print("weight_to_save = get_mm_adapter_state_maybe_zero_3(self.model.named_parameters(), keys_to_match)", weight_to_save)

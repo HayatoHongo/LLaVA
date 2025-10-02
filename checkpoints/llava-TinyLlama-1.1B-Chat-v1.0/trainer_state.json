@@ -10,22 +10,22 @@
     {
       "epoch": 1.0,
       "learning_rate": 0.001,
-      "loss": 8.8422,
+      "loss": 7.242,
       "step": 1
     },
     {
       "epoch": 1.0,
       "step": 1,
-      "total_flos": 193496334336.0,
-      "train_loss": 8.842212677001953,
-      "train_runtime": 1710.8737,
+      "total_flos": 72561125376.0,
+      "train_loss": 7.242035865783691,
+      "train_runtime": 1870.2713,
       "train_samples_per_second": 0.001,
       "train_steps_per_second": 0.001
     }
   ],
   "max_steps": 1,
   "num_train_epochs": 1,
-  "total_flos": 193496334336.0,
+  "total_flos": 72561125376.0,
   "trial_name": null,
   "trial_params": null
 }
