@@ -188,8 +188,6 @@ import re
 
 def build_vision_projector(config, delay_load=False, **kwargs):
     projector_type = getattr(config, 'mm_projector_type', 'linear')
-
-
     mlp_gelu_match = re.match(r'^mlp(\d+)x_gelu$', projector_type)
     #【ENTER】if mlp_gelu_match:
     mlp_depth = int(mlp_gelu_match.group(1))
@@ -207,8 +205,6 @@ def build_vision_projector(config, delay_load=False, **kwargs):
     )
     """
     return result
-
-    raise ValueError(f'Unknown projector type: {projector_type}')
 
 # LlavaMetaModel
 # __init__
@@ -464,13 +460,6 @@ class LlavaLlamaForCausalLM(LlamaForCausalLM, LlavaMetaForCausalLM):
                 images,
                 image_sizes
             )
-
-
-
-
-
-
-
 
         #  LlamaForCausalLM.forward(self, ...)で明示
         # Trainer > def train > def inner_training_loop > def training_step > model(**inputs) > model.forward
@@ -957,14 +946,6 @@ def train():
     else:
       pass
 
-    # 【SKIP】 freeze_backbone=False なので、この分岐はskipされる
-    if model_args.freeze_backbone:
-        pass
-
-    # 【SKIP】 bfloat16 なので 以下の if 文はスキップされる
-    if training_args.bits in [4, 8]:
-      pass
-
     # 【ENTER】 gradient_checkpointing=True なので、この分岐に入る
     if training_args.gradient_checkpointing:
         # 【ENTER】 model に enable_input_require_grads メソッドがあるので、この分岐に入る
@@ -976,24 +957,13 @@ def train():
         else:
           pass
 
-
-    # 【SKIP】 lora_enable=False なので、この分岐はskipされる
-    if training_args.lora_enable:
-      pass
-
-    # 【SKIP】model_args.model_name_or_path に mptは含まれていないので、この分岐はskipされる
-    if 'mpt' in model_args.model_name_or_path:
-      pass
-
-    #【ENTER】 model_args.model_name_or_path に mptは含まれていないので、この分岐に入る
-    else:
-        tokenizer = transformers.AutoTokenizer.from_pretrained(
-            model_args.model_name_or_path,
-            cache_dir=training_args.cache_dir,
-            model_max_length=training_args.model_max_length,
-            padding_side="right",
-            use_fast=False,
-        )
+    tokenizer = transformers.AutoTokenizer.from_pretrained(
+        model_args.model_name_or_path,
+        cache_dir=training_args.cache_dir,
+        model_max_length=training_args.model_max_length,
+        padding_side="right",
+        use_fast=False,
+    )
 
     # 【SKIP】 version=plain なので、この分岐はskipされる
     if model_args.version == "v0":
@@ -1046,8 +1016,7 @@ def train():
         #model.initialize_vision_tokenizer(model_args, tokenizer=tokenizer)
 
 
-    data_module = make_supervised_data_module(tokenizer=tokenizer,
-                                              data_args=data_args)
+    data_module = make_supervised_data_module(tokenizer=tokenizer,data_args=data_args)
 
     trainer = LLaVATrainer(model=model,
                     tokenizer=tokenizer,
