@@ -1,5 +1,5 @@
-input_path = "LLaVA_notebook_cleansed.py"
-output_path = "LLaVA_notebook_no_print.py"
+input_path = "copy_LLaVA_notebook.py"
+output_path = "copy_LLaVA_notebook_no_print.py"
 
 with open(input_path, "r") as f_in, open(output_path, "w") as f_out:
     for line in f_in:

@@ -1,7 +1,14 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[2]:
+
 import transformers
 import torch
 from dataclasses import dataclass, field
 from typing import Optional
+
+# In[3]:
 
 @dataclass
 class ModelArguments:
@@ -62,13 +69,15 @@ class TrainingArguments(transformers.TrainingArguments):
     mm_projector_lr: Optional[float] = None
     group_by_modality_length: bool = field(default=False)
 
+# In[4]:
+
 from transformers import HfArgumentParser
 
 args_dict = {
     #"deepspeed": "./scripts/zero2.json",
     "model_name_or_path": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
     "version": "plain",
-    "data_path": "/workspaces/LLaVA/CC3M_1.json",
+    "data_path": "/workspaces/LLaVA/blip_laion_cc_sbu_1.json",
     "image_folder": "/workspaces/LLaVA/images/",
     "vision_tower": "openai/clip-vit-large-patch14-336",
     "mm_projector_type": "mlp2x_gelu",
@@ -101,6 +110,13 @@ args_dict = {
     "report_to": "none",
 }
 
+# In[5]:
+
+parser = HfArgumentParser((ModelArguments, DataArguments, TrainingArguments))
+model_args, data_args, training_args = parser.parse_dict(args_dict)
+
+# In[6]:
+
 # Model Constants
 IGNORE_INDEX = -100
 IMAGE_TOKEN_INDEX = -200
@@ -110,6 +126,14 @@ DEFAULT_IM_START_TOKEN = "<im_start>"
 DEFAULT_IM_END_TOKEN = "<im_end>"
 IMAGE_PLACEHOLDER = "<image-placeholder>"
 
+# In[7]:
+
+local_rank = training_args.local_rank
+compute_dtype = (torch.float16 if training_args.fp16 else (torch.bfloat16 if training_args.bf16 else torch.float32))
+bnb_model_from_pretrained_args = {} # bitsandbytes
+
+# In[9]:
+
 from transformers import CLIPVisionModel, CLIPImageProcessor, CLIPVisionConfig
 import torch.nn as nn
 # __init__
@@ -117,135 +141,70 @@ import torch.nn as nn
 
 # result = CLIPVisionTower(vision_tower, args=vision_tower_cfg, **kwargs)
 class CLIPVisionTower(nn.Module):
-    def __init__(self, vision_tower, args, delay_load=False):
+    def __init__(self, vision_tower, args):
+        # result = CLIPVisionTower(vision_tower, args=vision_tower_cfg, **kwargs)
+        print("def CLIPVisionTower.__init__(self, vision_tower, args")
         super().__init__()
 
         self.is_loaded = False
+
         self.vision_tower_name = vision_tower
         self.select_layer = args.mm_vision_select_layer
         self.select_feature = getattr(args, 'mm_vision_select_feature', 'patch')
 
-        if not delay_load:
-            # 【ENTER】
-            self.load_model()
-        elif getattr(args, 'unfreeze_mm_vision_tower', False):            
-            self.load_model()
-        else:
-            self.cfg_only = CLIPVisionConfig.from_pretrained(self.vision_tower_name)
-            
     def load_model(self):
+
+        print("def CLIPVisionTower.load_model(self)")
         self.image_processor = CLIPImageProcessor.from_pretrained(self.vision_tower_name)
         self.vision_tower = CLIPVisionModel.from_pretrained(self.vision_tower_name)
         self.vision_tower.requires_grad_(False)
+
         self.is_loaded = True
 
-    # image_forward_outs から、指定した層の特徴量 (B, 577, 1024) を取り出したのち、パッチ特徴量 (B, 576, 1024) のみを返す。
-    def feature_select(self, image_forward_outs):
+# In[10]:
 
-        image_features = image_forward_outs.hidden_states[self.select_layer]
-        if hasattr(image_features, 'shape'):
-            pass
-        if self.select_feature == 'patch':
-            """
-            tensor([[[ 0.2236,  0.2432, -0.5938,  ...,  0.4863, -0.5273, -0.2041],
-                    [-0.0469, -0.1836, -0.0273,  ...,  0.3535,  0.3750,  0.3047],
-                    [-0.2598,  1.1484,  0.4844,  ...,  0.4961, -0.1719, -0.5117],
-                    ...,
-                    [ 1.7188,  0.9688,  0.8828,  ..., -0.2441, -0.8672,  1.3047],
-                    [ 0.7891, -0.3984,  0.6797,  ..., -0.3594, -0.9922,  0.3164],
-                    [ 1.5000,  0.6250,  0.3672,  ..., -0.5469, -0.4902,  0.9766]]],
-                device='cuda:0', dtype=torch.bfloat16)
-            """
-            image_features = image_features[:, 1:]
-            """
-            tensor([[[-0.0469, -0.1836, -0.0273,  ...,  0.3535,  0.3750,  0.3047],
-                    [-0.2598,  1.1484,  0.4844,  ...,  0.4961, -0.1719, -0.5117],
-                    [ 1.0625, -0.0635, -0.3730,  ...,  0.0220,  0.0820,  0.4805],
-                    ...,
-                    [ 1.7188,  0.9688,  0.8828,  ..., -0.2441, -0.8672,  1.3047],
-                    [ 0.7891, -0.3984,  0.6797,  ..., -0.3594, -0.9922,  0.3164],
-                    [ 1.5000,  0.6250,  0.3672,  ..., -0.5469, -0.4902,  0.9766]]],
-                device='cuda:0', dtype=torch.bfloat16)
-            """
-        elif self.select_feature == 'cls_patch':
-            pass
-        else:
-            pass
-        """
-        image_features (return)
-        tensor([[[-0.0469, -0.1836, -0.0273,  ...,  0.3535,  0.3750,  0.3047],
-                [-0.2598,  1.1484,  0.4844,  ...,  0.4961, -0.1719, -0.5117],
-                [ 1.0625, -0.0635, -0.3730,  ...,  0.0220,  0.0820,  0.4805],
-                ...,
-                [ 1.7188,  0.9688,  0.8828,  ..., -0.2441, -0.8672,  1.3047],
-                [ 0.7891, -0.3984,  0.6797,  ..., -0.3594, -0.9922,  0.3164],
-                [ 1.5000,  0.6250,  0.3672,  ..., -0.5469, -0.4902,  0.9766]]],
-            device='cuda:0', dtype=torch.bfloat16)
-        """
-        if hasattr(image_features, 'shape'):
-            pass
-        return image_features
+# In[12]:
 
+vision_tower_name = "openai/clip-vit-large-patch14-336"
+CLIPVisionTower_model = CLIPVisionTower(vision_tower_name, args=model_args)
 
-    @torch.no_grad() 
-    def forward(self, images):
+# In[13]:
 
-        
-        if hasattr(images, 'shape'):
-            pass
-        if type(images) is list:
-            pass
-        else:
-            # 【ENTER】
-            image_forward_outs = self.vision_tower(images.to(device=self.vision_tower.device, dtype=self.vision_tower.dtype), output_hidden_states=True)
-            image_features = self.feature_select(image_forward_outs).to(images.dtype)
+CLIPVisionTower_model.load_model()
 
-        """
-        image_features (return)
-        tensor([[[-0.0469, -0.1836, -0.0273,  ...,  0.3535,  0.3750,  0.3047],
-                [-0.2598,  1.1484,  0.4844,  ...,  0.4961, -0.1719, -0.5117],
-                [ 1.0625, -0.0635, -0.3730,  ...,  0.0220,  0.0820,  0.4805],
-                ...,
-                [ 1.7188,  0.9688,  0.8828,  ..., -0.2441, -0.8672,  1.3047],
-                [ 0.7891, -0.3984,  0.6797,  ..., -0.3594, -0.9922,  0.3164],
-                [ 1.5000,  0.6250,  0.3672,  ..., -0.5469, -0.4902,  0.9766]]],
-            device='cuda:0', dtype=torch.bfloat16)
-        """
-        if hasattr(image_features, 'shape'):
-            pass
-        return image_features
+# In[ ]:
 
-    @property
-    def config(self):
-        if self.is_loaded:
-            # 【ENTER】
-            result = self.vision_tower.config
-        else:
-            pass
-        return result
+# In[ ]:
 
-    @property
-    def hidden_size(self):
-        result = self.config.hidden_size
-        return result
-      
+# In[ ]:
+
 import os
 
 def build_vision_tower(vision_tower_cfg, **kwargs):
     # vision_tower = build_vision_tower(model_args)
+    print("def build_vision_tower(vision_tower_cfg, **kwargs)")
     vision_tower = getattr(vision_tower_cfg, 'mm_vision_tower', getattr(vision_tower_cfg, 'vision_tower', None))
     # ローカルに存在しない場合はFalse。存在する場合の例: /ubuntu/home/user/model/openai/clip-vit-large-patch14-336
     is_absolute_path_exists = os.path.exists(vision_tower)
     if is_absolute_path_exists or vision_tower.startswith("openai") or vision_tower.startswith("laion") or "ShareGPT4V" in vision_tower:
         # 【ENTER】
-        result = CLIPVisionTower(vision_tower, args=vision_tower_cfg, **kwargs)
-        return result
+        CLIPVisionTower_model = CLIPVisionTower(vision_tower, args=vision_tower_cfg, **kwargs)
+        CLIPVisionTower_model.load_model()
+        return CLIPVisionTower_model
+
     raise ValueError(f'Unknown vision tower: {vision_tower}')
+
+# In[ ]:
+
+# In[ ]:
 
 import re
 
 def build_vision_projector(config, delay_load=False, **kwargs):
+
+    print("def build_vision_projector(config, delay_load=False, **kwargs)")
     projector_type = getattr(config, 'mm_projector_type', 'linear')
+
     if projector_type == 'linear':
       pass
 
@@ -257,21 +216,15 @@ def build_vision_projector(config, delay_load=False, **kwargs):
         for _ in range(1, mlp_depth):
             modules.append(nn.GELU())
             modules.append(nn.Linear(config.hidden_size, config.hidden_size))
-        
         result = nn.Sequential(*modules) # * はリストをアンパックして引数に展開する
-        """
-        Sequential(
-        (0): Linear(in_features=1024, out_features=4096, bias=True)
-        (1): GELU(approximate='none')
-        (2): Linear(in_features=4096, out_features=4096, bias=True)
-        )
-        """
         return result
 
     if projector_type == 'identity':
       pass
 
     raise ValueError(f'Unknown projector type: {projector_type}')
+
+# In[ ]:
 
 # LlavaMetaModel
 # __init__
@@ -280,84 +233,35 @@ def build_vision_projector(config, delay_load=False, **kwargs):
 # unpad_image
 
 class LlavaMetaModel:
+
     def __init__(self, config):
+
+        # LlamaModelの__init_を呼び出す
         super(LlavaMetaModel, self).__init__(config)
 
         if hasattr(config, "mm_vision_tower"):
             self.vision_tower = build_vision_tower(config, delay_load=True)
             self.mm_projector = build_vision_projector(config)
+
             if 'unpad' in getattr(config, 'mm_patch_merge_type', ''):
               pass
 
-    def initialize_vision_modules(self, model_args, fsdp=None):
-
-        vision_tower = model_args.vision_tower
-        mm_vision_select_layer = model_args.mm_vision_select_layer
-        mm_vision_select_feature = model_args.mm_vision_select_feature
-        pretrain_mm_mlp_adapter = model_args.pretrain_mm_mlp_adapter
-        mm_patch_merge_type = model_args.mm_patch_merge_type
-        # 下記はself.config.mm_vision_towerに関するもの。self.vision_towerは依然としてNone
-        self.config.mm_vision_tower = vision_tower
-        
-        if self.get_vision_tower() is None:
-            #【ENTER】self.vision_tower, self.get_vision_towerはNoneなのでこの分岐に入る。
-
-            # build_vision_tower(model_args) はちょっと奥の依存関係が深い
-            vision_tower = build_vision_tower(model_args)
-            # 分散学習(FSDP)を使うかどうか. 今回は [] 空のリストとなるので、Noneではないが、len(fsdp) == 0
-            if fsdp is not None and len(fsdp) > 0:
-                pass
-            else:
-                # 【ENTER】else of if fsdp is not None and len(fsdp) > 0:
-                self.vision_tower = vision_tower
-        else:
-            pass
-
-        self.config.use_mm_proj = True
-        self.config.mm_projector_type = getattr(model_args, 'mm_projector_type', 'linear')
-        self.config.mm_hidden_size = vision_tower.hidden_size
-        self.config.mm_vision_select_layer = mm_vision_select_layer
-        self.config.mm_vision_select_feature = mm_vision_select_feature
-        self.config.mm_patch_merge_type = mm_patch_merge_type    
-
-        # mm_projector_is_None=True
-        if getattr(self, 'mm_projector', None) is None:
-            # 【ENTER】
-            self.mm_projector = build_vision_projector(self.config)
-            """
-            Sequential(
-            (0): Linear(in_features=1024, out_features=2048, bias=True)
-            (1): GELU(approximate='none')
-            (2): Linear(in_features=2048, out_features=2048, bias=True)
-            )
-            """
-            if 'unpad' in mm_patch_merge_type:
-                pass
-        else:
-            pass
-        if pretrain_mm_mlp_adapter is not None:
-            pass
-
-    def get_vision_tower(self):
-        vision_tower = getattr(self, 'vision_tower', None)
-        if type(vision_tower) is list:
-            # 【SKIP】
-            vision_tower = vision_tower[0]
-        return vision_tower
-
-
+# In[ ]:
 
 from transformers import LlamaConfig, LlamaModel
 
 class LlavaConfig(LlamaConfig):
     model_type = "llava_llama"
 
-
 class LlavaLlamaModel(LlavaMetaModel, LlamaModel):
     config_class = LlavaConfig
 
     def __init__(self, config: LlamaConfig):
+
+        print("def LlavaLlamaModel.__init__(self, config: LlamaConfig)")
         super(LlavaLlamaModel, self).__init__(config)
+
+# In[ ]:
 
 # LlavaMetaForCausalLM
 # get_vision_tower
@@ -371,267 +275,7 @@ class LlavaMetaForCausalLM:
         result = self.get_model().get_vision_tower()
         return result
 
-    def initialize_vision_tokenizer(self, model_args, tokenizer):
-        if model_args.mm_use_im_patch_token:
-            pass
-
-        if model_args.mm_use_im_start_end: # False
-            pass
-
-        elif model_args.mm_use_im_patch_token: # False
-            pass
-
-    def encode_images(self, images):
-        image_features = self.get_model().get_vision_tower()(images)
-        image_features = self.get_model().mm_projector(image_features)
-        return image_features
-
-
-    def prepare_inputs_labels_for_multimodal(
-        self, input_ids, position_ids, attention_mask, past_key_values, labels,
-        images, image_sizes=None
-    ):
-        """
-        llava/llava/model/language_model/llava_llama.py
-        """
-        """
-        tensor([[    1,  -200,   278, 25616, 26624,   297,   902, 19430, 11105, 29879,
-                10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114,
-                411,  2654, 11315,    13]])
-        """
-
-        """
-        tensor([[True, True, True, True, True, True, True, True, True, True, True, True,
-                True, True, True, True, True, True, True, True, True, True, True, True]])
-        """
-
-        """
-        tensor([[ -100,  -100,   278, 25616, 26624,   297,   902, 19430, 11105, 29879,
-                10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114,
-                411,  2654, 11315,    13]])
-        """
-
-
-        vision_tower = self.get_vision_tower()
-
-        if vision_tower is None or images is None or input_ids.shape[1] == 1:
-            pass
-
-        if type(images) is list or images.ndim == 5:
-            pass
-        else:
-            # 【ENTER】
-            image_features = self.encode_images(images)
-            """
-            tensor([[[-0.1943,  0.1157, -0.0747,  ...,  0.0027, -0.1691, -0.3439],
-                    [ 0.0437,  0.1717, -0.0998,  ...,  0.0930, -0.1386, -0.0731],
-                    [-0.0505,  0.1592, -0.0982,  ...,  0.0866, -0.1123, -0.2177],
-                    ...,
-                    [-0.0182,  0.0850, -0.0556,  ...,  0.0622, -0.1969,  0.0129],
-                    [-0.0651,  0.0586, -0.1218,  ..., -0.0614, -0.1158, -0.0104],
-                    [ 0.0863,  0.0081, -0.1651,  ..., -0.2040, -0.0455,  0.0618]]],
-                grad_fn=<ViewBackward0>)
-            """
-
-        # TODO: image start / end is not implemented here to support pretraining.
-        if getattr(self.config, 'tune_mm_mlp_adapter', False) and getattr(self.config, 'mm_use_im_start_end', False):
-            raise NotImplementedError
-
-        # Let's just add dummy tensors if they do not exist,
-        # it is a headache to deal with None all the time.
-        # But it is not ideal, and if you have a better idea,
-        # please open an issue / submit a PR, thanks.
-
-        """
-        tensor([[ -100,  -100,   278, 25616, 26624,   297,   902, 19430, 11105, 29879,
-                10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114,
-                411,  2654, 11315,    13]])
-        """
-
-
-        """
-        tensor([[True, True, True, True, True, True, True, True, True, True, True, True,
-                True, True, True, True, True, True, True, True, True, True, True, True]])
-        """
-
-        _labels = labels
-        _position_ids = position_ids
-        _attention_mask = attention_mask
-        if attention_mask is None:
-            pass
-        else:
-            # 【ENTER】
-            attention_mask = attention_mask.bool()
-    
-            """
-            tensor([[True, True, True, True, True, True, True, True, True, True, True, True,
-                    True, True, True, True, True, True, True, True, True, True, True, True]])
-            """
-        if position_ids is None:
-            position_ids = torch.arange(0, input_ids.shape[1], dtype=torch.long, device=input_ids.device)
-
-            """
-            tensor([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-                    18, 19, 20, 21, 22, 23])
-            """
-        if labels is None:
-            pass
-
-        # remove the padding using attention_mask -- FIXME
-        _input_ids = input_ids
-        input_ids = [cur_input_ids[cur_attention_mask] for cur_input_ids, cur_attention_mask in zip(input_ids, attention_mask)]
-        labels = [cur_labels[cur_attention_mask] for cur_labels, cur_attention_mask in zip(labels, attention_mask)]
-        """
-        [tensor([    1,  -200,   278, 25616, 26624,   297,   902, 19430, 11105, 29879,
-                10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114,
-                411,  2654, 11315,    13])]
-        """
-
-        """
-        [tensor([ -100,  -100,   278, 25616, 26624,   297,   902, 19430, 11105, 29879,
-                10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114,
-                411,  2654, 11315,    13])]
-        """
-
-
-        new_input_embeds = []
-        new_labels = []
-        cur_image_idx = 0
-        for batch_idx, cur_input_ids in enumerate(input_ids):
-            """
-            tensor([    1,  -200,   278, 25616, 26624,   297,   902, 19430, 11105, 29879,
-                    10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114,
-                    411,  2654, 11315,    13])
-            """
-            num_images = (cur_input_ids == IMAGE_TOKEN_INDEX).sum()
-            if num_images == 0:
-                cur_image_features = image_features[cur_image_idx]
-                cur_input_embeds_1 = self.get_model().embed_tokens(cur_input_ids)
-                cur_input_embeds = torch.cat([cur_input_embeds_1, cur_image_features[0:0]], dim=0)
-                new_input_embeds.append(cur_input_embeds)
-                new_labels.append(labels[batch_idx])
-                cur_image_idx += 1
-                continue
-
-            image_token_indices = [-1] + torch.where(cur_input_ids == IMAGE_TOKEN_INDEX)[0].tolist() + [cur_input_ids.shape[0]]
-            cur_input_ids_noim = []
-            cur_labels = labels[batch_idx]
-            """
-            tensor([ -100,  -100,   278, 25616, 26624,   297,   902, 19430, 11105, 29879,
-                    10508,  1596, 23425,   278,  3700,   322,  6567,   310,   263,  6114,
-                    411,  2654, 11315,    13])
-            """
-            cur_labels_noim = []
-            for i in range(len(image_token_indices) - 1): # 2回ループ。1回目 START から IMAGE_TOKEN_INDEXの手前まで、2回目はIMAGE_TOKEN_INDEX より先から 最後まで
-                cur_input_ids_noim.append(cur_input_ids[image_token_indices[i]+1:image_token_indices[i+1]])
-                cur_labels_noim.append(cur_labels[image_token_indices[i]+1:image_token_indices[i+1]])
-            """
-            [tensor([1]), tensor([  278, 25616, 26624,   297,   902, 19430, 11105, 29879, 10508,  1596,
-                    23425,   278,  3700,   322,  6567,   310,   263,  6114,   411,  2654,
-                    11315,    13])]
-            """
-            """
-            [tensor([-100]), tensor([  278, 25616, 26624,   297,   902, 19430, 11105, 29879, 10508,  1596,
-                    23425,   278,  3700,   322,  6567,   310,   263,  6114,   411,  2654,
-                    11315,    13])]
-            """
-            split_sizes = [x.shape[0] for x in cur_labels_noim]
-            cur_input_embeds = self.get_model().embed_tokens(torch.cat(cur_input_ids_noim))
-
-            cur_input_embeds_no_im = torch.split(cur_input_embeds, split_sizes, dim=0)
-
-            cur_new_input_embeds = []
-            cur_new_labels = []
-
-            for i in range(num_images + 1):
-                cur_new_input_embeds.append(cur_input_embeds_no_im[i])
-                cur_new_labels.append(cur_labels_noim[i])
-                if i < num_images:
-                    cur_image_features = image_features[cur_image_idx]
-                    cur_image_idx += 1
-                    cur_new_input_embeds.append(cur_image_features)
-                    cur_new_labels.append(torch.full((cur_image_features.shape[0],), IGNORE_INDEX, device=cur_labels.device, dtype=cur_labels.dtype))
-
-            """
-            [torch.Size([1, 2048]), torch.Size([576, 2048]), torch.Size([22, 2048])]
-            """
-
-
-
-
-            cur_new_input_embeds = [x.to(self.device) for x in cur_new_input_embeds]
-
-            cur_new_input_embeds = torch.cat(cur_new_input_embeds)
-            cur_new_labels = torch.cat(cur_new_labels)
-
-
-
-
-            new_input_embeds.append(cur_new_input_embeds)
-            new_labels.append(cur_new_labels)
-
-
-
-        # Truncate sequences to max length as image embeddings can make the sequence longer
-        tokenizer_model_max_length = getattr(self.config, 'tokenizer_model_max_length', None)
-        if tokenizer_model_max_length is not None:
-            new_input_embeds = [x[:tokenizer_model_max_length] for x in new_input_embeds]
-            new_labels = [x[:tokenizer_model_max_length] for x in new_labels]
-
-        # Combine them
-        max_len = max(x.shape[0] for x in new_input_embeds)
-        batch_size = len(new_input_embeds)
-
-        new_input_embeds_padded = []
-        new_labels_padded = torch.full((batch_size, max_len), IGNORE_INDEX, dtype=new_labels[0].dtype, device=new_labels[0].device)
-
-        attention_mask = torch.zeros((batch_size, max_len), dtype=attention_mask.dtype, device=attention_mask.device)
-
-        position_ids = torch.zeros((batch_size, max_len), dtype=position_ids.dtype, device=position_ids.device)
-
-        for i, (cur_new_embed, cur_new_labels) in enumerate(zip(new_input_embeds, new_labels)):
-            cur_len = cur_new_embed.shape[0]
-            if getattr(self.config, 'tokenizer_padding_side', 'right') == "left":
-                pass
-            else:
-                #【ENTER】
-                new_input_embeds_padded.append(torch.cat((
-                    cur_new_embed,
-                    torch.zeros((max_len - cur_len, cur_new_embed.shape[1]), dtype=cur_new_embed.dtype, device=cur_new_embed.device)
-                ), dim=0))
-                if cur_len > 0:
-                    # :cur_len に、代入
-                    new_labels_padded[i, :cur_len] = cur_new_labels 
-                    attention_mask[i, :cur_len] = True
-                    position_ids[i, :cur_len] = torch.arange(0, cur_len, dtype=position_ids.dtype, device=position_ids.device)
-
-
-
-
-
-        new_input_embeds = torch.stack(new_input_embeds_padded, dim=0)
-
-
-        if _labels is None:
-            #【SKIP】
-            new_labels = None
-        else:
-            # 【ENTER】
-            new_labels = new_labels_padded
-
-        if _attention_mask is None:
-            # 【SKIP】
-            attention_mask = None
-        else:
-            # 【ENTER】
-            attention_mask = attention_mask.to(dtype=_attention_mask.dtype)
-
-        if _position_ids is None:
-            position_ids = None
-
-        return None, position_ids, attention_mask, past_key_values, new_input_embeds, new_labels
-
-
+# In[ ]:
 
 from typing import List, Optional, Tuple, Union
 from transformers.generation.utils import GenerateOutput
@@ -642,116 +286,63 @@ class LlavaLlamaForCausalLM(LlamaForCausalLM, LlavaMetaForCausalLM):
     config_class = LlavaConfig
 
     def __init__(self, config):
+
+        print("def LlavaLlamaForCausalLM.__init__(self, config)")
+        # config は https://huggingface.co/lmsys/vicuna-7b-v1.5/blob/main/config.json
         super(LlamaForCausalLM, self).__init__(config)
         self.model = LlavaLlamaModel(config)
         # LlavaLlamaModelの初期化あと、LlavaMetaModelの初期化も呼ばれる。
         self.pretraining_tp = config.pretraining_tp
         self.vocab_size = config.vocab_size
         self.lm_head = nn.Linear(config.hidden_size, config.vocab_size, bias=False)
+
         # Initialize weights and apply final processing
         self.post_init()
 
-    def get_model(self):
-        return self.model
+# In[ ]:
 
-    def forward(
-        self,
-        input_ids: torch.LongTensor = None,
-        attention_mask: Optional[torch.Tensor] = None,
-        position_ids: Optional[torch.LongTensor] = None,
-        past_key_values: Optional[List[torch.FloatTensor]] = None,
-        inputs_embeds: Optional[torch.FloatTensor] = None,
-        labels: Optional[torch.LongTensor] = None,
-        use_cache: Optional[bool] = None,
-        output_attentions: Optional[bool] = None,
-        output_hidden_states: Optional[bool] = None,
-        images: Optional[torch.FloatTensor] = None,
-        image_sizes: Optional[List[List[int]]] = None,
-        return_dict: Optional[bool] = None,
-    ) -> Union[Tuple, CausalLMOutputWithPast]:
+# In[ ]:
 
+# In[ ]:
 
-        if hasattr(input_ids, 'shape'):
-            pass
-        if hasattr(inputs_embeds, 'shape'):
-            pass
-        if hasattr(images, 'shape'):
-            pass
+import inspect
 
-        if inputs_embeds is None:
-            # 【ENTER】
-            (
-                input_ids,
-                position_ids,
-                attention_mask,
-                past_key_values,
-                inputs_embeds,
-                labels
-            ) = self.prepare_inputs_labels_for_multimodal(
-                input_ids,
-                position_ids,
-                attention_mask,
-                past_key_values,
-                labels,
-                images,
-                image_sizes
-            )
+# In[ ]:
 
+def print_mro(cls):
+    for i, c in enumerate(cls.mro()):
 
+print_mro(LlavaLlamaModel)
 
+# In[ ]:
 
+print_mro(LlavaMetaModel)
 
+# In[ ]:
 
+print_mro(LlavaLlamaForCausalLM)
 
+# In[ ]:
 
-        #  LlamaForCausalLM.forward(self, ...)で明示
-        # Trainer > def train > def inner_training_loop > def training_step > model(**inputs) > model.forward
-        result = LlamaForCausalLM.forward(
-            self,
-            input_ids=input_ids,
-            attention_mask=attention_mask,
-            position_ids=position_ids,
-            past_key_values=past_key_values,
-            inputs_embeds=inputs_embeds,
-            labels=labels,
-            use_cache=use_cache,
-            output_attentions=output_attentions,
-            output_hidden_states=output_hidden_states,
-            return_dict=return_dict
-        )
-        return result
+model = LlavaLlamaForCausalLM.from_pretrained(
+    model_args.model_name_or_path,
+    cache_dir=training_args.cache_dir,
+    **bnb_model_from_pretrained_args
+)
 
-def maybe_zero_3(param, ignore_status=False, name=None):
+# In[ ]:
 
-    from deepspeed import zero
-    from deepspeed.runtime.zero.partition_parameters import ZeroParamStatus
-    if hasattr(param, "ds_id"): # TinyLLaVAではdeepspeedを使用しないのでSKIP
-        if param.ds_status == ZeroParamStatus.NOT_AVAILABLE:
-            if not ignore_status:
-                pass
-        with zero.GatheredParameters([param]):
-            param = param.data.detach().cpu().clone()
-    else:
-        param = param.detach().cpu().clone()
-    return param
+# In[ ]:
 
-def get_mm_adapter_state_maybe_zero_3(named_params, keys_to_match):
+model.enable_input_require_grads()
 
-    to_return = {k: t for k, t in named_params if any(key_match in k for key_match in keys_to_match)}
-    to_return = {k: maybe_zero_3(v, ignore_status=True, name=k).cpu() for k, v in to_return.items()}
-
-    for k, v in to_return.items():
-        if hasattr(v, 'shape'):
-            pass
-            
-    return to_return
+# In[ ]:
 
 import dataclasses
 from typing import List
 from enum import auto, Enum
 
 class SeparatorStyle(Enum):
-    """Different separator style."""
     SINGLE = auto()
     TWO = auto()
     MPT = auto()
@@ -760,7 +351,6 @@ class SeparatorStyle(Enum):
 
 @dataclasses.dataclass
 class Conversation:
-    """A class that keeps all conversation history."""
     system: str
     roles: List[str]
     messages: List[List[str]]
@@ -772,7 +362,6 @@ class Conversation:
 
     skip_next: bool = False
 
-
 conv_llava_plain = Conversation(
     system="",
     roles=("", ""),
@@ -783,99 +372,268 @@ conv_llava_plain = Conversation(
     sep="\n",
 )
 
-
 conv_templates = {
     "plain": conv_llava_plain,
 }
 
+# In[ ]:
+
+import inspect
+
+# In[ ]:
+
+tokenizer = transformers.AutoTokenizer.from_pretrained(
+    model_args.model_name_or_path,
+    cache_dir=training_args.cache_dir,
+    model_max_length=training_args.model_max_length,
+    padding_side="right",
+    use_fast=False,
+)
+
+# In[ ]:
+
+# In[ ]:
+
+tokenizer.pad_token = tokenizer.unk_token
+
+# In[ ]:
+
+# In[ ]:
+
+default_conversation = conv_templates[model_args.version]
+print("default_conversation\n", default_conversation)
+
+# In[ ]:
+
+# In[ ]:
+
+def get_model(self):
+
+    print("def LlavaLlamaForCausalLM.get_model(self)")
+    return self.model
+
+# In[ ]:
+
+LlavaLlamaForCausalLM.get_model = get_model
+
+# In[ ]:
+
+initial_model = model.get_model()
+
+# In[ ]:
+
+def config(self):
+
+    print("def CLIPVisionTower.config(self)")
+    if self.is_loaded:
+        # 【ENTER】
+        result = self.vision_tower.config
+    else:
+      pass
+    return result
+
+# In[ ]:
+
+def hidden_size(self):
+
+    print("def CLIPVisionTower.hidden_size(self)")
+    result = self.config.hidden_size
+    return result
+
+# In[ ]:
+
+CLIPVisionTower.config = property(config)
+
+# In[ ]:
+
+CLIPVisionTower.hidden_size = property(hidden_size)
+
+# In[ ]:
+
+def initialize_vision_modules(self, model_args, fsdp=None):
+
+  print("def initialize_vision_modules(self, model_args, fsdp=None)")
+  vision_tower = model_args.vision_tower
+  mm_vision_select_layer = model_args.mm_vision_select_layer
+  mm_vision_select_feature = model_args.mm_vision_select_feature
+  pretrain_mm_mlp_adapter = model_args.pretrain_mm_mlp_adapter
+  mm_patch_merge_type = model_args.mm_patch_merge_type
+  # 下記はself.config.mm_vision_towerに関するもの。self.vision_towerは依然としてNone
+  self.config.mm_vision_tower = vision_tower
+
+  if self.get_vision_tower() is None:
+      #【ENTER】self.vision_tower, self.get_vision_towerはNoneなのでこの分岐に入る。
+      # build_vision_tower(model_args) はちょっと奥の依存関係が深い
+      vision_tower = build_vision_tower(model_args)
+      # 分散学習(FSDP)を使うかどうか. 今回は [] 空のリストとなるので、Noneではないが、len(fsdp) == 0
+      if fsdp is not None and len(fsdp) > 0:
+        pass
+      else:
+          # 【ENTER】else of if fsdp is not None and len(fsdp) > 0:
+          self.vision_tower = vision_tower
+
+  else:
+    pass
+
+  self.config.use_mm_proj = True
+  self.config.mm_projector_type = getattr(model_args, 'mm_projector_type', 'linear')
+  self.config.mm_hidden_size = vision_tower.hidden_size
+  self.config.mm_vision_select_layer = mm_vision_select_layer
+  self.config.mm_vision_select_feature = mm_vision_select_feature
+  self.config.mm_patch_merge_type = mm_patch_merge_type
+
+  # mm_projector_is_None=True
+  if getattr(self, 'mm_projector', None) is None:
+      # 【ENTER】
+      self.mm_projector = build_vision_projector(self.config)
+      if 'unpad' in mm_patch_merge_type:
+        pass
+  else:
+    pass
+
+  if pretrain_mm_mlp_adapter is not None:
+    pass
+
+# In[ ]:
+
+LlavaMetaModel.initialize_vision_modules = initialize_vision_modules
+
+# In[ ]:
+
+def get_vision_tower(self):
+
+    print("def get_vision_tower(self)")
+    vision_tower = getattr(self, 'vision_tower', None)
+    if type(vision_tower) is list:
+        # 【SKIP】
+        vision_tower = vision_tower[0]
+    return vision_tower
+
+# In[ ]:
+
+LlavaMetaModel.get_vision_tower = get_vision_tower
+
+# In[ ]:
+
+initial_model.initialize_vision_modules(
+    model_args=model_args,
+    fsdp=training_args.fsdp
+)
+
+# In[ ]:
+
+vision_tower = model.get_vision_tower()
+vision_tower.to(dtype=torch.bfloat16 if training_args.bf16 else torch.float16, device=training_args.device)
+
+data_args.image_processor = vision_tower.image_processor
+data_args.is_multimodal = True
+
+model.config.image_aspect_ratio = data_args.image_aspect_ratio
+model.config.tokenizer_padding_side = tokenizer.padding_side
+model.config.tokenizer_model_max_length = tokenizer.model_max_length
+
+# In[ ]:
+
+model.config.tune_mm_mlp_adapter = training_args.tune_mm_mlp_adapter = model_args.tune_mm_mlp_adapter
+if model_args.tune_mm_mlp_adapter:
+    # 【ENTER】 tune_mm_mlp_adapter=True なので、この分岐に入る
+    # モデル全体の全パラメータを「学習不可（requires_grad=False）」にする
+    # これで通常の重みは全て凍結される
+    model.requires_grad_(False)
+    for p in model.get_model().mm_projector.parameters():
+        # mm_projector（画像特徴量→テキスト特徴量への変換層）の全パラメータだけを「学習可能（requires_grad=True）」に戻す
+        # これで mm_projector のみ学習されることになる
+        p.requires_grad = True
+
+# In[ ]:
+
+model.config.freeze_mm_mlp_adapter = training_args.freeze_mm_mlp_adapter
+if training_args.freeze_mm_mlp_adapter:
+  pass
+
+if training_args.bits in [4, 8]:
+  pass
+
+# In[ ]:
+
+def initialize_vision_tokenizer(self, model_args, tokenizer):
+    print("def initialize_vision_tokenizer(self, model_args, tokenizer)")
+
+    if model_args.mm_use_im_patch_token:
+      pass
+
+    if model_args.mm_use_im_start_end: # False
+      pass
+
+    elif model_args.mm_use_im_patch_token: # False
+      pass
+
+# In[ ]:
+
+LlavaLlamaForCausalLM.initialize_vision_tokenizer = initialize_vision_tokenizer
+
+# In[ ]:
+
+model.config.mm_use_im_start_end = data_args.mm_use_im_start_end = model_args.mm_use_im_start_end
+model.config.mm_projector_lr = training_args.mm_projector_lr
+training_args.use_im_start_end = model_args.mm_use_im_start_end
+model.config.mm_use_im_patch_token = model_args.mm_use_im_patch_token
+model.initialize_vision_tokenizer(model_args, tokenizer=tokenizer)
+
+# In[ ]:
+
 def rank0_print(*args):
+
+    print("def rank0_print(*args)")
     if local_rank == 0:
-        print(*args)
+
+# In[ ]:
 
 from torch.utils.data import Dataset
 import json
-import copy
-from PIL import Image
-from typing import Sequence
-from typing import Dict
 
 class LazySupervisedDataset(Dataset):
-    """Dataset for supervised fine-tuning."""
 
     def __init__(self, data_path: str,
                  tokenizer: transformers.PreTrainedTokenizer,
                  data_args: DataArguments):
-        
+
+        print("def LazySupervisedDataset.__init__(self, data_path, tokenizer, data_args)")
         super(LazySupervisedDataset, self).__init__()
         list_data_dict = json.load(open(data_path, "r"))
         # 今回は1サンプルだけなのでprintしても危険ではない
+
         self.tokenizer = tokenizer
         self.list_data_dict = list_data_dict
         self.data_args = data_args
 
-    def __len__(self):
+# In[ ]:
 
-        return len(self.list_data_dict)
+def __len__(self):
 
-    # Trainer > def _get_dataloader > dataloader = self.accelerator.prepare(DataLoader(dataset, **dataloader_params))
-    def __getitem__(self, i) -> Dict[str, torch.Tensor]:
+    print("def LazySupervisedDataset.__len__(self)")
+    return len(self.list_data_dict)
 
-        sources = self.list_data_dict[i]
-        if isinstance(i, int):
-            sources = [sources]
-        assert len(sources) == 1, "Don't know why it is wrapped to a list"  # FIXME
-        if 'image' in sources[0]:
-            image_file = self.list_data_dict[i]['image']
-            image_folder = self.data_args.image_folder
-            processor = self.data_args.image_processor
-            image_path = os.path.join(image_folder, image_file)
-            try:
-                image = Image.open(image_path).convert('RGB')
-            except Exception as e:
-                # 画像がなければこのサンプルはスキップ
-                return None 
-            if self.data_args.image_aspect_ratio == 'pad':
-                pass
-            else:
-                image = processor.preprocess(image, return_tensors='pt')['pixel_values'][0]
-            sources = preprocess_multimodal(
-                copy.deepcopy([e["conversations"] for e in sources]),
-                self.data_args)
-        else:
-            pass
+# In[ ]:
 
-        data_dict = preprocess(
-            sources,
-            self.tokenizer,
-            has_image=('image' in self.list_data_dict[i]))
-        if isinstance(i, int):
-            data_dict = dict(input_ids=data_dict["input_ids"][0],
-                                labels=data_dict["labels"][0])
+LazySupervisedDataset.__len__ = __len__
 
-        # image exist in the data
-        if 'image' in self.list_data_dict[i]:
-            data_dict['image'] = image
-        elif self.data_args.is_multimodal:
-            # image does not exist in the data, but the model is multimodal
-            crop_size = self.data_args.image_processor.crop_size
-            data_dict['image'] = torch.zeros(3, crop_size['height'], crop_size['width'])
-        return data_dict
+# In[ ]:
 
-
-
-
+from typing import Sequence
+from typing import Dict
 
 # Trainer > def _get_dataloader > dataloader_params = {..."collate_fn": data_collator,...}
 # self.accelerator.prepare(DataLoader(dataset, **dataloader_params)) で呼ばれる
 
 @dataclass
 class DataCollatorForSupervisedDataset(object):
-    """Collate examples for supervised fine-tuning."""
 
     tokenizer: transformers.PreTrainedTokenizer
 
     def __call__(self, instances: Sequence[Dict]) -> Dict[str, torch.Tensor]:
 
+        print("def DataCollatorForSupervisedDataset.__call__(self, instances)")
         #  [(torch.Size([24]), torch.Size([24]), torch.Size([3, 336, 336]))]
         # データローダーが None を返すことがあるので、Noneのサンプルを除外。
         instances = [x for x in instances if x is not None]
@@ -908,13 +666,15 @@ class DataCollatorForSupervisedDataset(object):
                 batch['images'] = images
         
         return batch
-    
+
+# In[ ]:
+
 from typing import Dict
 
 def make_supervised_data_module(tokenizer: transformers.PreTrainedTokenizer,
                                 data_args) -> Dict:
 
-    """Make dataset and collator for supervised fine-tuning."""
+    print("def make_supervised_data_module(tokenizer, data_args)")
     train_dataset = LazySupervisedDataset(tokenizer=tokenizer,
                                 data_path=data_args.data_path,
                                 data_args=data_args)
@@ -922,7 +682,14 @@ def make_supervised_data_module(tokenizer: transformers.PreTrainedTokenizer,
     result = dict(train_dataset=train_dataset,
                   eval_dataset=None,
                   data_collator=data_collator)
+    print("def make_supervised_data_module: result (return)\n", result) # {'train_dataset': <llava.train.train.LazySupervisedDataset object at 0x7ed6341f4880>, 'eval_dataset': None, 'data_collator': DataCollatorForSupervisedDataset(tokenizer=LlamaTokenizer(name_or_path='lmsys/vicuna-7b-v1.5', vocab_size=32000, model_max_length=2048, is_fast=False, padding_side='right', truncation_side='right', special_tokens={'bos_token': AddedToken("<s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'eos_token': AddedToken("</s>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'unk_token': AddedToken("<unk>", rstrip=False, lstrip=False, single_word=False, normalized=False), 'pad_token': '<unk>'}, clean_up_tokenization_spaces=False))}
     return result
+
+# In[ ]:
+
+data_module = make_supervised_data_module(tokenizer=tokenizer, data_args=data_args)
+
+# In[ ]:
 
 from transformers import Trainer
 from transformers.trainer import (
@@ -933,9 +700,12 @@ from transformers.trainer import (
     ShardedDDPOption,
     logger,
 )
+    
+# In[ ]:
 
 def tokenizer_image_token(prompt, tokenizer, image_token_index=IMAGE_TOKEN_INDEX, return_tensors=None):
 
+    print("def tokenizer_image_token(prompt, tokenizer, image_token_index=IMAGE_TOKEN_INDEX, return_tensors=None)")
     prompt_chunks = [tokenizer(chunk).input_ids for chunk in prompt.split('<image>')]
 
     def insert_separator(X, sep):
@@ -956,14 +726,16 @@ def tokenizer_image_token(prompt, tokenizer, image_token_index=IMAGE_TOKEN_INDEX
         raise ValueError(f'Unsupported tensor type: {return_tensors}')
     return input_ids
 
+# In[ ]:
+
 import copy
 
 def preprocess_plain(
     sources: Sequence[str],
-    tokenizer: transformers.PreTrainedTokenizer
+    tokenizer: transformers.PreTrainedTokenizer,
 ) -> Dict:
 
-    default_conversation = conv_templates["plain"] # hard coding
+    print("def preprocess_plain(sources, tokenizer)")
     # add end signal and concatenate together
     conversations = []
     for source in sources:
@@ -976,20 +748,20 @@ def preprocess_plain(
     input_ids = [tokenizer_image_token(prompt, tokenizer, return_tensors='pt') for prompt in conversations]
     for idx, tensor in enumerate(input_ids):
         if hasattr(tensor, 'shape'):
-            pass
     targets = copy.deepcopy(input_ids)
     for idx, tensor in enumerate(targets):
         if hasattr(tensor, 'shape'):
-            pass
     for target, source in zip(targets, sources):
         tokenized_len = len(tokenizer_image_token(source[0]['value'], tokenizer)) # prompt <image>
         target[:tokenized_len] = IGNORE_INDEX
 
     return dict(input_ids=input_ids, labels=targets)
 
+# In[ ]:
+
 def _add_speaker_and_signal(header, source, get_conversation=True):
-    default_conversation = conv_templates["plain"] # hard coding
-    """Add speaker and start/end signal on each round."""
+
+    print("def _add_speaker_and_signal(header, source, get_conversation=True)")
     BEGIN_SIGNAL = "### "
     END_SIGNAL = "\n"
     conversation = header
@@ -1008,11 +780,12 @@ def _add_speaker_and_signal(header, source, get_conversation=True):
     conversation += BEGIN_SIGNAL
     return conversation
 
+# In[ ]:
 
 def _tokenize_fn(strings: Sequence[str],
                  tokenizer: transformers.PreTrainedTokenizer) -> Dict:
 
-    """Tokenize a list of strings."""
+    print("def _tokenize_fn(strings, tokenizer)")
     tokenized_list = [
         tokenizer(
             text,
@@ -1027,7 +800,6 @@ def _tokenize_fn(strings: Sequence[str],
     ]
     for idx, tensor in enumerate(input_ids):
         if hasattr(tensor, 'shape'):
-            pass
     input_ids_lens = labels_lens = [
         tokenized.input_ids.ne(tokenizer.pad_token_id).sum().item()
         for tokenized in tokenized_list
@@ -1039,9 +811,11 @@ def _tokenize_fn(strings: Sequence[str],
         labels_lens=labels_lens,
     )
 
+# In[ ]:
 
 def _mask_targets(target, tokenized_lens, speakers):
 
+    print("def _mask_targets(target, tokenized_lens, speakers)")
     # cur_idx = 0
     cur_idx = tokenized_lens[0]
     tokenized_lens = tokenized_lens[1:]
@@ -1051,21 +825,15 @@ def _mask_targets(target, tokenized_lens, speakers):
             target[cur_idx+2:cur_idx + tokenized_len] = IGNORE_INDEX
         cur_idx += tokenized_len
 
+# In[ ]:
 
 def preprocess(
     sources: Sequence[str],
     tokenizer: transformers.PreTrainedTokenizer,
     has_image: bool = False
 ) -> Dict:
-    
-    default_conversation = conv_templates["plain"] # hard coding
-    """
-    Given a list of sources, each is a conversation list. This transform:
-    1. Add signal '### ' at the beginning each sentence, with end signal '\n';
-    2. Concatenate conversations together;
-    3. Tokenize the concatenated conversation;
-    4. Make a deepcopy as the target. Mask human words with IGNORE_INDEX.
-    """
+
+    print("def preprocess(sources, tokenizer, has_image=False)")
     if default_conversation.sep_style == SeparatorStyle.PLAIN:
         return preprocess_plain(sources, tokenizer) # True
     # add end signal and concatenate together
@@ -1082,7 +850,6 @@ def preprocess(
         input_ids = [tokenizer_image_token(prompt, tokenizer, return_tensors='pt') for prompt in conversations]
         for idx, tensor in enumerate(input_ids):
             if hasattr(tensor, 'shape'):
-                pass
     else:
         conversations_tokenized = _tokenize_fn(conversations, tokenizer)
         input_ids = conversations_tokenized["input_ids"]
@@ -1091,9 +858,7 @@ def preprocess(
     if isinstance(targets, list):
         for idx, tensor in enumerate(targets):
             if hasattr(tensor, 'shape'):
-                pass
     elif hasattr(targets, 'shape'):
-        pass
     for target, source in zip(targets, sources):
         if has_image:
             tokenized_lens = get_tokenize_len([header] + [s["value"] for s in source])
@@ -1104,14 +869,15 @@ def preprocess(
 
     return dict(input_ids=input_ids, labels=targets)
 
+# In[ ]:
+
 def preprocess_multimodal(
     sources: Sequence[str],
     data_args: DataArguments
 ) -> Dict:
 
-    default_conversation = conv_templates["plain"] # hard coding    
-    is_multimodal = data_args.is_multimodal
-
+    print("def preprocess_multimodal(sources, data_args)")
+    is_multimodal = data_args.is_multimodal 
     if not is_multimodal:
         pass
 
@@ -1129,10 +895,478 @@ def preprocess_multimodal(
             sentence["value"] = sentence["value"].replace(DEFAULT_IMAGE_TOKEN, replace_token)
     return sources
 
+# In[ ]:
+
+import copy
+from PIL import Image
+
+# Trainer > def _get_dataloader > dataloader = self.accelerator.prepare(DataLoader(dataset, **dataloader_params))
+def __getitem__(self, i) -> Dict[str, torch.Tensor]:
+
+    print("def LazySupervisedDataset.__getitem__(self, i)")
+    sources = self.list_data_dict[i]
+    if isinstance(i, int):
+        sources = [sources]
+    assert len(sources) == 1, "Don't know why it is wrapped to a list"  # FIXME
+    if 'image' in sources[0]:
+        image_file = self.list_data_dict[i]['image']
+        image_folder = self.data_args.image_folder
+        processor = self.data_args.image_processor
+        image_path = os.path.join(image_folder, image_file)
+        try:
+            image = Image.open(image_path).convert('RGB')
+        except Exception as e:
+            # 画像がなければこのサンプルはスキップ
+            return None 
+        if self.data_args.image_aspect_ratio == 'pad':
+            pass
+        else:
+            image = processor.preprocess(image, return_tensors='pt')['pixel_values'][0]
+        sources = preprocess_multimodal(
+            copy.deepcopy([e["conversations"] for e in sources]),
+            self.data_args)
+    else:
+        pass
+
+    data_dict = preprocess(
+        sources,
+        self.tokenizer,
+        has_image=('image' in self.list_data_dict[i]))
+    if isinstance(i, int):
+        data_dict = dict(input_ids=data_dict["input_ids"][0],
+                            labels=data_dict["labels"][0])
+
+    # image exist in the data
+    if 'image' in self.list_data_dict[i]:
+        data_dict['image'] = image
+    elif self.data_args.is_multimodal:
+        # image does not exist in the data, but the model is multimodal
+        crop_size = self.data_args.image_processor.crop_size
+        data_dict['image'] = torch.zeros(3, crop_size['height'], crop_size['width'])
+    return data_dict
+
+# In[ ]:
+
+LazySupervisedDataset.__getitem__ = __getitem__
+
+# In[ ]:
+
+tokenizer = transformers.AutoTokenizer.from_pretrained(
+    model_args.model_name_or_path,
+    cache_dir=training_args.cache_dir,
+    model_max_length=training_args.model_max_length,
+    padding_side="right",
+    use_fast=False,
+)
+
+# In[ ]:
+
+train_dataset = LazySupervisedDataset(tokenizer=tokenizer, data_path=data_args.data_path, data_args=data_args)
+
+# In[ ]:
+
+sample_data_dict = train_dataset.__getitem__(0)
+
+# In[ ]:
+
+data_collator = DataCollatorForSupervisedDataset(tokenizer=tokenizer)
+
+# In[ ]:
+
+instances = [sample_data_dict]
+data_collator = DataCollatorForSupervisedDataset(tokenizer=tokenizer)
+batch = data_collator(instances)
+
+# In[ ]:
+
+images = batch['images']
+
+# In[ ]:
+
+def encode_images(self, images):
+    print("def LlavaMetaForCausalLM(ABC).encode_images(self, images)")
+    image_features = self.get_model().get_vision_tower()(images)
+    image_features = self.get_model().mm_projector(image_features)
+    return image_features
+
+# In[ ]:
+
+LlavaMetaForCausalLM.encode_images = encode_images
+
+# In[ ]:
+
+# image_forward_outs から、指定した層の特徴量 (B, 577, 1024) を取り出したのち、パッチ特徴量 (B, 576, 1024) のみを返す。
+def feature_select(self, image_forward_outs):
+
+    print("def CLIPVisionTower.feature_select(self, image_forward_outs)")
+    image_features = image_forward_outs.hidden_states[self.select_layer]
+    if hasattr(image_features, 'shape'):
+    if self.select_feature == 'patch':
+        image_features = image_features[:, 1:]
+    elif self.select_feature == 'cls_patch':
+        pass
+    else:
+        pass
+    if hasattr(image_features, 'shape'):
+    return image_features
+
+# In[ ]:
+
+CLIPVisionTower.feature_select = feature_select
+
+# In[ ]:
+
+@torch.no_grad() 
+def forward(self, images):
+
+    print("def CLIPVisionTower.forward(self, images)")
+    
+    if hasattr(images, 'shape'):
+    if type(images) is list:
+        pass
+    else:
+        # 【ENTER】
+        image_forward_outs = self.vision_tower(images.to(device=self.vision_tower.device, dtype=self.vision_tower.dtype), output_hidden_states=True)
+        image_features = self.feature_select(image_forward_outs).to(images.dtype)
+
+    if hasattr(image_features, 'shape'):
+    return image_features
+
+# In[ ]:
+
+CLIPVisionTower.forward = forward
+
+# In[ ]:
+
+image_features = model.encode_images(images)
+
+# In[ ]:
+
+def prepare_inputs_labels_for_multimodal(
+    self, input_ids, position_ids, attention_mask, past_key_values, labels,
+    images, image_sizes=None
+):
+    print("def LlavaMetaForCausalLM(ABC).prepare_inputs_labels_for_multimodal(self, input_ids, position_ids, attention_mask, past_key_values, labels, images, image_sizes=None)")  # not found
+
+    vision_tower = self.get_vision_tower()
+
+    if vision_tower is None or images is None or input_ids.shape[1] == 1:
+        pass
+
+    if type(images) is list or images.ndim == 5:
+        pass
+    else:
+        # 【ENTER】
+        image_features = self.encode_images(images)
+
+    # TODO: image start / end is not implemented here to support pretraining.
+    if getattr(self.config, 'tune_mm_mlp_adapter', False) and getattr(self.config, 'mm_use_im_start_end', False):
+        raise NotImplementedError
+
+    # Let's just add dummy tensors if they do not exist,
+    # it is a headache to deal with None all the time.
+    # But it is not ideal, and if you have a better idea,
+    # please open an issue / submit a PR, thanks.
+
+    _labels = labels
+    _position_ids = position_ids
+    _attention_mask = attention_mask
+    if attention_mask is None:
+        pass
+    else:
+        # 【ENTER】
+        attention_mask = attention_mask.bool()
+ 
+    if position_ids is None:
+        # 【ENTER】
+        position_ids = torch.arange(0, input_ids.shape[1], dtype=torch.long, device=input_ids.device)
+
+    if labels is None:
+        pass
+
+    # remove the padding using attention_mask -- FIXME
+    _input_ids = input_ids
+    input_ids = [cur_input_ids[cur_attention_mask] for cur_input_ids, cur_attention_mask in zip(input_ids, attention_mask)]
+    labels = [cur_labels[cur_attention_mask] for cur_labels, cur_attention_mask in zip(labels, attention_mask)]
+
+    new_input_embeds = []
+    new_labels = []
+    cur_image_idx = 0
+    for batch_idx, cur_input_ids in enumerate(input_ids):
+        num_images = (cur_input_ids == IMAGE_TOKEN_INDEX).sum()
+        if num_images == 0:
+            cur_image_features = image_features[cur_image_idx]
+            cur_input_embeds_1 = self.get_model().embed_tokens(cur_input_ids)
+            cur_input_embeds = torch.cat([cur_input_embeds_1, cur_image_features[0:0]], dim=0)
+            new_input_embeds.append(cur_input_embeds)
+            new_labels.append(labels[batch_idx])
+            cur_image_idx += 1
+            continue
+
+        image_token_indices = [-1] + torch.where(cur_input_ids == IMAGE_TOKEN_INDEX)[0].tolist() + [cur_input_ids.shape[0]]
+        cur_input_ids_noim = []
+        cur_labels = labels[batch_idx]
+        cur_labels_noim = []
+        for i in range(len(image_token_indices) - 1): # 2回ループ。1回目 START から IMAGE_TOKEN_INDEXの手前まで、2回目はIMAGE_TOKEN_INDEX より先から 最後まで
+            cur_input_ids_noim.append(cur_input_ids[image_token_indices[i]+1:image_token_indices[i+1]])
+            cur_labels_noim.append(cur_labels[image_token_indices[i]+1:image_token_indices[i+1]])
+        split_sizes = [x.shape[0] for x in cur_labels_noim]
+        cur_input_embeds = self.get_model().embed_tokens(torch.cat(cur_input_ids_noim))
+        cur_input_embeds_no_im = torch.split(cur_input_embeds, split_sizes, dim=0)
+        cur_new_input_embeds = []
+        cur_new_labels = []
+
+        for i in range(num_images + 1):
+            cur_new_input_embeds.append(cur_input_embeds_no_im[i])
+            cur_new_labels.append(cur_labels_noim[i])
+            if i < num_images:
+                cur_image_features = image_features[cur_image_idx]
+                cur_image_idx += 1
+                cur_new_input_embeds.append(cur_image_features)
+                cur_new_labels.append(torch.full((cur_image_features.shape[0],), IGNORE_INDEX, device=cur_labels.device, dtype=cur_labels.dtype))
+
+        cur_new_input_embeds = [x.to(self.device) for x in cur_new_input_embeds]
+
+        cur_new_input_embeds = torch.cat(cur_new_input_embeds)
+        cur_new_labels = torch.cat(cur_new_labels)
+
+        new_input_embeds.append(cur_new_input_embeds)
+        new_labels.append(cur_new_labels)
+
+    # Truncate sequences to max length as image embeddings can make the sequence longer
+    tokenizer_model_max_length = getattr(self.config, 'tokenizer_model_max_length', None)
+    if tokenizer_model_max_length is not None:
+        new_input_embeds = [x[:tokenizer_model_max_length] for x in new_input_embeds]
+        new_labels = [x[:tokenizer_model_max_length] for x in new_labels]
+
+    # Combine them
+    max_len = max(x.shape[0] for x in new_input_embeds)
+    batch_size = len(new_input_embeds)
+
+    new_input_embeds_padded = []
+    new_labels_padded = torch.full((batch_size, max_len), IGNORE_INDEX, dtype=new_labels[0].dtype, device=new_labels[0].device)
+    attention_mask = torch.zeros((batch_size, max_len), dtype=attention_mask.dtype, device=attention_mask.device)
+    position_ids = torch.zeros((batch_size, max_len), dtype=position_ids.dtype, device=position_ids.device)
+
+    for i, (cur_new_embed, cur_new_labels) in enumerate(zip(new_input_embeds, new_labels)):
+        cur_len = cur_new_embed.shape[0]
+        if getattr(self.config, 'tokenizer_padding_side', 'right') == "left":
+            pass
+        else:
+            #【ENTER】
+            new_input_embeds_padded.append(torch.cat((
+                cur_new_embed,
+                torch.zeros((max_len - cur_len, cur_new_embed.shape[1]), dtype=cur_new_embed.dtype, device=cur_new_embed.device)
+            ), dim=0))
+            if cur_len > 0:
+                # :cur_len に、代入
+                new_labels_padded[i, :cur_len] = cur_new_labels 
+                attention_mask[i, :cur_len] = True
+                position_ids[i, :cur_len] = torch.arange(0, cur_len, dtype=position_ids.dtype, device=position_ids.device)
+
+    new_input_embeds = torch.stack(new_input_embeds_padded, dim=0)
+
+    if _labels is None:
+        #【SKIP】
+        new_labels = None
+    else:
+        # 【ENTER】
+        new_labels = new_labels_padded
+
+    if _attention_mask is None:
+        # 【SKIP】
+        attention_mask = None
+    else:
+        # 【ENTER】
+        attention_mask = attention_mask.to(dtype=_attention_mask.dtype)
+
+    if _position_ids is None:
+        position_ids = None
+
+    return None, position_ids, attention_mask, past_key_values, new_input_embeds, new_labels
+
+# In[ ]:
+
+LlavaMetaForCausalLM.prepare_inputs_labels_for_multimodal = prepare_inputs_labels_for_multimodal
+
+# In[ ]:
+
+input_ids = batch['input_ids'].to(device=model.device)
+
+attention_mask = batch['attention_mask'].to(device=model.device)
+
+labels = batch['labels'].to(device=model.device)
+
+images = batch['images'].to(device=model.device)
+
+# In[ ]:
+
+position_ids = None
+past_key_values = None
+image_sizes = None
+
+# In[ ]:
+
+# In[ ]:
+
+(
+    input_ids,
+    position_ids,
+    attention_mask,
+    past_key_values,
+    inputs_embeds,
+    labels
+) = model.prepare_inputs_labels_for_multimodal(
+    input_ids,
+    position_ids,
+    attention_mask,
+    past_key_values,
+    labels,
+    images,
+    image_sizes
+)
+
+# In[ ]:
+
+def forward(
+    self,
+    input_ids: torch.LongTensor = None,
+    attention_mask: Optional[torch.Tensor] = None,
+    position_ids: Optional[torch.LongTensor] = None,
+    past_key_values: Optional[List[torch.FloatTensor]] = None,
+    inputs_embeds: Optional[torch.FloatTensor] = None,
+    labels: Optional[torch.LongTensor] = None,
+    use_cache: Optional[bool] = None,
+    output_attentions: Optional[bool] = None,
+    output_hidden_states: Optional[bool] = None,
+    images: Optional[torch.FloatTensor] = None,
+    image_sizes: Optional[List[List[int]]] = None,
+    return_dict: Optional[bool] = None,
+) -> Union[Tuple, CausalLMOutputWithPast]:
+
+    print("def LlavaLlamaForCausalLM.forward(self, input_ids, attention_mask, position_ids, past_key_values, inputs_embeds, labels, use_cache, output_attentions, output_hidden_states, images, image_sizes, return_dict)")
+    if hasattr(input_ids, 'shape'):
+    if hasattr(inputs_embeds, 'shape'):
+    if hasattr(images, 'shape'):
+
+    if inputs_embeds is None:
+        # 【ENTER】
+        (
+            input_ids,
+            position_ids,
+            attention_mask,
+            past_key_values,
+            inputs_embeds,
+            labels
+        ) = self.prepare_inputs_labels_for_multimodal(
+            input_ids,
+            position_ids,
+            attention_mask,
+            past_key_values,
+            labels,
+            images,
+            image_sizes
+        )
+
+    #  LlamaForCausalLM.forward(self, ...)で明示
+    # Trainer > def train > def inner_training_loop > def training_step > model(**inputs) > model.forward
+    result = LlamaForCausalLM.forward(
+        self,
+        input_ids=input_ids,
+        attention_mask=attention_mask,
+        position_ids=position_ids,
+        past_key_values=past_key_values,
+        inputs_embeds=inputs_embeds,
+        labels=labels,
+        use_cache=use_cache,
+        output_attentions=output_attentions,
+        output_hidden_states=output_hidden_states,
+        return_dict=return_dict
+    )
+    print("Return of def LlavaLlamaForCausalLM.forward(self, input_ids, attention_mask, position_ids, past_key_values, inputs_embeds, labels, use_cache, output_attentions, output_hidden_states, images, image_sizes, return_dict)")
+    return result
+
+# In[ ]:
+
+LlavaLlamaForCausalLM.forward = forward
+
+# In[ ]:
+
+inputs = {
+    "input_ids": batch['input_ids'].to(device=model.device),
+    "attention_mask": batch['attention_mask'].to(device=model.device),
+    "labels": batch['labels'].to(device=model.device),
+    "images": batch['images'].to(device=model.device),
+    "position_ids": None,
+    "past_key_values": None,
+    "image_sizes": None,
+}
+
+# In[ ]:
+
+outputs = model(**inputs)
+
+# In[ ]:
+
+# In[ ]:
+
+# In[ ]:
+
+for name, param in model.named_parameters():
+
+# In[ ]:
+
+def maybe_zero_3(param, ignore_status=False, name=None):
+
+    print("def maybe_zero_3(param, ignore_status=False, name=None)")
+    from deepspeed import zero
+    from deepspeed.runtime.zero.partition_parameters import ZeroParamStatus
+    if hasattr(param, "ds_id"): # TinyLLaVAではdeepspeedを使用しないのでSKIP
+        if param.ds_status == ZeroParamStatus.NOT_AVAILABLE:
+            if not ignore_status:
+        with zero.GatheredParameters([param]):
+            param = param.data.detach().cpu().clone()
+    else:
+        param = param.detach().cpu().clone()
+    print("param (def maybe_zero_3 at llava_trainer.py return)\n", param)
+    return param
+
+# In[ ]:
+
+def get_mm_adapter_state_maybe_zero_3(named_params, keys_to_match):
+
+    print("def get_mm_adapter_state_maybe_zero_3(named_params, keys_to_match)")
+    to_return = {k: t for k, t in named_params if any(key_match in k for key_match in keys_to_match)}
+    to_return = {k: maybe_zero_3(v, ignore_status=True, name=k).cpu() for k, v in to_return.items()}
+    print("to_return def get_mm_adapter_state_maybe_zero_3 \n", to_return)
+
+    for k, v in to_return.items():
+        if hasattr(v, 'shape'):
+            
+    return to_return
+
+# In[ ]:
+
+keys_to_match = ['mm_projector']
+weight_to_save = get_mm_adapter_state_maybe_zero_3(model.named_parameters(), keys_to_match)
+
+# In[ ]:
+
+output_dir = training_args.output_dir
+model.config.save_pretrained(output_dir)
+torch.save(weight_to_save, os.path.join(output_dir, f'mm_projector.bin'))
+
+# In[ ]:
+
+get_ipython().system('ls ./checkpoints')
+
+# In[ ]:
+
 class LLaVATrainer(Trainer):
     # Trainer > _inner_training_loop > _maybe_log_save_evaluate > self._save_checkpoint(model, trial)
     def _save_checkpoint(self, model, trial, metrics=None):
 
+        print("def _save_checkpoint(self, model, trial, metrics=None)")
         if getattr(self.args, 'tune_mm_mlp_adapter', False):
             # 【ENTER】
             from transformers.trainer_utils import PREFIX_CHECKPOINT_DIR
@@ -1155,10 +1389,12 @@ class LLaVATrainer(Trainer):
         else:
             pass
 
+# In[ ]:
+
 def safe_save_model_for_hf_trainer(trainer: transformers.Trainer,
                                    output_dir: str):
 
-    """Collects the state dict and dump to disk."""
+    print("def safe_save_model_for_hf_trainer(trainer: transformers.Trainer, output_dir: str)")
 
     if getattr(trainer.args, "tune_mm_mlp_adapter", False):
         # Only save Adapter
@@ -1168,7 +1404,6 @@ def safe_save_model_for_hf_trainer(trainer: transformers.Trainer,
 
         weight_to_save = get_mm_adapter_state_maybe_zero_3(trainer.model.named_parameters(), keys_to_match)
         if hasattr(weight_to_save, 'shape'):
-            pass
         trainer.model.config.save_pretrained(output_dir)
 
         current_folder = output_dir.split('/')[-1]
@@ -1194,15 +1429,18 @@ def safe_save_model_for_hf_trainer(trainer: transformers.Trainer,
         }
         for key, value in cpu_state_dict.items():
             if hasattr(value, 'shape'):
-                pass
         del state_dict
         trainer._save(output_dir, state_dict=cpu_state_dict)  # noqa
+
+# In[ ]:
 
 import pathlib
 
 def train():
 
+    print("def train()")
     global local_rank
+
     parser = transformers.HfArgumentParser(
         (ModelArguments, DataArguments, TrainingArguments))
     model_args, data_args, training_args = parser.parse_dict(args_dict)
@@ -1227,6 +1465,7 @@ def train():
                 cache_dir=training_args.cache_dir,
                 **bnb_model_from_pretrained_args
             )
+            print("model defined as LlavaLlamaForCausalLM \n", model)
     # 【SKIP】 vision_tower=clip-vit-large-patch14-336 なので、この分岐には入らない
     else:
       pass
@@ -1250,7 +1489,6 @@ def train():
         else:
           pass
 
-
     # 【SKIP】 lora_enable=False なので、この分岐はskipされる
     if training_args.lora_enable:
       pass
@@ -1268,6 +1506,7 @@ def train():
             padding_side="right",
             use_fast=False,
         )
+        print("tokenizer defined by AutoTokenizer.from_pretrained \n", tokenizer)
 
     # 【SKIP】 version=plain なので、この分岐はskipされる
     if model_args.version == "v0":
@@ -1282,6 +1521,7 @@ def train():
         # 【ENTER】 model_args.version=plain は conversation_lib.conv_templates に含まれている（"plain": conv_llava_plain）ので、この分岐に入る
         if model_args.version in conv_templates:
             default_conversation = conv_templates[model_args.version]
+            print(f"conversation_lib.default_conversation set to {model_args.version}")
         # 【SKIP】 model_args.version=plain は conversation_lib.conv_templates に含まれているので、この分岐はskipされる
         else:
           pass
@@ -1354,5 +1594,8 @@ def train():
         safe_save_model_for_hf_trainer(trainer=trainer,
                                        output_dir=training_args.output_dir)
 
+# In[ ]:
+
 if __name__ == "__main__":
     train()
+
