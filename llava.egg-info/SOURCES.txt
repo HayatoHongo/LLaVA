@@ -60,3 +60,4 @@ print_factory/after_code.py
 print_factory/original_code.py
 print_factory/print_factory.py
 print_factory/printpromptexperiment.py
+print_factory/removeprint.py
