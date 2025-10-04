@@ -414,6 +414,7 @@ class LlavaLlamaForCausalLM(LlamaForCausalLM, LlavaMetaForCausalLM):
 
     def __init__(self, config):
         super(LlamaForCausalLM, self).__init__(config)
+        # class LlamaForCausalLM(LlamaPreTrainedModel, GenerationMixin): の初期化で、self.modelのみを置き換えている。
         self.model = LlavaLlamaModel(config)
         # LlavaLlamaModelの初期化あと、LlavaMetaModelの初期化も呼ばれる。
         self.pretraining_tp = config.pretraining_tp
