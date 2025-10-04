@@ -14,16 +14,16 @@
     ]
   },
   {
-    "id": "GCC_train_000406392",
+    "id": "GCC_train_000196242",
     "image": "GCC_train_000406392.jpg",
     "conversations": [
       {
         "from": "human",
-        "value": "Share a concise interpretation of the image provided.\n<image>"
+        "value": "Render a clear and concise summary of the photo.\n<image>"
       },
       {
         "from": "gpt",
-        "value": "water pollution in the city"
+        "value": "illustration of a summer holiday in bright colors ."
       }
     ]
   }
