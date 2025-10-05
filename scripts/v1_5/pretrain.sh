@@ -2,9 +2,9 @@
 
 deepspeed llava/train/train_mem.py \
     --deepspeed ./scripts/zero2.json \
-    --model_name_or_path lmsys/vicuna-7b-v1.5 \
+    --model_name_or_path TinyLlama/TinyLlama-1.1B-Chat-v1.0 \
     --version plain \
-    --data_path /content/LLaVA/blip_laion_cc_sbu_1.json \
+    --data_path /content/LLaVA/CC3M_2.json \
     --image_folder /content/LLaVA/images \
     --vision_tower openai/clip-vit-large-patch14-336 \
     --mm_projector_type mlp2x_gelu \
@@ -13,7 +13,7 @@ deepspeed llava/train/train_mem.py \
     --mm_use_im_start_end False \
     --mm_use_im_patch_token False \
     --bf16 True \
-    --output_dir ./checkpoints/llava-v1.5-7b-pretrain \
+    --output_dir ./checkpoints/Tinyllava-v1.5-7b-pretrain \
     --num_train_epochs 1 \
     --per_device_train_batch_size 1 \
     --per_device_eval_batch_size 1 \
