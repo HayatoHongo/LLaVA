@@ -1559,7 +1559,8 @@ Parameter Group 1
     weight_decay: 0.0
 )
 Rank: 0 partition count [1, 1] and sizes[(6291456, False), (4096, False)] 
-  0%|          | 0/1 [00:00<?, ?it/s]current file path llava/train/train.py
+
+  0%|          | 0/1 [00:00<?, ?it/s]current file path llava/train/train.py
 def LazySupervisedDataset.__len__(self)
 current file path llava/train/train.py
 def LazySupervisedDataset.__len__(self)
@@ -3594,8 +3595,12 @@ result (return)
          [-9.0625, -9.3125,  3.8906,  ..., -4.3438, -6.0938, -2.8906],
          [-8.2500, -8.5625,  1.3906,  ..., -3.7812, -5.9688, -2.4219]]],
        device='cuda:0', grad_fn=<ToCopyBackward0>), past_key_values=None, hidden_states=None, attentions=None)
-100%|██████████| 1/1 [00:01<00:00,  1.46s/it]                                             {'loss': 8.4151, 'learning_rate': 0.001, 'epoch': 1.0}
-100%|██████████| 1/1 [00:01<00:00,  1.46s/it]current file path llava/train/llava_trainer.py
+
+100%|██████████| 1/1 [00:01<00:00,  1.46s/it]
+                                             
+{'loss': 8.4151, 'learning_rate': 0.001, 'epoch': 1.0}
+
+100%|██████████| 1/1 [00:01<00:00,  1.46s/it]current file path llava/train/llava_trainer.py
 def _save_checkpoint(self, model, trial, metrics=None)
 self
  <llava.train.llava_trainer.LLaVATrainer object at 0x7a4663927070>
@@ -3787,8 +3792,12 @@ to_return
 【ENTER】if self.args.local_rank == 0 or self.args.local_rank == -1:
 【EXIT】if self.args.local_rank == 0 or self.args.local_rank == -1:
 【EXIT】if getattr(self.args, 'tune_mm_mlp_adapter', False):
-                                             {'train_runtime': 1.51, 'train_samples_per_second': 1.325, 'train_steps_per_second': 0.662, 'train_loss': 8.415122985839844, 'epoch': 1.0}
-100%|██████████| 1/1 [00:01<00:00,  1.46s/it]100%|██████████| 1/1 [00:01<00:00,  1.51s/it]
+
+                                             
+{'train_runtime': 1.51, 'train_samples_per_second': 1.325, 'train_steps_per_second': 0.662, 'train_loss': 8.415122985839844, 'epoch': 1.0}
+
+100%|██████████| 1/1 [00:01<00:00,  1.46s/it]
+100%|██████████| 1/1 [00:01<00:00,  1.51s/it]
 【EXIT】if list(pathlib.Path(training_args.output_dir).glob(checkpoint-*)):
 model.config.use_cache = True True
 【COND】lora_enable=False

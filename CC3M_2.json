@@ -1,19 +1,5 @@
 [
   {
-    "id": "GCC_train_000406392",
-    "image": "GCC_train_000406392.jpg",
-    "conversations": [
-      {
-        "from": "human",
-        "value": "<image>\nShare a concise interpretation of the image provided."
-      },
-      {
-        "from": "gpt",
-        "value": "water pollution in the city"
-      }
-    ]
-  },
-  {
     "id": "GCC_train_000196242",
     "image": "GCC_train_000406392.jpg",
     "conversations": [
@@ -24,6 +10,20 @@
       {
         "from": "gpt",
         "value": "illustration of a summer holiday in bright colors ."
+      }
+    ]
+  },
+  {
+    "id": "GCC_train_000406392",
+    "image": "GCC_train_000406392.jpg",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>\nShare a concise interpretation of the image provided."
+      },
+      {
+        "from": "gpt",
+        "value": "water pollution in the city"
       }
     ]
   }
