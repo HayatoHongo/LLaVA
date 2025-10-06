@@ -800,7 +800,7 @@ def preprocess(
         return preprocess_v1(sources, tokenizer, has_image=has_image)
     if conversation_lib.default_conversation.version == "mpt":
         return preprocess_mpt(sources, tokenizer)
-    # add end signal and concatenate together
+    # add end signal and concatenate together"
     conversations = []
     for source in sources:
         header = f"{conversation_lib.default_conversation.system}\n\n"
