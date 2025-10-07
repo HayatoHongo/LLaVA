@@ -55,7 +55,7 @@ class LlavaLlamaForCausalLM(LlamaForCausalLM, LlavaMetaForCausalLM):
         print("config\n", config)
         super(LlamaForCausalLM, self).__init__(config)
         self.model = LlavaLlamaModel(config)
-        # LlavaLlamaModelの初期化あと、LlavaMetaModelの初期化も呼ばれる。
+        # LlavaLlamaModelの初期化あと、LlavaBaseModelの初期化も呼ばれる。
         self.pretraining_tp = config.pretraining_tp
         self.vocab_size = config.vocab_size
         self.lm_head = nn.Linear(config.hidden_size, config.vocab_size, bias=False)
